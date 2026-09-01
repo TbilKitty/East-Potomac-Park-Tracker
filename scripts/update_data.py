@@ -209,9 +209,63 @@ def rank_articles_by_novelty(df_media, max_articles=30):
     return results
 
 
+PHOTO_URL = "https://www.nps.gov/npgallery/GetAsset/36B74D30-DE82-4B2E-8A20-F83F69B55B39"
+
+
+def ensure_header_photo():
+    """Keep the NPS photo with the generated site so Pages can serve it."""
+    path = "park-photo.jpg"
+    if os.path.isfile(path) and os.path.getsize(path) > 0:
+        return path
+    try:
+        response = requests.get(PHOTO_URL, timeout=30)
+        response.raise_for_status()
+        if not response.content.startswith(b"\xff\xd8\xff"):
+            raise ValueError("NPS response was not a JPEG")
+        with open(path + ".tmp", "wb") as photo:
+            photo.write(response.content)
+        os.replace(path + ".tmp", path)
+        return path
+    except (requests.RequestException, OSError, ValueError) as exc:
+        print(f"Header photo download failed; using NPS source: {exc}")
+        return PHOTO_URL
+
+
+def render_media_chart(df_media, now):
+    """Show 90 days even when the retrieved sample has only one article date."""
+    today = pd.Timestamp(now).tz_convert("UTC").normalize()
+    first_day = today - pd.Timedelta(days=89)
+    days = pd.date_range(first_day, today, freq="D")
+    dates = pd.to_datetime(df_media.get("seendate", pd.Series(dtype=str)),
+                           errors="coerce", utc=True).dropna()
+    dates = dates[(dates >= first_day) & (dates <= pd.Timestamp(now))]
+    daily = pd.Series(1, index=pd.DatetimeIndex(dates)).resample("D").sum()
+    daily = daily.reindex(days, fill_value=0)
+    # Seven-day buckets anchored to the beginning of the rolling window.
+    weekly = daily.resample("168h", origin=first_day).sum()
+    fig, ax = plt.subplots(figsize=(10, 4.8))
+    ax.plot(weekly.index, weekly.values, marker="o", color="#E03C31", linewidth=2)
+    ax.set_ylim(0, max(1, float(weekly.max()) * 1.15))
+    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.set_title("Media Interest — Last 90 Days")
+    ax.set_ylabel("Retrieved articles per week")
+    ax.set_xlabel("Week starting (UTC); final week is partial")
+    ax.set_xlim(first_day, today)
+    ax.set_xticks(weekly.index[::2])
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %d, %Y", tz=timezone.utc))
+    ax.grid(axis="y", alpha=0.2)
+    ax.spines[["top", "right"]].set_visible(False)
+    fig.autofmt_xdate(rotation=35)
+    fig.tight_layout()
+    fig.savefig("media_coverage_over_time.png", dpi=150)
+    plt.close(fig)
+    return first_day.strftime("%b %d, %Y") + " – " + today.strftime("%b %d, %Y")
+
+
 def main():
     os.makedirs("data", exist_ok=True)
     now = datetime.now(timezone.utc)
+    photo_src = ensure_header_photo()
 
     # --- Docket ---
     df_docket = pd.DataFrame(columns=["date_filed", "entry_number", "description"])
@@ -254,31 +308,8 @@ def main():
                 df_media["seendate"] = pd.to_datetime(df_media["seendate"])
     df_media.to_csv("data/east_potomac_media.csv", index=False)
 
-    # --- Charts ---
-    if not df_media.empty:
-        # GDELT seendate is the date observed, not necessarily publication.
-        chart_dates = pd.to_datetime(df_media["seendate"], errors="coerce", utc=True).dropna()
-        weekly = pd.Series(1, index=pd.DatetimeIndex(chart_dates)).resample("W-SUN").sum()
-        fig, ax = plt.subplots(figsize=(8, 4))
-        ax.plot(weekly.index, weekly.values, marker="o", color="#E03C31", linewidth=2)
-        ax.set_ylim(bottom=0)
-        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.set_title("Media Interest")
-        ax.set_ylabel("Retrieved articles per week")
-        ax.set_xlabel("Week ending (Sunday, UTC)")
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %d, %Y"))
-        # Tick labels are actual weekly bucket dates, not arbitrary auto ticks.
-        tick_step = max(1, (len(weekly) + 6) // 7)
-        ticks = weekly.index[::tick_step]
-        if len(weekly) and weekly.index[-1] not in ticks:
-            ticks = ticks.append(weekly.index[-1:])
-        ax.set_xticks(ticks)
-        ax.grid(axis="y", alpha=0.2)
-        ax.spines[["top", "right"]].set_visible(False)
-        fig.autofmt_xdate(rotation=40)
-        plt.tight_layout()
-        plt.savefig("media_coverage_over_time.png", dpi=150)
-        plt.close()
+    # --- Chart always spans the rolling 90-day window ---
+    chart_range = render_media_chart(df_media, now)
 
     ranked_articles = rank_articles_by_novelty(df_media, max_articles=30)
 
@@ -353,11 +384,13 @@ def main():
     with open(prev_path, "w") as f:
         json.dump(sorted(current_items), f)
 
-    charts_html = ""
-    if not df_media.empty:
-        charts_html = '<img src="media_coverage_over_time.png" alt="Weekly coverage volume chart">'
-    else:
-        charts_html = "<p>Media coverage data not available this run.</p>"
+    charts_html = (
+        f'<p style="font-family:Arial,sans-serif;">{chart_range}</p>'
+        '<img src="media_coverage_over_time.png" '
+        'alt="Line graph of weekly retrieved article counts over the last 90 days">'
+    )
+    if df_media.empty:
+        charts_html += "<p>No article data available this run; the displayed zeros do not establish an absence of news coverage.</p>"
 
     article_rows = ""
     for a in ranked_articles:
@@ -430,8 +463,8 @@ def main():
 </style>
 </head>
 <body>
-  <img src="park-photo.jpg" alt="The Golf Course on East Potomac Park during cherry blossom season" style="width:100%; max-height:320px; object-fit:cover; border-radius:8px; margin-bottom:6px;">
-  <p style="font-family: Arial, sans-serif; font-size: 0.72rem; color: #4A4A4A; margin: 0 0 28px;">Photo: National Park Service (public domain)</p>
+  <img src="{photo_src}" alt="Cherry blossoms lining the road at East Potomac Park" style="width:100%; max-height:320px; object-fit:cover; border-radius:8px; margin-bottom:6px;">
+  <p style="font-family: Arial, sans-serif; font-size: 0.72rem; color: #4A4A4A; margin: 0 0 28px;">Photo: NPS / NCR Photo Library (public domain)</p>
 
   <h1>East Potomac Park &mdash; Case Tracker</h1>
   <p class="updated">Automatically updated daily. Last updated: {updated}</p>
@@ -480,9 +513,11 @@ def main():
     <div>
       {charts_html}
       <p style="font-family:Arial,sans-serif; font-size:0.9rem; color:#4A4A4A;">
-        Each point counts retrieved articles observed by GDELT during the week ending on the
-        displayed Sunday (UTC). Dates are observation dates, not necessarily publication dates.
-        The first and last weeks may be partial. Counts reflect the retrieved sample
+        The window moves forward each day and always covers the last 90 days.
+        Each point counts retrieved articles observed by GDELT in the seven days beginning
+        on that date (UTC); the final week is partial. Dates are observation dates, not
+        necessarily publication dates. Zero means no articles in the retrieved data for
+        that week, not necessarily no coverage. Counts reflect the retrieved sample
         (up to 250 articles), not all news coverage or audience engagement.
       </p>
     </div>
