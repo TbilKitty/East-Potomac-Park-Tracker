@@ -6,11 +6,6 @@ from datetime import datetime, timezone
 
 import requests
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-from matplotlib.ticker import MaxNLocator
 
 DOCKET_ID = 72278895  # DC Preservation League v. Department of Interior, 1:26-cv-00477
 API_TOKEN = os.environ.get("COURTLISTENER_TOKEN", "")
@@ -21,17 +16,36 @@ def get_docket_entries(docket_id):
     entries = []
     url = "https://www.courtlistener.com/api/rest/v4/docket-entries/"
     params = {"docket": docket_id, "order_by": "-date_filed"}
+    deadline = time.monotonic() + 180
+    rate_limit_retries = 0
+    pages = 0
     while url:
-        resp = requests.get(url, params=params, headers=headers, timeout=30)
+        remaining = deadline - time.monotonic()
+        if remaining <= 0 or pages >= 20:
+            raise requests.exceptions.Timeout("CourtListener fetch limit reached; use saved docket data.")
+        print(f"CourtListener: fetching page {pages + 1}...", flush=True)
+        resp = requests.get(url, params=params, headers=headers, timeout=min(30, remaining))
         if resp.status_code == 429:
-            time.sleep(15)
+            rate_limit_retries += 1
+            if rate_limit_retries > 3:
+                resp.raise_for_status()
+            delay = 15 * rate_limit_retries
+            if time.monotonic() + delay >= deadline:
+                raise requests.exceptions.Timeout("CourtListener rate limit exceeded fetch budget.")
+            print(f"CourtListener rate limited; retry {rate_limit_retries}/3 in {delay}s.", flush=True)
+            time.sleep(delay)
             continue
         resp.raise_for_status()
         data = resp.json()
         entries.extend(data["results"])
+        pages += 1
         url = data.get("next")
         params = {}
-        time.sleep(13)
+        if url:
+            remaining = deadline - time.monotonic()
+            if remaining <= 13:
+                raise requests.exceptions.Timeout("CourtListener fetch budget exhausted.")
+            time.sleep(13)
     return entries
 
 
@@ -231,37 +245,6 @@ def ensure_header_photo():
         return PHOTO_URL
 
 
-def render_media_chart(df_media, now):
-    """Show 90 days even when the retrieved sample has only one article date."""
-    today = pd.Timestamp(now).tz_convert("UTC").normalize()
-    first_day = today - pd.Timedelta(days=89)
-    days = pd.date_range(first_day, today, freq="D")
-    dates = pd.to_datetime(df_media.get("seendate", pd.Series(dtype=str)),
-                           errors="coerce", utc=True).dropna()
-    dates = dates[(dates >= first_day) & (dates <= pd.Timestamp(now))]
-    daily = pd.Series(1, index=pd.DatetimeIndex(dates)).resample("D").sum()
-    daily = daily.reindex(days, fill_value=0)
-    # Seven-day buckets anchored to the beginning of the rolling window.
-    weekly = daily.resample("168h", origin=first_day).sum()
-    fig, ax = plt.subplots(figsize=(10, 4.8))
-    ax.plot(weekly.index, weekly.values, marker="o", color="#E03C31", linewidth=2)
-    ax.set_ylim(0, max(1, float(weekly.max()) * 1.15))
-    ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-    ax.set_title("Media Interest — Last 90 Days")
-    ax.set_ylabel("Retrieved articles per week")
-    ax.set_xlabel("Week starting (UTC); final week is partial")
-    ax.set_xlim(first_day, today)
-    ax.set_xticks(weekly.index[::2])
-    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %d, %Y", tz=timezone.utc))
-    ax.grid(axis="y", alpha=0.2)
-    ax.spines[["top", "right"]].set_visible(False)
-    fig.autofmt_xdate(rotation=35)
-    fig.tight_layout()
-    fig.savefig("media_coverage_over_time.png", dpi=150)
-    plt.close(fig)
-    return first_day.strftime("%b %d, %Y") + " – " + today.strftime("%b %d, %Y")
-
-
 def main():
     os.makedirs("data", exist_ok=True)
     now = datetime.now(timezone.utc)
@@ -282,11 +265,13 @@ def main():
             df_docket = pd.read_csv("data/east_potomac_docket.csv")
     df_docket.to_csv("data/east_potomac_docket.csv", index=False)
 
+    print("Fetching public notices...", flush=True)
     # --- Upcoming hearings / notices ---
     fr_notices = get_federal_register_notices("East Potomac", "national-park-service")
     fr_notices += get_federal_register_notices("East Potomac", "interior-department")
     hearing_entries = flag_hearing_entries(df_docket)
 
+    print("Fetching news articles...", flush=True)
     # --- Media (rolling 90-day window, GDELT's actual coverage range) ---
     start = (now - pd.Timedelta(days=90)).strftime("%Y%m%d%H%M%S")
     end = now.strftime("%Y%m%d%H%M%S")
@@ -308,11 +293,10 @@ def main():
                 df_media["seendate"] = pd.to_datetime(df_media["seendate"])
     df_media.to_csv("data/east_potomac_media.csv", index=False)
 
-    # --- Chart always spans the rolling 90-day window ---
-    chart_range = render_media_chart(df_media, now)
-
+    print("Summarizing up to 30 articles; this may take several minutes...", flush=True)
     ranked_articles = rank_articles_by_novelty(df_media, max_articles=30)
 
+    print("Rendering the updated page...", flush=True)
     # --- Render index.html ---
     updated = now.strftime("%B %d, %Y at %H:%M UTC")
 
@@ -383,14 +367,6 @@ def main():
     os.makedirs("data", exist_ok=True)
     with open(prev_path, "w") as f:
         json.dump(sorted(current_items), f)
-
-    charts_html = (
-        f'<p style="font-family:Arial,sans-serif;">{chart_range}</p>'
-        '<img src="media_coverage_over_time.png" '
-        'alt="Line graph of weekly retrieved article counts over the last 90 days">'
-    )
-    if df_media.empty:
-        charts_html += "<p>No article data available this run; the displayed zeros do not establish an absence of news coverage.</p>"
 
     article_rows = ""
     for a in ranked_articles:
@@ -517,17 +493,57 @@ def main():
   </details>
 
   <details class="section" open>
-    <summary>Media Interest <span class="toggle-label" aria-hidden="true"></span></summary>
+    <summary>Public Search Interest <span class="toggle-label" aria-hidden="true"></span></summary>
     <div>
-      {charts_html}
+      <p style="font-family:Arial,sans-serif;">&ldquo;East Potomac Park&rdquo; &middot; United States &middot; Past 3 months &middot; Google Web Search</p>
+      <div id="search-interest-chart" style="min-height:420px; width:100%;"></div>
+      <p id="search-interest-status" style="font-family:Arial,sans-serif; font-size:0.9rem;">Loading Google Trends&hellip;</p>
       <p style="font-family:Arial,sans-serif; font-size:0.9rem; color:#4A4A4A;">
-        The window moves forward each day and always covers the last 90 days.
-        Each point counts retrieved articles observed by GDELT in the seven days beginning
-        on that date (UTC); the final week is partial. Dates are observation dates, not
-        necessarily publication dates. Zero means no articles in the retrieved data for
-        that week, not necessarily no coverage. Counts reflect the retrieved sample
-        (up to 250 articles), not all news coverage or audience engagement.
+        Relative search interest, scaled from 0 to 100: 100 marks peak interest in this
+        period and region. These are not search counts. Low search volume can appear
+        as zero or insufficient data. Search activity measures attention, not support
+        for a particular outcome.
       </p>
+      <p style="font-family:Arial,sans-serif; font-size:0.9rem;">
+        Data source: <a href="https://trends.google.com/trends/explore?date=today%203-m&amp;geo=US&amp;q=East%20Potomac%20Park&amp;hl=en" target="_blank" rel="noopener">Google Trends &mdash; open the interactive chart</a>.
+        If the embedded chart is unavailable, use this link to check the source.
+      </p>
+      <script>
+        (function () {{
+          const host = document.getElementById('search-interest-chart');
+          const status = document.getElementById('search-interest-status');
+          const loader = document.createElement('script');
+          loader.src = 'https://ssl.gstatic.com/trends_nrtr/4031_RC01/embed_loader.js';
+          loader.async = true;
+          function unavailable() {{
+            status.textContent = 'The embedded chart could not load. Open Google Trends using the link below.';
+            host.style.minHeight = '0';
+          }}
+          loader.onerror = unavailable;
+          loader.onload = function () {{
+            try {{
+              trends.embed.renderExploreWidgetTo(host, 'TIMESERIES', {{
+                comparisonItem: [{{keyword: 'East Potomac Park', geo: 'US', time: 'today 3-m'}}],
+                category: 0,
+                property: ''
+              }}, {{
+                exploreQuery: 'date=today%203-m&geo=US&q=East%20Potomac%20Park&hl=en',
+                guestPath: 'https://trends.google.com:443/trends/embed/',
+                width: '100%',
+                locale: 'en'
+              }});
+              const frame = host.querySelector('iframe');
+              if (frame) {{
+                frame.title = 'Google search interest for East Potomac Park in the United States over the past three months';
+                frame.style.minHeight = '420px';
+                status.textContent = 'Chart supplied by Google Trends. Availability depends on Google and sufficient search data.';
+              }} else {{ unavailable(); }}
+            }} catch (error) {{ unavailable(); }}
+          }};
+          document.head.appendChild(loader);
+        }})();
+      </script>
+      <noscript><p>Enable JavaScript to view this chart, or open Google Trends using the link above.</p></noscript>
     </div>
   </details>
 
@@ -551,13 +567,13 @@ def main():
     <summary>About Me <span class="toggle-label" aria-hidden="true"></span></summary>
     <div class="bio">
       <p>The opioid epidemic hit my dad and our family hard. Before I graduated high school,
-      I was homeless. Years of impossibly hard work later, I&rsquo;m a single parent and a
-      student at the University of Baltimore School of Law.</p>
+      I was homeless. Years of impossibly hard work later, I&rsquo;m a single parent to a wonderful child and a full time law
+      student.</p>
       <p>My legal interest is in using tax policy to advance social equity&mdash;shaping the
       rules that influence who gets opportunities, who builds wealth, and who gets left behind.
       Go UB Law!</p>
-      <p>I originally made this website as a gift for a partner who loves East Potomac Park.
-      We&rsquo;re no longer together, but the website is still here.</p>
+      <p>I made this website as a gift for a partner who loves East Potomac Park.
+      We&rsquo;re no longer together, but the spirit of public policy remains.</p>
     </div>
   </details>
 </body>
@@ -565,6 +581,7 @@ def main():
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
+    print("Page generated successfully.", flush=True)
 
 
 if __name__ == "__main__":
