@@ -146,6 +146,12 @@ def main():
   <h1>East Potomac Park &mdash; Case Tracker</h1>
   <p class="updated">Automatically updated daily. Last updated: {updated}</p>
 
+  <p style="font-family: Arial, sans-serif;">
+    <a href="write-to-congress.html" style="display:inline-block; background:#2C5F4F; color:#fff; text-decoration:none; padding:10px 18px; border-radius:4px; font-weight:bold;">
+      Write to Your Member of Congress &rarr;
+    </a>
+  </p>
+
   <h2>Media Coverage</h2>
   {charts_html}
 
