@@ -235,10 +235,14 @@ def main():
     end = now.strftime("%Y%m%d%H%M%S")
     df_media = pd.DataFrame()
     try:
-        articles = gdelt_search('"East Potomac" (cherry OR golf)', start, end)
+        articles = gdelt_search('"East Potomac Park"', start, end)
         if articles:
             df_media = pd.DataFrame(articles)
             df_media["seendate"] = pd.to_datetime(df_media["seendate"])
+            # Belt-and-suspenders: GDELT's query filtering isn't fully reliable,
+            # so double-check locally that the park is actually mentioned.
+            mask = df_media["title"].str.contains("east potomac", case=False, na=False)
+            df_media = df_media[mask]
     except Exception as e:
         print(f"GDELT fetch failed, keeping previous data if any: {e}")
         if os.path.exists("data/east_potomac_media.csv"):
