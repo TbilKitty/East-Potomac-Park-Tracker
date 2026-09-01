@@ -10,6 +10,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from matplotlib.ticker import MaxNLocator
 
 DOCKET_ID = 72278895  # DC Preservation League v. Department of Interior, 1:26-cv-00477
 API_TOKEN = os.environ.get("COURTLISTENER_TOKEN", "")
@@ -255,14 +256,24 @@ def main():
 
     # --- Charts ---
     if not df_media.empty:
-        weekly = df_media.set_index("seendate").resample("W").size()
+        # GDELT seendate is the date observed, not necessarily publication.
+        chart_dates = pd.to_datetime(df_media["seendate"], errors="coerce", utc=True).dropna()
+        weekly = pd.Series(1, index=pd.DatetimeIndex(chart_dates)).resample("W-SUN").sum()
         fig, ax = plt.subplots(figsize=(8, 4))
         ax.plot(weekly.index, weekly.values, marker="o", color="#E03C31", linewidth=2)
-        ax.fill_between(weekly.index, weekly.values, color="#E03C31", alpha=0.08)
-        ax.set_title("Media Interest \u2014 East Potomac Park")
-        ax.set_ylabel("Articles that week")
+        ax.set_ylim(bottom=0)
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.set_title("Media Interest")
+        ax.set_ylabel("Retrieved articles per week")
+        ax.set_xlabel("Week ending (Sunday, UTC)")
         ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %d, %Y"))
-        ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+        # Tick labels are actual weekly bucket dates, not arbitrary auto ticks.
+        tick_step = max(1, (len(weekly) + 6) // 7)
+        ticks = weekly.index[::tick_step]
+        if len(weekly) and weekly.index[-1] not in ticks:
+            ticks = ticks.append(weekly.index[-1:])
+        ax.set_xticks(ticks)
+        ax.grid(axis="y", alpha=0.2)
         ax.spines[["top", "right"]].set_visible(False)
         fig.autofmt_xdate(rotation=40)
         plt.tight_layout()
@@ -405,9 +416,16 @@ def main():
     margin-right: 8px;
     transition: transform 0.15s ease;
   }}
-  details[open] summary::before {{ transform: rotate(90deg); }}
+  details[open] > summary::before {{ transform: rotate(90deg); }}
   details > *:not(summary) {{ padding: 0 16px 16px; }}
   details table {{ margin: 0; }}
+  .section {{ margin-bottom: 24px; }}
+  .section > summary {{ font-size: 1.25rem; padding: 18px 16px; }}
+  summary:focus-visible {{ outline: 3px solid #2C5F4F; outline-offset: 2px; }}
+  .toggle-label {{ float: right; font-size: 0.85rem; font-weight: normal; }}
+  .toggle-label::after {{ content: "Expand"; }}
+  details[open] > summary .toggle-label::after {{ content: "Minimize"; }}
+  .table-scroll {{ overflow-x: auto; }}
   details ul {{ margin: 0; padding-left: 20px; }}
 </style>
 </head>
@@ -427,40 +445,60 @@ def main():
     </a>
   </div>
 
-  <h2>News Articles</h2>
+  <details class="section" open>
+    <summary>News Articles <span class="toggle-label" aria-hidden="true"></span></summary>
+    <div>
   <p style="font-family: Arial, sans-serif; font-size: 0.85rem; color: #4A4A4A;">
     Ranked by how much genuinely new information each one adds, compared to everything already covered
     by earlier articles &mdash; not just by outlet or recency.
   </p>
-  <details style="margin-bottom: 32px;">
-    <summary>Ranked Articles ({len(ranked_articles)})</summary>
-    <div>{article_rows}</div>
+  <p>{len(ranked_articles)} ranked articles</p>
+  <div>{article_rows}</div>
+
+    </div>
   </details>
 
-  <h2>Court Documents &amp; Public Notices</h2>
+  <details class="section" open>
+    <summary>Court Documents &amp; Public Notices <span class="toggle-label" aria-hidden="true"></span></summary>
+    <div>
   <div style="font-family: Arial, sans-serif; font-size: 0.92rem; margin-bottom: 12px;">
     {hearings_section}
   </div>
   <details style="margin-bottom: 32px;">
     <summary>Full Docket &mdash; DC Preservation League v. Department of Interior (1:26-cv-00477) ({len(df_docket)} entries)</summary>
-    <table>
+    <div class="table-scroll"><table>
       <tr><th>Date Filed</th><th>Entry #</th><th>Description</th></tr>
       {docket_rows}
-    </table>
+    </table></div>
   </details>
 
-  <h2>Media Interest</h2>
-  {charts_html}
+    </div>
+  </details>
 
-  <div style="font-family: Arial, sans-serif; background:#EFECE4; border:1px solid #D8D3C7; border-radius:6px; padding:20px; margin: 32px 0;">
-    <strong>Get email updates</strong>
+  <details class="section" open>
+    <summary>Media Interest <span class="toggle-label" aria-hidden="true"></span></summary>
+    <div>
+      {charts_html}
+      <p style="font-family:Arial,sans-serif; font-size:0.9rem; color:#4A4A4A;">
+        Each point counts retrieved articles observed by GDELT during the week ending on the
+        displayed Sunday (UTC). Dates are observation dates, not necessarily publication dates.
+        The first and last weeks may be partial. Counts reflect the retrieved sample
+        (up to 250 articles), not all news coverage or audience engagement.
+      </p>
+    </div>
+  </details>
+
+  <details class="section" open>
+    <summary>Email Subscription <span class="toggle-label" aria-hidden="true"></span></summary>
+    <div style="font-family: Arial, sans-serif;">
     <p style="font-size:0.88rem; color:#4A4A4A; margin:6px 0 12px;">Only sent when there's genuinely new hearing or notice activity &mdash; not a daily digest.</p>
     <form action="https://buttondown.com/api/emails/embed-subscribe/tbilkitty" method="post" target="popupwindow"
-          onsubmit="window.open('https://buttondown.com/tbilkitty', 'popupwindow')" style="display:flex; gap:8px;">
+          onsubmit="window.open('https://buttondown.com/tbilkitty', 'popupwindow')" style="display:flex; gap:8px; flex-wrap:wrap;">
       <input type="email" name="email" placeholder="you@example.com" required style="flex:1; padding:8px 10px; border:1px solid #D8D3C7; border-radius:4px;">
       <input type="submit" value="Subscribe" style="background:#2C5F4F; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">
     </form>
-  </div>
+    </div>
+  </details>
 </body>
 </html>"""
 
