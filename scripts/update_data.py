@@ -107,12 +107,38 @@ ARTICLE_FETCH_HEADERS = {
 }
 
 
+JUNK_CONTAINER_SELECTORS = ["nav", "footer", "aside", "header"]
+JUNK_CLASS_KEYWORDS = [
+    "related", "recommend", "trending", "promo", "newsletter",
+    "social", "comment", "sidebar", "advert", "subscribe", "share",
+]
+
+
 def fetch_article_text(url, timeout=15, max_chars=4000):
     try:
         resp = requests.get(url, headers=ARTICLE_FETCH_HEADERS, timeout=timeout)
         resp.raise_for_status()
         soup = BeautifulSoup(resp.text, "html.parser")
-        paragraphs = [p.get_text(" ", strip=True) for p in soup.find_all("p")]
+
+        # Strip obvious non-article chrome before we go looking for text.
+        for tag_name in JUNK_CONTAINER_SELECTORS:
+            for tag in soup.find_all(tag_name):
+                tag.decompose()
+        for tag in soup.find_all(class_=True):
+            classes = " ".join(tag.get("class", [])).lower()
+            if any(keyword in classes for keyword in JUNK_CLASS_KEYWORDS):
+                tag.decompose()
+
+        # Prefer a real <article> tag or a common main-content container if one exists.
+        container = soup.find("article")
+        if container is None:
+            container = soup.find(attrs={"class": re.compile(r"(article|story|entry)[-_]?(body|content)", re.I)})
+        if container is None:
+            container = soup.find("main")
+        if container is None:
+            container = soup  # fall back to whatever's left after stripping junk
+
+        paragraphs = [p.get_text(" ", strip=True) for p in container.find_all("p")]
         text = " ".join(p for p in paragraphs if len(p) > 40)
         return text[:max_chars] if text else None
     except Exception:
@@ -262,9 +288,15 @@ def main():
     else:
         hearings_section = ""
         if hearing_rows:
-            hearings_section += f"<h3>Court Hearings &amp; Conferences</h3><ul>{hearing_rows}</ul>"
+            hearings_section += (
+                f'<details><summary>Court Hearings &amp; Conferences ({len(hearing_entries)})</summary>'
+                f'<ul>{hearing_rows}</ul></details>'
+            )
         if notice_rows:
-            hearings_section += f"<h3>Federal Register Notices</h3><ul>{notice_rows}</ul>"
+            hearings_section += (
+                f'<details><summary>Federal Register Notices ({len(fr_notices)})</summary>'
+                f'<ul>{notice_rows}</ul></details>'
+            )
 
     # --- Compare against last run to see if anything is genuinely new ---
     current_items = set()
@@ -335,17 +367,49 @@ def main():
   th, td {{ text-align: left; padding: 8px; border-bottom: 1px solid #D8D3C7; vertical-align: top; }}
   th {{ background: #EFECE4; }}
   img {{ max-width: 100%; border: 1px solid #D8D3C7; border-radius: 6px; margin-bottom: 24px; display: block; }}
+
+  details {{
+    border: 1px solid #D8D3C7;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    background: #fff;
+  }}
+  details summary {{
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 0.92rem;
+    padding: 12px 16px;
+    cursor: pointer;
+    list-style: none;
+  }}
+  details summary::-webkit-details-marker {{ display: none; }}
+  details summary::before {{
+    content: "\\25B8";
+    display: inline-block;
+    margin-right: 8px;
+    transition: transform 0.15s ease;
+  }}
+  details[open] summary::before {{ transform: rotate(90deg); }}
+  details > *:not(summary) {{ padding: 0 16px 16px; }}
+  details table {{ margin: 0; }}
+  details ul {{ margin: 0; padding-left: 20px; }}
 </style>
 </head>
 <body>
+  <img src="park-photo.jpg" alt="The Golf Course on East Potomac Park during cherry blossom season" style="width:100%; max-height:320px; object-fit:cover; border-radius:8px; margin-bottom:6px;">
+  <p style="font-family: Arial, sans-serif; font-size: 0.72rem; color: #4A4A4A; margin: 0 0 28px;">Photo: National Park Service (public domain)</p>
+
   <h1>East Potomac Park &mdash; Case Tracker</h1>
   <p class="updated">Automatically updated daily. Last updated: {updated}</p>
 
-  <p style="font-family: Arial, sans-serif;">
+  <div style="display:flex; gap:10px; flex-wrap:wrap; font-family: Arial, sans-serif; margin-bottom: 24px;">
     <a href="write-to-congress.html" style="display:inline-block; background:#2C5F4F; color:#fff; text-decoration:none; padding:10px 18px; border-radius:4px; font-weight:bold;">
       Write to Your Member of Congress &rarr;
     </a>
-  </p>
+    <a href="https://github.com/sponsors/tbilkitty" target="_blank" rel="noopener" style="display:inline-block; background:#fff; color:#2C5F4F; border:2px solid #2C5F4F; text-decoration:none; padding:8px 18px; border-radius:4px; font-weight:bold;">
+      &#9829; Sponsor This Project
+    </a>
+  </div>
 
   <h2>Upcoming Hearings &amp; Public Notices</h2>
   <div style="font-family: Arial, sans-serif; font-size: 0.92rem; margin-bottom: 32px;">
@@ -369,15 +433,18 @@ def main():
     Articles below are ranked by how much genuinely new information each one adds, compared to everything
     already covered by earlier articles &mdash; not just by outlet or recency.
   </p>
-  <div style="margin-bottom: 40px;">
-    {article_rows}
-  </div>
+  <details style="margin-bottom: 40px;">
+    <summary>Ranked Articles ({len(ranked_articles)})</summary>
+    <div>{article_rows}</div>
+  </details>
 
-  <h2>Docket &mdash; DC Preservation League v. Department of Interior (1:26-cv-00477)</h2>
-  <table>
-    <tr><th>Date Filed</th><th>Entry #</th><th>Description</th></tr>
-    {docket_rows}
-  </table>
+  <details>
+    <summary>Full Docket &mdash; DC Preservation League v. Department of Interior (1:26-cv-00477) ({len(df_docket)} entries)</summary>
+    <table>
+      <tr><th>Date Filed</th><th>Entry #</th><th>Description</th></tr>
+      {docket_rows}
+    </table>
+  </details>
 </body>
 </html>"""
 
