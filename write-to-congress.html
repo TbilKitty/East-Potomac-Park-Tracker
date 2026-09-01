@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Write to Congress — East Potomac Park</title>
+<style>
+  :root {
+    --ink: #1A1A1A;
+    --ink-soft: #4A4A4A;
+    --paper: #FAF7F1;
+    --line: #D8D3C7;
+    --accent: #2C5F4F;
+    --accent-soft: #E7F0EC;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: #EFECE4;
+    color: var(--ink);
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  header {
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 8px;
+  }
+
+  .lede {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+    max-width: 640px;
+  }
+
+  .lookup-links {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.9rem;
+    margin-top: 14px;
+  }
+
+  .lookup-links a {
+    color: var(--accent);
+    font-weight: bold;
+    text-decoration: none;
+    margin-right: 18px;
+  }
+
+  .lookup-links a:hover { text-decoration: underline; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 24px;
+  }
+
+  h2 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .field {
+    margin-bottom: 14px;
+  }
+
+  .field label {
+    display: block;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .field input, .field textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.95rem;
+    background: #fff;
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 70px;
+    font-family: Georgia, serif;
+  }
+
+  .row2 {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 20px;
+  }
+
+  fieldset legend {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    padding: 0;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.92rem;
+    color: var(--ink);
+  }
+
+  .check-item input {
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+  }
+
+  .hint {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    margin: -6px 0 16px;
+  }
+
+  .letter-preview {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 36px 40px;
+    white-space: pre-wrap;
+    font-size: 1rem;
+    min-height: 400px;
+  }
+
+  .actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.88rem;
+    font-weight: bold;
+    padding: 10px 18px;
+    border-radius: 4px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  button.secondary {
+    background: #fff;
+    color: var(--accent);
+  }
+
+  button:hover { opacity: 0.9; }
+
+  .copied-msg {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-top: 8px;
+    display: none;
+  }
+
+  @media print {
+    .panel.form-panel, header .lookup-links, .actions, h2, .lede { display: none; }
+    body { background: #fff; }
+    .grid { display: block; }
+    .letter-preview { border: none; padding: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Write to Your Member of Congress</h1>
+    <p class="lede">
+      Check the concerns that apply to you, fill in your information, and this page
+      will assemble a personalized letter about the redevelopment of East Potomac
+      Park. Don't know your representative or senators yet? Look them up first —
+      it takes one click.
+    </p>
+    <div class="lookup-links">
+      <a href="https://www.house.gov/representatives/find-your-representative" target="_blank" rel="noopener">Find your Representative &rarr;</a>
+      <a href="https://www.senate.gov/senators/senators-contact.htm" target="_blank" rel="noopener">Find your Senators &rarr;</a>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <div class="panel form-panel">
+      <h2>Your Information</h2>
+
+      <div class="field">
+        <label for="recipient">Recipient's Name &amp; Title</label>
+        <input type="text" id="recipient" placeholder="e.g. Representative Jane Smith">
+      </div>
+
+      <div class="field">
+        <label for="fullname">Your Full Name</label>
+        <input type="text" id="fullname" placeholder="Audriana Duvall">
+      </div>
+
+      <div class="field">
+        <label for="address">Street Address</label>
+        <input type="text" id="address" placeholder="123 Main St">
+      </div>
+
+      <div class="field row2">
+        <div>
+          <label for="city">City</label>
+          <input type="text" id="city" placeholder="Baltimore">
+        </div>
+        <div>
+          <label for="state">State</label>
+          <input type="text" id="state" placeholder="MD">
+        </div>
+        <div>
+          <label for="zip">ZIP</label>
+          <input type="text" id="zip" placeholder="21206">
+        </div>
+      </div>
+
+      <h2>Your Concerns</h2>
+
+      <fieldset>
+        <div class="check-item">
+          <input type="checkbox" id="c1" checked>
+          <label for="c1">Trees — including cherry trees — were removed at East Potomac Park before the redevelopment plan received official approval.</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="c2" checked>
+          <label for="c2">The park was designated by Congress in 1897 to be held "forever" for public recreation, and I believe that commitment should be honored.</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="c3">
+          <label for="c3">The current plan would convert public recreational land — used for golf, tennis, fishing, biking, and picnicking — into an exclusive, private-style golf course.</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="c4">
+          <label for="c4">I am concerned the project may proceed without full compliance with federal environmental and historic preservation review requirements (NEPA and the National Historic Preservation Act).</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="c5">
+          <label for="c5">There is active federal litigation over this project, and I believe Congress should not wait on the courts to exercise its own oversight role.</label>
+        </div>
+      </fieldset>
+
+      <h2>What I'm Asking For</h2>
+
+      <fieldset>
+        <div class="check-item">
+          <input type="checkbox" id="a1" checked>
+          <label for="a1">Request that the Department of the Interior and National Park Service fully comply with all required environmental and historic preservation review before any further work.</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="a2">
+          <label for="a2">Request a Congressional oversight hearing on the East Potomac Park redevelopment.</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="a3">
+          <label for="a3">Ask that you publicly state your position on this project.</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="a4">
+          <label for="a4">Let you know I will be watching how you handle this issue, and that it will factor into my future advocacy and voting decisions.</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="a5">
+          <label for="a5">I am a regular visitor to East Potomac Park and am willing to share my own observations if that would be useful to advocacy organizations or your office.</label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="personal">Add a personal note (recommended — personalized letters carry more weight)</label>
+        <textarea id="personal" placeholder="e.g. I've been visiting East Potomac Park with my family for years, and..."></textarea>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Letter Preview</h2>
+      <div class="letter-preview" id="preview"></div>
+      <div class="actions">
+        <button onclick="copyLetter()">Copy Letter Text</button>
+        <button class="secondary" onclick="downloadLetter()">Download as .txt</button>
+        <button class="secondary" onclick="window.print()">Print / Save as PDF</button>
+      </div>
+      <div class="copied-msg" id="copiedMsg">Copied to clipboard.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const fields = ['recipient','fullname','address','city','state','zip','personal'];
+  const checks = ['c1','c2','c3','c4','c5','a1','a2','a3','a4','a5'];
+
+  const concernText = {
+    c1: "Trees — including cherry trees — were removed at East Potomac Park before the redevelopment plan received official approval. This raises serious concerns about whether the process is being conducted in good faith.",
+    c2: "Congress designated East Potomac Park in 1897 to be \u201cforever held and used as a park for the recreation and pleasure of the people.\u201d I believe that commitment should be honored, not quietly set aside.",
+    c3: "The current plan would convert land used for public golf, tennis, fishing, biking, and picnicking into a private-style championship golf course, at the expense of the broader public who currently enjoy the park.",
+    c4: "I am concerned that this project may move forward without full compliance with the National Environmental Policy Act and the National Historic Preservation Act, both of which exist to ensure decisions like this one get proper public review.",
+    c5: "There is active federal litigation over this project. I don't believe Congress should simply wait on the courts \u2014 oversight from my elected representatives matters too."
+  };
+
+  const askText = {
+    a1: "require the Department of the Interior and National Park Service to fully comply with all required environmental and historic preservation review before any further work proceeds",
+    a2: "hold a Congressional oversight hearing on the East Potomac Park redevelopment",
+    a3: "publicly state your position on this project"
+  };
+
+  const statementText = {
+    a4: "I want you to know that I will be watching how you handle this issue, and that it will factor into my future advocacy and voting decisions.",
+    a5: "I am a regular visitor to East Potomac Park, and I am willing to share my own firsthand observations if that would be useful to advocacy organizations or your office."
+  };
+
+  function buildLetter() {
+    const v = {};
+    fields.forEach(id => v[id] = document.getElementById(id).value.trim());
+    const c = {};
+    checks.forEach(id => c[id] = document.getElementById(id).checked);
+
+    const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    let lines = [];
+    lines.push(v.fullname || "[Your Name]");
+    lines.push(v.address || "[Your Street Address]");
+    lines.push([v.city, v.state, v.zip].filter(Boolean).join(", ") || "[City, State, ZIP]");
+    lines.push("");
+    lines.push(today);
+    lines.push("");
+    lines.push((v.recipient || "[Representative/Senator Name]"));
+    lines.push("");
+    lines.push(`Dear ${v.recipient ? v.recipient.replace(/^Rep(resentative)?\.?\s*/i,'Representative ').replace(/^Sen(ator)?\.?\s*/i,'Senator ') : "[Representative/Senator]"},`);
+    lines.push("");
+
+    let opening = `I am writing as your constituent to share my concerns about the redevelopment of East Potomac Park's golf course in Washington, D.C.`;
+    lines.push(opening);
+    lines.push("");
+
+    const concernParas = checks.filter(id => id.startsWith('c') && c[id]).map(id => concernText[id]);
+    concernParas.forEach(p => { lines.push(p); lines.push(""); });
+
+    const asks = checks.filter(id => ['a1','a2','a3'].includes(id) && c[id]).map(id => askText[id]);
+    if (asks.length) {
+      let askSentence = "I respectfully ask that you ";
+      if (asks.length === 1) {
+        askSentence += asks[0] + ".";
+      } else if (asks.length === 2) {
+        askSentence += asks[0] + " and " + asks[1] + ".";
+      } else {
+        askSentence += asks.slice(0, -1).join(", ") + ", and " + asks[asks.length - 1] + ".";
+      }
+      lines.push(askSentence);
+      lines.push("");
+    }
+
+    ['a4','a5'].forEach(id => {
+      if (c[id]) { lines.push(statementText[id]); lines.push(""); }
+    });
+
+    if (v.personal) {
+      lines.push(v.personal);
+      lines.push("");
+    }
+
+    lines.push("Thank you for your time and attention to this matter. I look forward to your response.");
+    lines.push("");
+    lines.push("Sincerely,");
+    lines.push(v.fullname || "[Your Name]");
+
+    return lines.join("\n");
+  }
+
+  function render() {
+    document.getElementById('preview').textContent = buildLetter();
+  }
+
+  [...fields, ...checks].forEach(id => {
+    document.getElementById(id).addEventListener('input', render);
+  });
+
+  function copyLetter() {
+    navigator.clipboard.writeText(buildLetter()).then(() => {
+      const msg = document.getElementById('copiedMsg');
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 2000);
+    });
+  }
+
+  function downloadLetter() {
+    const blob = new Blob([buildLetter()], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const name = (document.getElementById('fullname').value.trim() || 'letter').replace(/\s+/g, '_');
+    a.download = `${name}_East_Potomac_Letter.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  render();
+</script>
+
+</body>
+</html>
