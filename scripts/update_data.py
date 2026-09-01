@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import html as html_module
 from datetime import datetime, timezone
 
 import requests
@@ -8,6 +9,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 DOCKET_ID = 72278895  # DC Preservation League v. Department of Interior, 1:26-cv-00477
 API_TOKEN = os.environ.get("COURTLISTENER_TOKEN", "")
@@ -254,10 +256,15 @@ def main():
     # --- Charts ---
     if not df_media.empty:
         weekly = df_media.set_index("seendate").resample("W").size()
-        plt.figure(figsize=(8, 4))
-        weekly.plot(kind="bar", color="#E03C31")
-        plt.title("Weekly Coverage Volume \u2014 East Potomac Park")
-        plt.ylabel("Articles")
+        fig, ax = plt.subplots(figsize=(8, 4))
+        ax.plot(weekly.index, weekly.values, marker="o", color="#E03C31", linewidth=2)
+        ax.fill_between(weekly.index, weekly.values, color="#E03C31", alpha=0.08)
+        ax.set_title("Media Interest \u2014 East Potomac Park")
+        ax.set_ylabel("Articles that week")
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %d, %Y"))
+        ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+        ax.spines[["top", "right"]].set_visible(False)
+        fig.autofmt_xdate(rotation=40)
         plt.tight_layout()
         plt.savefig("media_coverage_over_time.png", dpi=150)
         plt.close()
@@ -270,21 +277,22 @@ def main():
     docket_rows = ""
     for _, row in df_docket.head(30).iterrows():
         docket_rows += (
-            f"<tr><td>{row['date_filed']}</td><td>{row['entry_number']}</td>"
-            f"<td>{row['description']}</td></tr>\n"
+            f"<tr><td>{html_module.escape(str(row['date_filed']))}</td>"
+            f"<td>{html_module.escape(str(row['entry_number']))}</td>"
+            f"<td>{html_module.escape(str(row['description']))}</td></tr>\n"
         )
     if not docket_rows:
         docket_rows = "<tr><td colspan='3'>No docket entries retrieved yet.</td></tr>"
 
     hearing_rows = ""
     for _, row in hearing_entries.iterrows():
-        hearing_rows += f"<li><strong>{row['date_filed']}</strong> \u2014 {row['description']}</li>\n"
+        hearing_rows += f"<li><strong>{html_module.escape(str(row['date_filed']))}</strong> \u2014 {html_module.escape(str(row['description']))}</li>\n"
 
     notice_rows = ""
     for doc in fr_notices:
-        title = doc.get("title", "")
-        pub_date = doc.get("publication_date", "")
-        html_url = doc.get("html_url", "#")
+        title = html_module.escape(doc.get("title", ""))
+        pub_date = html_module.escape(doc.get("publication_date", ""))
+        html_url = html_module.escape(doc.get("html_url", "#"))
         notice_rows += f'<li><strong>{pub_date}</strong> \u2014 <a href="{html_url}" target="_blank" rel="noopener">{title}</a></li>\n'
 
     if not hearing_rows and not notice_rows:
@@ -344,14 +352,18 @@ def main():
     for a in ranked_articles:
         pct = round(a["novelty"] * 100)
         date_str = a["seendate"].strftime("%b %d, %Y") if hasattr(a["seendate"], "strftime") else str(a["seendate"])
+        safe_title = html_module.escape(str(a["title"]))
+        safe_domain = html_module.escape(str(a["domain"]))
+        safe_summary = html_module.escape(str(a["summary"]))
+        safe_url = html_module.escape(str(a["url"]))
         article_rows += f"""
         <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="{a['url']}" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">{a['title']}</a>
+            <a href="{safe_url}" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">{safe_title}</a>
             <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">{pct}% new info</span>
           </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">{a['domain']} &middot; {date_str}</div>
-          <div style="font-size:0.92rem; color:#333;">{a['summary']}</div>
+          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">{safe_domain} &middot; {date_str}</div>
+          <div style="font-size:0.92rem; color:#333;">{safe_summary}</div>
         </div>
         """
     if not article_rows:
@@ -415,12 +427,32 @@ def main():
     </a>
   </div>
 
-  <h2>Upcoming Hearings &amp; Public Notices</h2>
-  <div style="font-family: Arial, sans-serif; font-size: 0.92rem; margin-bottom: 32px;">
+  <h2>News Articles</h2>
+  <p style="font-family: Arial, sans-serif; font-size: 0.85rem; color: #4A4A4A;">
+    Ranked by how much genuinely new information each one adds, compared to everything already covered
+    by earlier articles &mdash; not just by outlet or recency.
+  </p>
+  <details style="margin-bottom: 32px;">
+    <summary>Ranked Articles ({len(ranked_articles)})</summary>
+    <div>{article_rows}</div>
+  </details>
+
+  <h2>Court Documents &amp; Public Notices</h2>
+  <div style="font-family: Arial, sans-serif; font-size: 0.92rem; margin-bottom: 12px;">
     {hearings_section}
   </div>
+  <details style="margin-bottom: 32px;">
+    <summary>Full Docket &mdash; DC Preservation League v. Department of Interior (1:26-cv-00477) ({len(df_docket)} entries)</summary>
+    <table>
+      <tr><th>Date Filed</th><th>Entry #</th><th>Description</th></tr>
+      {docket_rows}
+    </table>
+  </details>
 
-  <div style="font-family: Arial, sans-serif; background:#EFECE4; border:1px solid #D8D3C7; border-radius:6px; padding:20px; margin-bottom:32px;">
+  <h2>Media Interest</h2>
+  {charts_html}
+
+  <div style="font-family: Arial, sans-serif; background:#EFECE4; border:1px solid #D8D3C7; border-radius:6px; padding:20px; margin: 32px 0;">
     <strong>Get email updates</strong>
     <p style="font-size:0.88rem; color:#4A4A4A; margin:6px 0 12px;">Only sent when there's genuinely new hearing or notice activity &mdash; not a daily digest.</p>
     <form action="https://buttondown.com/api/emails/embed-subscribe/tbilkitty" method="post" target="popupwindow"
@@ -429,26 +461,6 @@ def main():
       <input type="submit" value="Subscribe" style="background:#2C5F4F; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">
     </form>
   </div>
-
-  <h2>Media Coverage</h2>
-  {charts_html}
-
-  <p style="font-family: Arial, sans-serif; font-size: 0.85rem; color: #4A4A4A; margin-top: 24px;">
-    Articles below are ranked by how much genuinely new information each one adds, compared to everything
-    already covered by earlier articles &mdash; not just by outlet or recency.
-  </p>
-  <details style="margin-bottom: 40px;">
-    <summary>Ranked Articles ({len(ranked_articles)})</summary>
-    <div>{article_rows}</div>
-  </details>
-
-  <details>
-    <summary>Full Docket &mdash; DC Preservation League v. Department of Interior (1:26-cv-00477) ({len(df_docket)} entries)</summary>
-    <table>
-      <tr><th>Date Filed</th><th>Entry #</th><th>Description</th></tr>
-      {docket_rows}
-    </table>
-  </details>
 </body>
 </html>"""
 
