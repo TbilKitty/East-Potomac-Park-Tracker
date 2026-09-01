@@ -459,7 +459,17 @@ def main():
   .toggle-label::after {{ content: "Expand"; }}
   details[open] > summary .toggle-label::after {{ content: "Minimize"; }}
   .table-scroll {{ overflow-x: auto; }}
+  .signup-actions {{ display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }}
+  .signup-actions form {{ flex: 1 1 320px; min-width: 0; }}
+  .signup-actions input[type="email"] {{ min-width: 0; }}
+  .signup-actions > a {{ text-align: center; }}
+  @media (max-width: 540px) {{
+    .signup-actions form, .signup-actions > a {{ flex-basis: 100%; }}
+  }}
   details ul {{ margin: 0; padding-left: 20px; }}
+  .about-me > summary {{ font-size: 1rem; padding: 12px 16px; }}
+  .about-me .bio {{ font-size: 1rem; line-height: 1.65; }}
+  .about-me .bio p:last-child {{ margin-bottom: 0; }}
 </style>
 </head>
 <body>
@@ -473,9 +483,7 @@ def main():
     <a href="write-to-congress.html" style="display:inline-block; background:#2C5F4F; color:#fff; text-decoration:none; padding:10px 18px; border-radius:4px; font-weight:bold;">
       Write to Your Member of Congress &rarr;
     </a>
-    <a href="https://github.com/sponsors/tbilkitty" target="_blank" rel="noopener" style="display:inline-block; background:#fff; color:#2C5F4F; border:2px solid #2C5F4F; text-decoration:none; padding:8px 18px; border-radius:4px; font-weight:bold;">
-      &#9829; Sponsor This Project
-    </a>
+
   </div>
 
   <details class="section" open>
@@ -527,11 +535,29 @@ def main():
     <summary>Email Subscription <span class="toggle-label" aria-hidden="true"></span></summary>
     <div style="font-family: Arial, sans-serif;">
     <p style="font-size:0.88rem; color:#4A4A4A; margin:6px 0 12px;">Only sent when there's genuinely new hearing or notice activity &mdash; not a daily digest.</p>
+    <div class="signup-actions">
     <form action="https://buttondown.com/api/emails/embed-subscribe/tbilkitty" method="post" target="popupwindow"
           onsubmit="window.open('https://buttondown.com/tbilkitty', 'popupwindow')" style="display:flex; gap:8px; flex-wrap:wrap;">
       <input type="email" name="email" placeholder="you@example.com" required style="flex:1; padding:8px 10px; border:1px solid #D8D3C7; border-radius:4px;">
       <input type="submit" value="Subscribe" style="background:#2C5F4F; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">
     </form>
+    <a href="https://github.com/sponsors/tbilkitty" target="_blank" rel="noopener" style="display:inline-block; background:#fff; color:#2C5F4F; border:2px solid #2C5F4F; text-decoration:none; padding:8px 18px; border-radius:4px; font-weight:bold;">
+      &#9749; Caffeinate a Broke-Ass Law Student
+    </a>
+    </div>
+    </div>
+  </details>
+  <details class="section about-me" id="about-me">
+    <summary>About Me <span class="toggle-label" aria-hidden="true"></span></summary>
+    <div class="bio">
+      <p>The opioid epidemic hit my dad and our family hard. Before I graduated high school,
+      I was homeless. Years of impossibly hard work later, I&rsquo;m a single parent and a
+      student at the University of Baltimore School of Law.</p>
+      <p>My legal interest is in using tax policy to advance social equity&mdash;shaping the
+      rules that influence who gets opportunities, who builds wealth, and who gets left behind.
+      Go UB Law!</p>
+      <p>I originally made this website as a gift for a partner who loves East Potomac Park.
+      We&rsquo;re no longer together, but the website is still here.</p>
     </div>
   </details>
 </body>
