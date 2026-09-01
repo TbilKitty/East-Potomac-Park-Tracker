@@ -12,58 +12,130 @@
   th, td { text-align: left; padding: 8px; border-bottom: 1px solid #D8D3C7; vertical-align: top; }
   th { background: #EFECE4; }
   img { max-width: 100%; border: 1px solid #D8D3C7; border-radius: 6px; margin-bottom: 24px; display: block; }
+
+  details {
+    border: 1px solid #D8D3C7;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    background: #fff;
+  }
+  details summary {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 0.92rem;
+    padding: 12px 16px;
+    cursor: pointer;
+    list-style: none;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before {
+    content: "\25B8";
+    display: inline-block;
+    margin-right: 8px;
+    transition: transform 0.15s ease;
+  }
+  details[open] > summary::before { transform: rotate(90deg); }
+  details > *:not(summary) { padding: 0 16px 16px; }
+  details table { margin: 0; }
+  .section { margin-bottom: 24px; }
+  .section > summary { font-size: 1.25rem; padding: 18px 16px; }
+  summary:focus-visible { outline: 3px solid #2C5F4F; outline-offset: 2px; }
+  .toggle-label { float: right; font-size: 0.85rem; font-weight: normal; }
+  .toggle-label::after { content: "Expand"; }
+  details[open] > summary .toggle-label::after { content: "Minimize"; }
+  .table-scroll { overflow-x: auto; }
+  details ul { margin: 0; padding-left: 20px; }
 </style>
 </head>
 <body>
-  <h1>East Potomac Park &mdash; Case Tracker</h1>
-  <p class="updated">Automatically updated daily. Last updated: September 01, 2026 at 18:21 UTC</p>
+  <img src="park-photo.jpg" alt="The Golf Course on East Potomac Park during cherry blossom season" style="width:100%; max-height:320px; object-fit:cover; border-radius:8px; margin-bottom:6px;">
+  <p style="font-family: Arial, sans-serif; font-size: 0.72rem; color: #4A4A4A; margin: 0 0 28px;">Photo: National Park Service (public domain)</p>
 
-  <p style="font-family: Arial, sans-serif;">
+  <h1>East Potomac Park &mdash; Case Tracker</h1>
+  <p class="updated">Automatically updated daily. Last updated: September 01, 2026 at 20:40 UTC</p>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap; font-family: Arial, sans-serif; margin-bottom: 24px;">
     <a href="write-to-congress.html" style="display:inline-block; background:#2C5F4F; color:#fff; text-decoration:none; padding:10px 18px; border-radius:4px; font-weight:bold;">
       Write to Your Member of Congress &rarr;
     </a>
-  </p>
+    <a href="https://github.com/sponsors/tbilkitty" target="_blank" rel="noopener" style="display:inline-block; background:#fff; color:#2C5F4F; border:2px solid #2C5F4F; text-decoration:none; padding:8px 18px; border-radius:4px; font-weight:bold;">
+      &#9829; Sponsor This Project
+    </a>
+  </div>
 
-  <h2>Upcoming Hearings &amp; Public Notices</h2>
-  <div style="font-family: Arial, sans-serif; font-size: 0.92rem; margin-bottom: 32px;">
-    <h3>Court Hearings &amp; Conferences</h3><ul><li><strong>2026-08-31</strong> — MINUTE ORDER. In light of the parties' 66 Proposed Briefing Schedule, the Court ORDERS the parties to appear for a status conference on September 3, 2026, at 2:00 pm. If the parties are unable to attend at that time, they shall propose alternative times on September 3 or 4 for the Court's consideration. Signed by Judge Ana C. Reyes on 8/31/2026. (lcacr3)</li>
+  <details class="section" open>
+    <summary>News Articles <span class="toggle-label" aria-hidden="true"></span></summary>
+    <div>
+  <p style="font-family: Arial, sans-serif; font-size: 0.85rem; color: #4A4A4A;">
+    Ranked by how much genuinely new information each one adds, compared to everything already covered
+    by earlier articles &mdash; not just by outlet or recency.
+  </p>
+  <p>2 ranked articles</p>
+  <div>
+        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
+            <a href="https://www.yahoo.com/news/politics/articles/democrats-demand-trump-remove-east-164805508.html" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Democrats demand Trump remove East Wing debris  recklessly  dumped at East Potomac Park</a>
+            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">100% new info</span>
+          </div>
+          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">yahoo.com &middot; Jun 26, 2026</div>
+          <div style="font-size:0.92rem; color:#333;">&quot;These contaminants are embedded in debris piles just feet away from the banks of the Potomac River, an important tributary of the Chesapeake Bay where people fish and row.&quot; In a statement to The Hill on Friday, The Department of the Interior said &quot;the soil was tested, multiple times by multiple parties, and this project passed all standards set by law.&quot; &quot;This thorough process was followed to ensure the transfer was safe for the public. Earlier this year, the Trump administration announced it had struck a deal with the NLT allowing it to maintain operation of the East Potomac Golf Links &quot;until the National Park Service is ready to commence a historic restoration there.&quot; The project at East Potomac Park has faced legal challenges from local preservation groups, with a judge ruling last month that the NPS must notify the preservation group if they plan to cut down more than 10 trees or perform other maintenance at the property.</div>
+        </div>
+        
+        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
+            <a href="https://wtop.com/dc/2026/06/lawmakers-say-white-house-demolition-debris-at-east-potomac-park-poses-health-risk/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Lawmakers say White House demolition debris at East Potomac Park poses health risk</a>
+            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">79% new info</span>
+          </div>
+          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">wtop.com &middot; Jun 27, 2026</div>
+          <div style="font-size:0.92rem; color:#333;">Lawmakers say White House demolition debris at East Potomac Park poses health risk</div>
+        </div>
+        </div>
+
+    </div>
+  </details>
+
+  <details class="section" open>
+    <summary>Court Documents &amp; Public Notices <span class="toggle-label" aria-hidden="true"></span></summary>
+    <div>
+  <div style="font-family: Arial, sans-serif; font-size: 0.92rem; margin-bottom: 12px;">
+    <details><summary>Court Hearings &amp; Conferences (37)</summary><ul><li><strong>2026-08-31</strong> — MINUTE ORDER. In light of the parties&#x27; 66 Proposed Briefing Schedule, the Court ORDERS the parties to appear for a status conference on September 3, 2026, at 2:00 pm. If the parties are unable to attend at that time, they shall propose alternative times on September 3 or 4 for the Court&#x27;s consideration. Signed by Judge Ana C. Reyes on 8/31/2026. (lcacr3)</li>
 <li><strong>2026-08-21</strong> — Set/Reset Deadlines/Hearings: Joint Proposed Briefing Schedule due by 8/27/2026. (zcdw)</li>
-<li><strong>2026-08-14</strong> — Set/Reset Deadlines/Hearings: Plaintiff's Notice of Intent due by 8/18/2026. (zcdw)</li>
-<li><strong>2026-07-08</strong> — Set/Reset Deadlines/Hearings: Response to Court's Order due by 7/17/2026. (zcdw)</li>
+<li><strong>2026-08-14</strong> — Set/Reset Deadlines/Hearings: Plaintiff&#x27;s Notice of Intent due by 8/18/2026. (zcdw)</li>
+<li><strong>2026-07-08</strong> — Set/Reset Deadlines/Hearings: Response to Court&#x27;s Order due by 7/17/2026. (zcdw)</li>
 <li><strong>2026-07-08</strong> — TRANSCRIPT OF MOTION HEARING before Judge Ana C. Reyes held on July 2, 2026; Page Numbers: 1-130. Court Reporter Sonja L. Reeves, RDR, CRR, Telephone number (202) 354-3246, Transcripts may be ordered by submitting the Transcript Order FormFor the first 90 days after this filing date, the transcript may be viewed at the courthouse at a public terminal or purchased from the court reporter referenced above. After 90 days, the transcript may be accessed via PACER. Other transcript formats, (multi-page, condensed, CD or ASCII) may be purchased from the court reporter.NOTICE RE REDACTION OF TRANSCRIPTS: The parties have twenty-one days to file with the court and the court reporter any request to redact personal identifiers from this transcript. If no such requests are filed, the transcript will be made available to the public via PACER without redaction after 90 days. The policy, which includes the five personal identifiers specifically covered, is located on our website at www.dcd.uscourts.gov. Redaction Request due 7/29/2026. Redacted Transcript Deadline set for 8/8/2026. Release of Transcript Restriction set for 10/6/2026.(Reeves, Sonja) (Entered: 07/08/2026)</li>
-<li><strong>2026-07-06</strong> — MINUTE ORDER. As discussed during last week's motion hearing, the Court ORDERS the Government to respond to the following questions on or before July 17, 2026. 1. Has the Secretary of the Interior or any other high-ranking official made any statements or given any directives to anyone at the Agency--oral or written--concerning the President's statement that they will begin "build[ing] one of the Greatest Golf Courses in the world" by September 1, 2026? Donald J. Trump, Truth Social (June 28, 2026, 2:42 PM), https://truthsocial.com/@realDonaldTrump/posts/116829203090822692; 2. On what date did Clark Construction conduct testing on the excavated soil, and when did NPS receive the results? See Dkt. 38-1 at 2-3 (Nersesian Decl.); 3. Which individuals from the Agency accompanied President Trump during the site visit?; and 4. Who created the conceptual renderings reviewed at that visit, and who currently possesses or maintains those renderings? Lastly, the Court ORDERS the parties to meet and confer regarding proposed language for an interim preservation protocol governing activities at the site pending Court action. Signed by Judge Ana C. Reyes on 7/6/2026. (lcacr3)</li>
+<li><strong>2026-07-06</strong> — MINUTE ORDER. As discussed during last week&#x27;s motion hearing, the Court ORDERS the Government to respond to the following questions on or before July 17, 2026. 1. Has the Secretary of the Interior or any other high-ranking official made any statements or given any directives to anyone at the Agency--oral or written--concerning the President&#x27;s statement that they will begin &quot;build[ing] one of the Greatest Golf Courses in the world&quot; by September 1, 2026? Donald J. Trump, Truth Social (June 28, 2026, 2:42 PM), https://truthsocial.com/@realDonaldTrump/posts/116829203090822692; 2. On what date did Clark Construction conduct testing on the excavated soil, and when did NPS receive the results? See Dkt. 38-1 at 2-3 (Nersesian Decl.); 3. Which individuals from the Agency accompanied President Trump during the site visit?; and 4. Who created the conceptual renderings reviewed at that visit, and who currently possesses or maintains those renderings? Lastly, the Court ORDERS the parties to meet and confer regarding proposed language for an interim preservation protocol governing activities at the site pending Court action. Signed by Judge Ana C. Reyes on 7/6/2026. (lcacr3)</li>
 <li><strong>2026-07-02</strong> — Minute Entry for proceedings held before Judge Ana C. Reyes: Motion Hearing held on 7/2/2026 re 8 Motion to Stay or in the alternative Motion for Preliminary Injunction and 34 Motion to Dismiss for Lack of Jurisdiction and for Failure to State a Claim. Motions heard and taken under advisement. (Court Reporter: Sonja Reeves) (zcdw) Modified on 8/10/2026 to correct hearing date (zcdw).</li>
-<li><strong>2026-07-01</strong> — MINUTE ORDER. In preparation for tomorrow's motion hearing, the Court ORDERS the Government to be prepared to discuss: (1) Whether anyone at the National Garden of American Heroes Foundation or the O'Rourke Group has communicated with the National Park Service or the Department of the Interior regarding the proposed golf course and, if so, the nature and substance of those communications; (2) What commitments, if any, the Secretary of Interior or his delegates have made concerning President Trump's statements that they "will build one of the Greatest Golf Courses in the world." Donald J. Trump, Truth Social (June 28, 2026, 2:42 PM), https://truthsocial.com/@realDonaldTrump/posts/116829203090822692; (3) How the Government intends to undertake the actions listed in its Motion to Dismiss--including "contract for architectural and design services" and "compliance with NEPA, Section 106, Section 7 of the Endangered Species Act, the Organic Act, and any other applicable laws and regulations"--by September 1, 2026. Dkt. [34-1] at 24; see Trump, supra; (4) On what basis Mr. Fazio has been appointed or designated as the architect or designer of the proposed golf course. See Trump, supra; (5) Whether NPS or the Department of the Interior has entered into any contract or agreement--oral or written--with respect to the construction of the proposed golf course by September 1, 2026; and (6) Whether any blueprints, plans, or conceptual designs for the proposed golf course exist and, if so, the current status of their review or approval. Signed by Judge Ana C. Reyes on 7/1/2026. (lcacr3)</li>
-<li><strong>2026-06-30</strong> — MINUTE ORDER. The Motion Hearing set for July 2, 2026, will be accessible to the public via the Court's public access dial-in line. The public access telephone number is 833-990-9400, and the access code is 787605272. Signed by Judge Ana C. Reyes on 6/30/2026. (lcacr3)</li>
+<li><strong>2026-07-01</strong> — MINUTE ORDER. In preparation for tomorrow&#x27;s motion hearing, the Court ORDERS the Government to be prepared to discuss: (1) Whether anyone at the National Garden of American Heroes Foundation or the O&#x27;Rourke Group has communicated with the National Park Service or the Department of the Interior regarding the proposed golf course and, if so, the nature and substance of those communications; (2) What commitments, if any, the Secretary of Interior or his delegates have made concerning President Trump&#x27;s statements that they &quot;will build one of the Greatest Golf Courses in the world.&quot; Donald J. Trump, Truth Social (June 28, 2026, 2:42 PM), https://truthsocial.com/@realDonaldTrump/posts/116829203090822692; (3) How the Government intends to undertake the actions listed in its Motion to Dismiss--including &quot;contract for architectural and design services&quot; and &quot;compliance with NEPA, Section 106, Section 7 of the Endangered Species Act, the Organic Act, and any other applicable laws and regulations&quot;--by September 1, 2026. Dkt. [34-1] at 24; see Trump, supra; (4) On what basis Mr. Fazio has been appointed or designated as the architect or designer of the proposed golf course. See Trump, supra; (5) Whether NPS or the Department of the Interior has entered into any contract or agreement--oral or written--with respect to the construction of the proposed golf course by September 1, 2026; and (6) Whether any blueprints, plans, or conceptual designs for the proposed golf course exist and, if so, the current status of their review or approval. Signed by Judge Ana C. Reyes on 7/1/2026. (lcacr3)</li>
+<li><strong>2026-06-30</strong> — MINUTE ORDER. The Motion Hearing set for July 2, 2026, will be accessible to the public via the Court&#x27;s public access dial-in line. The public access telephone number is 833-990-9400, and the access code is 787605272. Signed by Judge Ana C. Reyes on 6/30/2026. (lcacr3)</li>
 <li><strong>2026-05-27</strong> — NOTICE of Hearing: Motion Hearing set for 7/2/2026 at 2:00 PM in Courtroom 12 before Judge Ana C. Reyes. (zcdw)</li>
-<li><strong>2026-05-19</strong> — MINUTE ORDER. The Court GRANTS 52 Unopposed Motion for Extension of Time. Upon consideration of the 52 Motion and 36 Proposed Briefing Schedule, the Court ORDERS the parties to abide by the following briefing deadlines: Motion to Dismiss: Plaintiffs' Opposition to Defendants' Motion to Dismiss is due by May 28. Defendants' Reply in Support of the Motion to Dismiss is due by June 25. Motion for Extra-Record Discovery: Defendants' Opposition to the Motion for Extra-Record Discovery is due by June 4. Plaintiffs' Reply in Support of the Motion for Extra-Record Discovery is due by June 25. The Court further ORDERS the parties to contact the Courtroom Deputy to schedule a motion hearing for the week of June 29, 2026. Signed by Judge Ana C. Reyes on 5/19/2026. (lcacr3)</li>
+<li><strong>2026-05-19</strong> — MINUTE ORDER. The Court GRANTS 52 Unopposed Motion for Extension of Time. Upon consideration of the 52 Motion and 36 Proposed Briefing Schedule, the Court ORDERS the parties to abide by the following briefing deadlines: Motion to Dismiss: Plaintiffs&#x27; Opposition to Defendants&#x27; Motion to Dismiss is due by May 28. Defendants&#x27; Reply in Support of the Motion to Dismiss is due by June 25. Motion for Extra-Record Discovery: Defendants&#x27; Opposition to the Motion for Extra-Record Discovery is due by June 4. Plaintiffs&#x27; Reply in Support of the Motion for Extra-Record Discovery is due by June 25. The Court further ORDERS the parties to contact the Courtroom Deputy to schedule a motion hearing for the week of June 29, 2026. Signed by Judge Ana C. Reyes on 5/19/2026. (lcacr3)</li>
 <li><strong>2026-05-05</strong> — MINUTE ORDER granting IN PART 47 Emergency Motion for Status Conference. The Court held the status conference on May 4, 2026. As discussed on the record, the Court defers ruling on 8 Motion for a Stay/Preliminary Injunction pending further briefing by the parties. Signed by Judge Ana C. Reyes on 5/5/2026. (lcacr3)</li>
 <li><strong>2026-05-04</strong> — Set/Reset Deadlines/Hearings: Status Conference set for 5/4/2026 at 8:00 AM via videoconferece (Audio Line Available) before Judge Ana C. Reyes. (zcdw)</li>
-<li><strong>2026-05-04</strong> — MINUTE ORDER. The Court ORDERS the Government to ensure the attendance at this mornings status conference of Kevin Griess, Superintendent of National Mall and Memorial Parks (NAMA). The further ORDERS the Government to have present the individual at the Agency who has interfaced with the National Garden of American Heroes Foundation (Foundation). The Court EXPECTS the Government to locate this individual as soon as possible and have them join the conference as quickly as possible. The Court also ORDERS the Government to begin compiling communications concerning Hains Point or golf courses in Washington, D.C., including any communications between: (1) the Agency and the Foundation (including Meredith O'Rourke); (2) the Agency and the White House; and (3) the Agency and National Links Trust. The Court also ORDERS the Government to produce the communications between Mr. Griess and NAMA's Chief of Maintenance (referenced in paragraph 12 of his declaration). See Dkt. [48-1].During the conference, the Government shall be prepared to address: (1) the authentication of the Foundation's fundraising pledge; (2) whether the Government has entered into any agreement with the Foundation; and (3) whether any designer or architect has been named, and if so, who. Signed by Judge Ana C. Reyes on 5/4/2026.(lcacr3)</li>
+<li><strong>2026-05-04</strong> — MINUTE ORDER. The Court ORDERS the Government to ensure the attendance at this mornings status conference of Kevin Griess, Superintendent of National Mall and Memorial Parks (NAMA). The further ORDERS the Government to have present the individual at the Agency who has interfaced with the National Garden of American Heroes Foundation (Foundation). The Court EXPECTS the Government to locate this individual as soon as possible and have them join the conference as quickly as possible. The Court also ORDERS the Government to begin compiling communications concerning Hains Point or golf courses in Washington, D.C., including any communications between: (1) the Agency and the Foundation (including Meredith O&#x27;Rourke); (2) the Agency and the White House; and (3) the Agency and National Links Trust. The Court also ORDERS the Government to produce the communications between Mr. Griess and NAMA&#x27;s Chief of Maintenance (referenced in paragraph 12 of his declaration). See Dkt. [48-1].During the conference, the Government shall be prepared to address: (1) the authentication of the Foundation&#x27;s fundraising pledge; (2) whether the Government has entered into any agreement with the Foundation; and (3) whether any designer or architect has been named, and if so, who. Signed by Judge Ana C. Reyes on 5/4/2026.(lcacr3)</li>
 <li><strong>2026-05-04</strong> — Minute Entry for video proceedings held before Judge Ana C. Reyes: Status Conference held on 5/4/2026. (Court Reporter: Christine Asif) (zcdw)</li>
-<li><strong>2026-05-04</strong> — MINUTE ORDER. The Court ORDERS the Government to ensure the attendance at this mornings status conference of Kevin Griess, Superintendent of National Mall and Memorial Parks (NAMA). The further ORDERS the Government to have present the individual at the Agency who has interfaced with the National Garden of American Heroes Foundation (Foundation). The Court EXPECTS the Government to locate this individual as soon as possible and have them join the conference as quickly as possible. The Court also ORDERS the Government to begin compiling communications concerning Hains Point or golf courses in Washington, D.C., including any communications between: (1) the Agency and the Foundation (including Meredith O'Rourke); (2) the Agency and the White House; and (3) the Agency and National Links Trust. The Court also ORDERS the Government to produce the communications between Mr. Griess and NAMA's Chief of Maintenance (referenced in paragraph 12 of his declaration). See Dkt. [48-1].During the conference, the Government shall be prepared to address: (1) the authentication of the Foundation's fundraising pledge; (2) whether the Government has entered into any agreement with the Foundation; and (3) whether any designer or architect has been named, and if so, who.Signed by Judge Ana C. Reyes on 5/4/2026.(lcacr3)</li>
+<li><strong>2026-05-04</strong> — MINUTE ORDER. The Court ORDERS the Government to ensure the attendance at this mornings status conference of Kevin Griess, Superintendent of National Mall and Memorial Parks (NAMA). The further ORDERS the Government to have present the individual at the Agency who has interfaced with the National Garden of American Heroes Foundation (Foundation). The Court EXPECTS the Government to locate this individual as soon as possible and have them join the conference as quickly as possible. The Court also ORDERS the Government to begin compiling communications concerning Hains Point or golf courses in Washington, D.C., including any communications between: (1) the Agency and the Foundation (including Meredith O&#x27;Rourke); (2) the Agency and the White House; and (3) the Agency and National Links Trust. The Court also ORDERS the Government to produce the communications between Mr. Griess and NAMA&#x27;s Chief of Maintenance (referenced in paragraph 12 of his declaration). See Dkt. [48-1].During the conference, the Government shall be prepared to address: (1) the authentication of the Foundation&#x27;s fundraising pledge; (2) whether the Government has entered into any agreement with the Foundation; and (3) whether any designer or architect has been named, and if so, who.Signed by Judge Ana C. Reyes on 5/4/2026.(lcacr3)</li>
 <li><strong>2026-05-04</strong> — Memorandum in opposition to re 47 Emergency MOTION for Status Conference re 8 MOTION to Stay OR IN THE ALTERNATIVE MOTION for Preliminary Injunction filed by JESSICA BOWRON, DOUG BURGUM, DEPARTMENT OF INTERIOR, NATIONAL PARK SERVICE. (Attachments: # 1 Declaration of Kevin Griess, # 2 Exhibit A)(Robertson, Michael) (Entered: 05/04/2026)</li>
-<li><strong>2026-05-04</strong> — MINUTE ORDER. The Court ORDERS the Government to ensure the attendance at this mornings status conference of Kevin Griess, Superintendent of National Mall and Memorial Parks (NAMA). The further ORDERS the Government to have present the individual at the Agency who has interfaced with the National Garden of American Heroes Foundation (Foundation). The Court EXPECTS the Government to locate this individual as soon as possible and have them join the conference as quickly as possible. The Court also ORDERS the Government to begin compiling communications concerning Hains Point or golf courses in Washington, D.C., including any communications between: (1) the Agency and the Foundation (including Meredith O'Rourke); (2) the Agency and the White House; and (3) the Agency and National Links Trust. The Court also ORDERS the Government to produce the communications between Mr. Griess and NAMA's Chief of Maintenance (referenced in paragraph 12 of his declaration). See Dkt. [48-1].During the conference, the Government shall be prepared to address: (1) the authentication of the Foundation's fundraising pledge; (2) whether the Government has entered into any agreement with the Foundation; and (3) whether any designer or architect has been named, and if so, who. Signed by Judge Ana C. Reyes on 5/4/2026.(lcacr3)</li>
+<li><strong>2026-05-04</strong> — MINUTE ORDER. The Court ORDERS the Government to ensure the attendance at this mornings status conference of Kevin Griess, Superintendent of National Mall and Memorial Parks (NAMA). The further ORDERS the Government to have present the individual at the Agency who has interfaced with the National Garden of American Heroes Foundation (Foundation). The Court EXPECTS the Government to locate this individual as soon as possible and have them join the conference as quickly as possible. The Court also ORDERS the Government to begin compiling communications concerning Hains Point or golf courses in Washington, D.C., including any communications between: (1) the Agency and the Foundation (including Meredith O&#x27;Rourke); (2) the Agency and the White House; and (3) the Agency and National Links Trust. The Court also ORDERS the Government to produce the communications between Mr. Griess and NAMA&#x27;s Chief of Maintenance (referenced in paragraph 12 of his declaration). See Dkt. [48-1].During the conference, the Government shall be prepared to address: (1) the authentication of the Foundation&#x27;s fundraising pledge; (2) whether the Government has entered into any agreement with the Foundation; and (3) whether any designer or architect has been named, and if so, who. Signed by Judge Ana C. Reyes on 5/4/2026.(lcacr3)</li>
 <li><strong>2026-05-04</strong> — Minute Entry for video proceedings held before Judge Ana C. Reyes: Status Conference held on 5/4/2026. (Court Reporter: Christine Asif) (zcdw)</li>
-<li><strong>2026-05-03</strong> — MINUTE ORDER re 47 Plaintiffs' Emergency Motion for Status Conference. Given representation by the Government in numerous hearings that no plans have been approved on the East Potomac Golf Course or are scheduled to take place (other than the land filing previously discussed), the Court ORDERS the Government to file a response to 47 Plaintiffs' Emergency Motion for Status Conference by 7:30 AM tomorrow (May 4, 2026). The Government's response shall address what, if any, work has taken place on the Golf Course. The Court expects the Government to have answers to its questions and ORDERS the Government to contact its client and for its client to respond before filing its response. The Court further ORDERS both parties to appear for a video status conference at 8:00 AM tomorrow (May 4, 2026). A client representative for the Government must be present. Signed by Judge Ana C. Reyes on 5/3/2026. (lcacr3)</li>
+<li><strong>2026-05-03</strong> — MINUTE ORDER re 47 Plaintiffs&#x27; Emergency Motion for Status Conference. Given representation by the Government in numerous hearings that no plans have been approved on the East Potomac Golf Course or are scheduled to take place (other than the land filing previously discussed), the Court ORDERS the Government to file a response to 47 Plaintiffs&#x27; Emergency Motion for Status Conference by 7:30 AM tomorrow (May 4, 2026). The Government&#x27;s response shall address what, if any, work has taken place on the Golf Course. The Court expects the Government to have answers to its questions and ORDERS the Government to contact its client and for its client to respond before filing its response. The Court further ORDERS both parties to appear for a video status conference at 8:00 AM tomorrow (May 4, 2026). A client representative for the Government must be present. Signed by Judge Ana C. Reyes on 5/3/2026. (lcacr3)</li>
 <li><strong>2026-05-03</strong> — Emergency MOTION for Status Conference re 8 MOTION to Stay OR IN THE ALTERNATIVE MOTION for Preliminary Injunction by DC PRESERVATION LEAGUE, ALEX DICKSON, DAVE ROBERTS. (Attachments: # 1 Memorandum in Support, # 2 Exhibit A (Pledge Agreement), # 3 Text of Proposed Order)(Bardwell, Will) Modified event on 5/4/2026 (znmw). (Entered: 05/03/2026)</li>
-<li><strong>2026-05-03</strong> — MINUTE ORDER. Tomorrow morning's status conference will be accessible to the public via the Court's public access dial-in line. The public access telephone number is 833-990-9400, and the access code is 787605272. Signed by Judge Ana C. Reyes on 5/3/2026. (lcacr3)</li>
+<li><strong>2026-05-03</strong> — MINUTE ORDER. Tomorrow morning&#x27;s status conference will be accessible to the public via the Court&#x27;s public access dial-in line. The public access telephone number is 833-990-9400, and the access code is 787605272. Signed by Judge Ana C. Reyes on 5/3/2026. (lcacr3)</li>
 <li><strong>2026-04-30</strong> — Set/Reset Deadlines/Hearings: Motion for Extra-Record Discovery due by 5/14/2026. (zcdw)</li>
 <li><strong>2026-04-09</strong> — Minute Entry for video proceedings held before Judge Ana C. Reyes: Status Conference held on 4/9/2026. (Court Reporter: Jan Dickman) (zcdw)</li>
 <li><strong>2026-04-09</strong> — Set/Reset Deadlines/Hearings: Status Conference set for 4/9/2026 at 4:00 PM via videoconference before Judge Ana C. Reyes. (zcdw)</li>
-<li><strong>2026-04-09</strong> — MINUTE ORDER. As discussed during this afternoon's status conference, the Court ORDERS Defendants to lodge the Administrative Record on or before April 30, 2026, and Plaintiffs to file any extra-record motion on or before May 7, 2026. The Court further ORDERS the parties to file a joint proposed briefing schedule and to contact the Courtroom Deputy to schedule the motion hearing(s). Signed by Judge Ana C. Reyes on 4/9/2026. (lcacr3)</li>
-<li><strong>2026-04-09</strong> — MINUTE ORDER. The Court ORDERS that tomorrow's status conference is rescheduled to this afternoon at 4:00 p.m. Signed by Judge Ana C. Reyes on 4/9/2026. (lcacr3)</li>
-<li><strong>2026-04-09</strong> — MINUTE ORDER. This afternoon's hearing will be accessible to the public via the Court's public access dial-in line. The public access telephone number is 833-990-9400, and the access code is 787605272. Signed by Judge Ana C. Reyes on 4/9/2026. (lcacr3)</li>
-<li><strong>2026-04-09</strong> — MINUTE ORDER. Upon consideration of the parties' 33 Joint Status Report, the Court ORDERS the parties to appear for a virtual status conference tomorrow, April 10, 2026, at 3:00 p.m. Signed by Judge Ana C. Reyes on 4/9/2026. (lcacr3)</li>
+<li><strong>2026-04-09</strong> — MINUTE ORDER. As discussed during this afternoon&#x27;s status conference, the Court ORDERS Defendants to lodge the Administrative Record on or before April 30, 2026, and Plaintiffs to file any extra-record motion on or before May 7, 2026. The Court further ORDERS the parties to file a joint proposed briefing schedule and to contact the Courtroom Deputy to schedule the motion hearing(s). Signed by Judge Ana C. Reyes on 4/9/2026. (lcacr3)</li>
+<li><strong>2026-04-09</strong> — MINUTE ORDER. The Court ORDERS that tomorrow&#x27;s status conference is rescheduled to this afternoon at 4:00 p.m. Signed by Judge Ana C. Reyes on 4/9/2026. (lcacr3)</li>
+<li><strong>2026-04-09</strong> — MINUTE ORDER. This afternoon&#x27;s hearing will be accessible to the public via the Court&#x27;s public access dial-in line. The public access telephone number is 833-990-9400, and the access code is 787605272. Signed by Judge Ana C. Reyes on 4/9/2026. (lcacr3)</li>
+<li><strong>2026-04-09</strong> — MINUTE ORDER. Upon consideration of the parties&#x27; 33 Joint Status Report, the Court ORDERS the parties to appear for a virtual status conference tomorrow, April 10, 2026, at 3:00 p.m. Signed by Judge Ana C. Reyes on 4/9/2026. (lcacr3)</li>
 <li><strong>2026-03-26</strong> — TRANSCRIPT OF STATUS CONFERENCE before Judge Ana C. Reyes held on March 11, 2026. Page Numbers: 1 - 91. Date of Issuance: March 26, 2026. Court Reporter: Jeff Hook. Telephone number: 202-354-3373. Transcripts may be ordered by submitting the Transcript Order FormFor the first 90 days after this filing date, the transcript may be viewed at the courthouse at a public terminal or purchased from the court reporter referenced above. After 90 days, the transcript may be accessed via PACER. Other transcript formats, (multi-page, condensed, CD or ASCII) may be purchased from the court reporter.NOTICE RE REDACTION OF TRANSCRIPTS: The parties have twenty-one days to file with the court and the court reporter any request to redact personal identifiers from this transcript. If no such requests are filed, the transcript will be made available to the public via PACER without redaction after 90 days. The policy, which includes the five personal identifiers specifically covered, is located on our website at www.dcd.uscourts.gov. Redaction Request due 4/16/2026. Redacted Transcript Deadline set for 4/26/2026. Release of Transcript Restriction set for 6/24/2026.(Hook, Jeff) (Entered: 03/26/2026)</li>
 <li><strong>2026-03-19</strong> — MINUTE ORDER granting 28 Unopposed Motion for Extension of Time. The Court ORDERS the parties to file the Joint Status Report five business days after the parties receive the March 11, 2026, hearing transcript. Signed by Judge Ana C. Reyes on 3/19/2026. (lcacr3)</li>
-<li><strong>2026-03-11</strong> — MINUTE ORDER. This afternoon's status conference will be accessible to the public via the Court's public access dial-in line. The public access telephone number is 833-990-9400, and the access code is 787605272. Signed by Judge Ana C. Reyes on 3/11/2026. (lcacr3)</li>
+<li><strong>2026-03-11</strong> — MINUTE ORDER. This afternoon&#x27;s status conference will be accessible to the public via the Court&#x27;s public access dial-in line. The public access telephone number is 833-990-9400, and the access code is 787605272. Signed by Judge Ana C. Reyes on 3/11/2026. (lcacr3)</li>
 <li><strong>2026-03-11</strong> — Minute Entry for proceedings held before Judge Ana C. Reyes: Status Conference held on 3/11/2026. Parties directed to submit a Joint Status Report by 3/20/2026. (Court Reporter: Jeff Hook) (zcdw)</li>
 <li><strong>2026-03-10</strong> — NOTICE of Hearing: Status Conference set for 3/11/2026 at 3:00 PM in Courtroom 12 before Judge Ana C. Reyes. Public access line will be available. (zcdw) Modified on 3/11/2026 to update hearing location (zcdw).</li>
 <li><strong>2026-03-10</strong> — NOTICE of Hearing: Status Conference set for 3/11/2026 at 3:00 PM in Courtroom 12 before Judge Ana C. Reyes. (zcdw)</li>
-<li><strong>2026-02-24</strong> — MINTUE ORDER. The Court ORDERS the parties to contact the Courtroom Deputy, Chashawn White (chashawn_white@dcd.uscourts.gov) to schedule a case management status conference in this action between March 3 and March 13, 2026. Defendants' shall file their opposition to Plaintiffs' Motion on or before March 3, 2026. The Court further ORDERS Plaintiffs' counsel to inform Defendants' counsel of this Minute Order as soon as possible. Signed by Judge Ana C. Reyes on 02/24/2026. (lcacr3)</li>
+<li><strong>2026-02-24</strong> — MINTUE ORDER. The Court ORDERS the parties to contact the Courtroom Deputy, Chashawn White (chashawn_white@dcd.uscourts.gov) to schedule a case management status conference in this action between March 3 and March 13, 2026. Defendants&#x27; shall file their opposition to Plaintiffs&#x27; Motion on or before March 3, 2026. The Court further ORDERS Plaintiffs&#x27; counsel to inform Defendants&#x27; counsel of this Minute Order as soon as possible. Signed by Judge Ana C. Reyes on 02/24/2026. (lcacr3)</li>
 <li><strong>2026-02-24</strong> — Set/Reset Deadlines/Hearings: Response to 8 due by 3/3/2026. (zcdw)</li>
-</ul><h3>Federal Register Notices</h3><ul><li><strong>2024-03-12</strong> — <a href="https://www.federalregister.gov/documents/2024/03/12/2024-05174/national-register-of-historic-places-notification-of-pending-nominations-and-related-actions" target="_blank" rel="noopener">National Register of Historic Places; Notification of Pending Nominations and Related Actions</a></li>
+</ul></details><details><summary>Federal Register Notices (20)</summary><ul><li><strong>2024-03-12</strong> — <a href="https://www.federalregister.gov/documents/2024/03/12/2024-05174/national-register-of-historic-places-notification-of-pending-nominations-and-related-actions" target="_blank" rel="noopener">National Register of Historic Places; Notification of Pending Nominations and Related Actions</a></li>
 <li><strong>2021-08-19</strong> — <a href="https://www.federalregister.gov/documents/2021/08/19/2021-17795/national-register-of-historic-places-notification-of-pending-nominations-and-related-actions" target="_blank" rel="noopener">National Register of Historic Places; Notification of Pending Nominations and Related Actions</a></li>
 <li><strong>2018-08-15</strong> — <a href="https://www.federalregister.gov/documents/2018/08/15/2018-17386/special-regulations-areas-of-the-national-park-system-national-capital-region-special-events-and" target="_blank" rel="noopener">Special Regulations, Areas of the National Park System, National Capital Region, Special Events and Demonstrations</a></li>
 <li><strong>2017-09-01</strong> — <a href="https://www.federalregister.gov/documents/2017/09/01/2017-18525/national-register-of-historic-places-notification-of-pending-nominations-and-related-actions" target="_blank" rel="noopener">National Register of Historic Places; Notification of Pending Nominations and Related Actions</a></li>
@@ -83,306 +155,15 @@
 <li><strong>2024-03-12</strong> — <a href="https://www.federalregister.gov/documents/2024/03/12/2024-05174/national-register-of-historic-places-notification-of-pending-nominations-and-related-actions" target="_blank" rel="noopener">National Register of Historic Places; Notification of Pending Nominations and Related Actions</a></li>
 <li><strong>2023-08-11</strong> — <a href="https://www.federalregister.gov/documents/2023/08/11/2023-17175/migratory-bird-hunting-final-2023-24-frameworks-for-migratory-bird-hunting-regulations" target="_blank" rel="noopener">Migratory Bird Hunting; Final 2023-24 Frameworks for Migratory Bird Hunting Regulations</a></li>
 <li><strong>2023-07-26</strong> — <a href="https://www.federalregister.gov/documents/2023/07/26/2023-15143/endangered-and-threatened-wildlife-and-plants-threatened-species-status-with-section-4d-rule-for" target="_blank" rel="noopener">Endangered and Threatened Wildlife and Plants; Threatened Species Status With Section 4(d) Rule for Green Floater and Designation of Critical Habitat</a></li>
-</ul>
+</ul></details>
   </div>
-
-  <div style="font-family: Arial, sans-serif; background:#EFECE4; border:1px solid #D8D3C7; border-radius:6px; padding:20px; margin-bottom:32px;">
-    <strong>Get email updates</strong>
-    <p style="font-size:0.88rem; color:#4A4A4A; margin:6px 0 12px;">Only sent when there's genuinely new hearing or notice activity &mdash; not a daily digest.</p>
-    <form action="https://buttondown.com/api/emails/embed-subscribe/tbilkitty" method="post" target="popupwindow"
-          onsubmit="window.open('https://buttondown.com/tbilkitty', 'popupwindow')" style="display:flex; gap:8px;">
-      <input type="email" name="email" placeholder="you@example.com" required style="flex:1; padding:8px 10px; border:1px solid #D8D3C7; border-radius:4px;">
-      <input type="submit" value="Subscribe" style="background:#2C5F4F; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">
-    </form>
-  </div>
-
-  <h2>Media Coverage</h2>
-  <img src="media_coverage_over_time.png" alt="Weekly coverage volume chart">
-
-  <p style="font-family: Arial, sans-serif; font-size: 0.85rem; color: #4A4A4A; margin-top: 24px;">
-    Articles below are ranked by how much genuinely new information each one adds, compared to everything
-    already covered by earlier articles &mdash; not just by outlet or recency.
-  </p>
-  <div style="margin-bottom: 40px;">
-    
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://wsvn.com/news/us-world/the-curtain-is-coming-down-for-trump-at-the-kennedy-center-as-his-name-is-being-taken-off-building/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">The curtain is coming down for Trump at the Kennedy Center as his name is being taken off building - WSVN 7News | Miami News , Weather , Sports</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">100% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">wsvn.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In its unsuccessful appeal on Friday seeking a pause on the order removing Trump’s name, the Kennedy Center’s leadership argued, in terms that seemed similar to the president’s speech patterns, that the lower court was interfering with needed renovations. “The District Court is not allowing us to close in order to properly fix up and repair the Building, including potentially life threatening structural damage like beams and parking garage ceilings that are rusted, and in serious danger of falling onto people below,” according to the appeal.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.breakingnews.ie/world/workers-remove-trumps-name-from-kennedy-centre-1913270.html" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Workers remove Trump name from Kennedy Centre</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">84% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">breakingnews.ie &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">Workers remove Trump name from Kennedy Centre</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="http://www.hngnews.com/nation_world/the-curtain-is-coming-down-for-trump-at-the-kennedy-center-as-his-name-is/article_03ec0757-ef4d-5d67-84ab-9f03691fb481.html" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">The curtain is coming down for Trump at the Kennedy Center as his name is being taken off building</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">82% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">hngnews.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">The curtain is coming down for Trump at the Kennedy Center as his name is being taken off building</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://isp.netscape.com:443/entertainment/story/0001/20260613/5a32c569d72c333e9d65c76b4224b617" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">81% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">isp.netscape.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.thehindu.com/news/international/trumps-name-is-gone-from-the-kennedy-centers-facade-top-official/article71098593.ece" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade : top official</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">75% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">thehindu.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">| Photo Credit: Reuters The letters spelling out President Donald Trump’s name on the facade of the Kennedy Center are now gone, the executive director of the performing arts venue said in a legal filing on Saturday (June 13, 2026) with the court that had ordered the removal. They started hours past the original court-ordered deadline, later extended to noon EDT, and did their work shrouded by the tarp, much to the frustration of onlookers who had gathered for hours hoping to witness a dramatic moment symbolizing the limits of Mr.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.wdio.com/ap-top-news/ap-top-news-us-headlines/trumps-name-is-gone-from-the-kennedy-centers-facade-after-court-rulings/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade after court rulings</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">65% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">wdio.com &middot; Jun 14, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">Trump name is gone from the Kennedy Center facade after court rulings</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="http://www.rockymounttelegram.com/features/entertainment/trumps-name-is-gone-from-the-kennedy-centers-facade-after-court-rulings/article_84828c06-e5b9-5184-9613-e0a2a2f30e60.html" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade after court rulings</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">61% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">rockymounttelegram.com &middot; Jun 14, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">Trump name is gone from the Kennedy Center facade after court rulings</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="http://www.rockymounttelegram.com/features/entertainment/trumps-name-is-gone-from-the-kennedy-centers-facade-according-to-a-top-official-at/article_84828c06-e5b9-5184-9613-e0a2a2f30e60.html" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">55% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">rockymounttelegram.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.manilatimes.net/2026/06/14/world/trumps-name-removed-from-kennedy-center-facade-top-official-says/2364954" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name removed from Kennedy center facade , top official says</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">55% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">manilatimes.net &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">WASHINGTON — The letters spelling out President Donald Trump's name on the facade of the Kennedy Center are now gone, the executive director of the performing arts venue said in a legal filing Saturday with the court that had ordered the removal. A tarp continued to hang over the scaffolding constructed for workers to remove Trump’s name from the building, making it impossible to immediately detect whether the only words remaining on its white marble portico are “The John F.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.dailypress.com/2026/06/13/trumps-name-is-gone-from-the-kennedy-centers-facade-according-to-a-top-official-at-the-arts-venue/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue – Daily Press</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">48% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">dailypress.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the center had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the center over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.union-bulletin.com/news/national/trumps-name-is-gone-from-the-kennedy-centers-facade-according-to-a-top-official-at/article_835a6651-f29c-592e-b526-fed26cf64422.html" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">45% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">union-bulletin.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.seattletimes.com/entertainment/trumps-name-is-still-on-the-kennedy-center-though-officials-say-it-will-be-down-by-noon/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">45% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">seattletimes.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.news8000.com/news/politics/national-politics/trumps-name-is-gone-from-the-kennedy-centers-facade-according-to-a-top-official-at/article_873c4d28-01a2-5a0c-a5d7-ac0dd058b4df.html" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">42% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">news8000.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="http://www.dailyadvance.com/features/entertainment/trumps-name-is-gone-from-the-kennedy-centers-facade-according-to-a-top-official-at/article_dd5dd5da-1f6a-5c5b-8e1f-fbca2f5d805c.html" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">41% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">dailyadvance.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.pressdemocrat.com/2026/06/12/trumps-name-is-gone-from-the-kennedy-centers-facade-according-to-a-top-official-at-the-arts-venue/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue – The Press Democrat</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">35% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">pressdemocrat.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the center had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the center over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.wwaytv3.com/trumps-name-is-gone-from-the-kennedy-centers-facade-according-to-a-top-official-at-the-arts-venue/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">33% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">wwaytv3.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">WASHINGTON (AP) — The letters spelling out President Donald Trump’s name on the facade of the Kennedy Center are now gone, the executive director of the performing arts venue said in a legal filing Saturday with the court that had ordered the removal. They started hours past the original court-ordered deadline, later extended to noon EDT, and did their work shrouded by the tarp, much to the frustration of onlookers who had gathered for hours hoping to witness a dramatic moment symbolizing the limits of Trump’s power.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.ktvh.com/politics/the-president/kennedy-center-begins-removing-president-trumps-name-after-court-deadline" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Behind the tarp : Trump name erased from Kennedy Center after judge order</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">27% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">ktvh.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">They started hours past the original court-ordered deadline, later extended to noon EDT, and did their work shrouded by the tarp, much to the frustration of onlookers who had gathered for hours hoping to witness a dramatic moment symbolizing the limits of Trump's power. RELATED STORY | Trump renaming controversy grows as second Kennedy Center event axed Though he rarely discussed the Kennedy Center during his 2024 campaign, Trump moved quickly to oust the institution's leadership when he returned to office in January 2025 and replaced it with a board of trustees that named him chairman.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.cp24.com/news/world/2026/06/13/workers-begin-removing-trumps-name-from-the-kennedy-center-hours-after-a-court-ordered-deadline/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name from the Kennedy Center being removed</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">26% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">cp24.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the centre had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the centre over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.voiceofalexandria.com/entertainment/celebrity_news/the-curtain-is-coming-down-for-trump-at-the-kennedy-center-as-his-name-is/article_7f87ffa2-96fa-5032-a9c0-7019a0c891ca.html" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">The curtain is coming down for Trump at the Kennedy Center as his name is being taken off building</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">23% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">voiceofalexandria.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">The curtain is coming down for Trump at the Kennedy Center as his name is being taken off building</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.breitbart.com/news/trumps-name-is-still-on-the-kennedy-center-though-officials-say-it-will-be-down-by-noon/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">22% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">breitbart.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the center had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the center over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.wpxi.com/news/local/trumps-name-is-gone-kennedy-centers-facade-according-top-official-arts-venue/LCANDEZTDRHZPN3UK5VM2PCW5Y/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">22% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">wpxi.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">WASHINGTON (AP) — The letters spelling out President Donald Trump’s name on the facade of the Kennedy Center are now gone, the executive director of the performing arts venue said in a legal filing Saturday with the court that had ordered the removal. They started hours past the original court-ordered deadline, later extended to noon EDT, and did their work shrouded by the tarp, much to the frustration of onlookers who had gathered for hours hoping to witness a dramatic moment symbolizing the limits of Trump’s power.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.eastbaytimes.com/2026/06/12/trumps-name-is-gone-from-the-kennedy-centers-facade-according-to-a-top-official-at-the-arts-venue/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue – East Bay Times</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">21% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">eastbaytimes.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the center had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the center over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.orlandosentinel.com/2026/06/13/trumps-name-is-gone-from-the-kennedy-centers-facade-according-to-a-top-official-at-the-arts-venue/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue – Orlando Sentinel</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">17% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">orlandosentinel.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the center had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the center over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.chicagotribune.com/2026/06/13/kennedy-center-trump-name-gone/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">16% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">chicagotribune.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the center had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the center over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.mercurynews.com/2026/06/12/trumps-name-is-gone-from-the-kennedy-centers-facade-after-court-rulings/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade after court rulings – The Mercury News</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">15% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">mercurynews.com &middot; Jun 14, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the center had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the center over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.capitalgazette.com/2026/06/13/trumps-name-is-gone-from-the-kennedy-centers-facade-according-to-a-top-official-at-the-arts-venue/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade , according to a top official at the arts venue – Capital Gazette</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">14% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">capitalgazette.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the center had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the center over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.wishtv.com/news/trump-kennedy-center-removed/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Kennedy Center removes Trump name after court order - Indianapolis News | Indiana Weather | Indiana Traffic | WISH - TV</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">14% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">wishtv.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the center had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the center over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.billboard.com/music/music-news/trump-name-removed-kennedy-center-1236272538/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump Name Is Gone From Kennedy Center Facade</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">13% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">billboard.com &middot; Jun 14, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the center had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the center over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.orlandosentinel.com/2026/06/13/trumps-name-is-gone-from-the-kennedy-centers-facade-after-court-rulings/" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">Trump name is gone from the Kennedy Center facade after court rulings – Orlando Sentinel</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">10% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">orlandosentinel.com &middot; Jun 14, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">In a filing, Floca said the board of trustees and the center had removed “all physical signage on the Kennedy Center building and grounds, including the front portico, that purports to rename the Kennedy Center after President Trump.” But for onlookers who have gathered on the plaza in front of the center over the past day hoping to witness a dramatic moment symbolizing the limits of Trump’s power, it was virtually impossible to see whether the signage was gone. “The rule of law prevailed, and that is worth celebrating.” Leo Bartholomaus, a recent graduate of Syracuse University who lives in Virginia, said he was walking by the Kennedy Center on Friday afternoon after visiting the National Mall to see events related to this weekend’s UFC match at the White House.</div>
-        </div>
-        
-        <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
-            <a href="https://www.smdailyjournal.com/arts_and_entertainment/the-curtain-is-coming-down-for-trump-at-the-kennedy-center-as-his-name-is/article_93dbc7ed-5920-58e8-a4cd-6aca9b1d765b.html" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">The curtain is coming down for Trump at the Kennedy Center as his name is being taken off building</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">9% new info</span>
-          </div>
-          <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">smdailyjournal.com &middot; Jun 13, 2026</div>
-          <div style="font-size:0.92rem; color:#333;">The curtain is coming down for Trump at the Kennedy Center as his name is being taken off building</div>
-        </div>
-        
-  </div>
-
-  <h2>Docket &mdash; DC Preservation League v. Department of Interior (1:26-cv-00477)</h2>
-  <table>
-    <tr><th>Date Filed</th><th>Entry #</th><th>Description</th></tr>
-    <tr><td>2026-08-31</td><td>nan</td><td></td></tr>
+  <details style="margin-bottom: 32px;">
+    <summary>Full Docket &mdash; DC Preservation League v. Department of Interior (1:26-cv-00477) (165 entries)</summary>
+    <div class="table-scroll"><table>
+      <tr><th>Date Filed</th><th>Entry #</th><th>Description</th></tr>
+      <tr><td>2026-08-31</td><td>nan</td><td></td></tr>
 <tr><td>2026-08-31</td><td>nan</td><td></td></tr>
-<tr><td>2026-08-31</td><td>nan</td><td>MINUTE ORDER. In light of the parties' 66 Proposed Briefing Schedule, the Court ORDERS the parties to appear for a status conference on September 3, 2026, at 2:00 pm. If the parties are unable to attend at that time, they shall propose alternative times on September 3 or 4 for the Court's consideration. Signed by Judge Ana C. Reyes on 8/31/2026. (lcacr3)</td></tr>
+<tr><td>2026-08-31</td><td>nan</td><td>MINUTE ORDER. In light of the parties&#x27; 66 Proposed Briefing Schedule, the Court ORDERS the parties to appear for a status conference on September 3, 2026, at 2:00 pm. If the parties are unable to attend at that time, they shall propose alternative times on September 3 or 4 for the Court&#x27;s consideration. Signed by Judge Ana C. Reyes on 8/31/2026. (lcacr3)</td></tr>
 <tr><td>2026-08-27</td><td>66.0</td><td>PROPOSED BRIEFING SCHEDULE (Joint Filing) by DC PRESERVATION LEAGUE, ALEX DICKSON, DAVE ROBERTS. (Bardwell, Will) (Entered: 08/27/2026)</td></tr>
 <tr><td>2026-08-21</td><td>nan</td><td>Set/Reset Deadlines/Hearings: Joint Proposed Briefing Schedule due by 8/27/2026. (zcdw)</td></tr>
 <tr><td>2026-08-21</td><td>nan</td><td></td></tr>
@@ -390,27 +171,56 @@
 <tr><td>2026-08-20</td><td>65.0</td><td>Joint MOTION for Extension of Time to File Proposed Briefing Schedule by DC PRESERVATION LEAGUE, ALEX DICKSON, DAVE ROBERTS. (Attachments: # 1 Text of Proposed Order)(Samburg, Mark) (Entered: 08/20/2026)</td></tr>
 <tr><td>2026-08-20</td><td>nan</td><td></td></tr>
 <tr><td>2026-08-18</td><td>64.0</td><td>NOTICE of Intent to File Amended and Supplemental Complaint by DC PRESERVATION LEAGUE, ALEX DICKSON, DAVE ROBERTS (Bardwell, Will) (Entered: 08/18/2026)</td></tr>
-<tr><td>2026-08-14</td><td>nan</td><td>Set/Reset Deadlines/Hearings: Plaintiff's Notice of Intent due by 8/18/2026. (zcdw)</td></tr>
+<tr><td>2026-08-14</td><td>nan</td><td>Set/Reset Deadlines/Hearings: Plaintiff&#x27;s Notice of Intent due by 8/18/2026. (zcdw)</td></tr>
 <tr><td>2026-08-14</td><td>nan</td><td></td></tr>
 <tr><td>2026-08-13</td><td>nan</td><td>MINUTE ORDER. Substantial developments have occurred since Plaintiffs filed their 1 Complaint and 8 Motion to Stay, and the Court finds that the operative complaint is outdated. As such, the pending 34 Motion to Dismiss addresses deficiencies that may not appear from an amended complaint. In the interest of judicial economy and efficient case management, Plaintiffs should consider whether to file an amended complaint. If they do not, and if the Court grants the pending 34 Motion to Dismiss, it will do so with prejudice. Plaintiffs shall advise the Court, on or before August 18, 2026, on whether they intend to amend their filings. If so, the Court ORDERS the parties to meet and confer and jointly file a proposed briefing schedule to govern further proceedings. The parties shall file their proposed briefing schedule on or before August 21, 2026. Signed by Judge Ana C. Reyes on 8/13/2026. (lcacr3)</td></tr>
 <tr><td>2026-08-13</td><td>nan</td><td></td></tr>
 <tr><td>2026-08-13</td><td>nan</td><td></td></tr>
 <tr><td>2026-08-10</td><td>nan</td><td></td></tr>
-<tr><td>2026-07-17</td><td>63.0</td><td>RESPONSE TO ORDER OF THE COURT Defendants' Response to the Court's July 6, 2026, Minute Order by JESSICA BOWRON, DOUG BURGUM, DEPARTMENT OF INTERIOR, NATIONAL PARK SERVICE re Order,,,,, (Robertson, Michael) Modified event on 7/20/2026 (znmw). (Entered: 07/17/2026)</td></tr>
+<tr><td>2026-07-17</td><td>63.0</td><td>RESPONSE TO ORDER OF THE COURT Defendants&#x27; Response to the Court&#x27;s July 6, 2026, Minute Order by JESSICA BOWRON, DOUG BURGUM, DEPARTMENT OF INTERIOR, NATIONAL PARK SERVICE re Order,,,,, (Robertson, Michael) Modified event on 7/20/2026 (znmw). (Entered: 07/17/2026)</td></tr>
 <tr><td>2026-07-15</td><td>62.0</td><td>TRANSCRIPT OF PROCEEDINGS before Judge Ana C. Reyes held on 5/4/2026; Page Numbers: 1-50. Date of Issuance:7/15/2026. Court Reporter Christine T. Asif, Telephone number 202-354-3247, Transcripts may be ordered by submitting the Transcript Order FormFor the first 90 days after this filing date, the transcript may be viewed at the courthouse at a public terminal or purchased from the court reporter referenced above. After 90 days, the transcript may be accessed via PACER. Other transcript formats, (multi-page, condensed, CD or ASCII) may be purchased from the court reporter.NOTICE RE REDACTION OF TRANSCRIPTS: The parties have twenty-one days to file with the court and the court reporter any request to redact personal identifiers from this transcript. If no such requests are filed, the transcript will be made available to the public via PACER without redaction after 90 days. The policy, which includes the five personal identifiers specifically covered, is located on our website at www.dcd.uscourts.gov. Redaction Request due 8/5/2026. Redacted Transcript Deadline set for 8/15/2026. Release of Transcript Restriction set for 10/13/2026.(Asif, Christine) (Entered: 07/15/2026)</td></tr>
-<tr><td>2026-07-08</td><td>nan</td><td>Set/Reset Deadlines/Hearings: Response to Court's Order due by 7/17/2026. (zcdw)</td></tr>
+<tr><td>2026-07-08</td><td>nan</td><td>Set/Reset Deadlines/Hearings: Response to Court&#x27;s Order due by 7/17/2026. (zcdw)</td></tr>
 <tr><td>2026-07-08</td><td>nan</td><td></td></tr>
 <tr><td>2026-07-08</td><td>60.0</td><td>TRANSCRIPT OF MOTION HEARING before Judge Ana C. Reyes held on July 2, 2026; Page Numbers: 1-130. Court Reporter Sonja L. Reeves, RDR, CRR, Telephone number (202) 354-3246, Transcripts may be ordered by submitting the Transcript Order FormFor the first 90 days after this filing date, the transcript may be viewed at the courthouse at a public terminal or purchased from the court reporter referenced above. After 90 days, the transcript may be accessed via PACER. Other transcript formats, (multi-page, condensed, CD or ASCII) may be purchased from the court reporter.NOTICE RE REDACTION OF TRANSCRIPTS: The parties have twenty-one days to file with the court and the court reporter any request to redact personal identifiers from this transcript. If no such requests are filed, the transcript will be made available to the public via PACER without redaction after 90 days. The policy, which includes the five personal identifiers specifically covered, is located on our website at www.dcd.uscourts.gov. Redaction Request due 7/29/2026. Redacted Transcript Deadline set for 8/8/2026. Release of Transcript Restriction set for 10/6/2026.(Reeves, Sonja) (Entered: 07/08/2026)</td></tr>
 <tr><td>2026-07-06</td><td>nan</td><td></td></tr>
 <tr><td>2026-07-06</td><td>nan</td><td></td></tr>
-<tr><td>2026-07-06</td><td>nan</td><td>MINUTE ORDER. As discussed during last week's motion hearing, the Court ORDERS the Government to respond to the following questions on or before July 17, 2026. 1. Has the Secretary of the Interior or any other high-ranking official made any statements or given any directives to anyone at the Agency--oral or written--concerning the President's statement that they will begin "build[ing] one of the Greatest Golf Courses in the world" by September 1, 2026? Donald J. Trump, Truth Social (June 28, 2026, 2:42 PM), https://truthsocial.com/@realDonaldTrump/posts/116829203090822692; 2. On what date did Clark Construction conduct testing on the excavated soil, and when did NPS receive the results? See Dkt. 38-1 at 2-3 (Nersesian Decl.); 3. Which individuals from the Agency accompanied President Trump during the site visit?; and 4. Who created the conceptual renderings reviewed at that visit, and who currently possesses or maintains those renderings? Lastly, the Court ORDERS the parties to meet and confer regarding proposed language for an interim preservation protocol governing activities at the site pending Court action. Signed by Judge Ana C. Reyes on 7/6/2026. (lcacr3)</td></tr>
+<tr><td>2026-07-06</td><td>nan</td><td>MINUTE ORDER. As discussed during last week&#x27;s motion hearing, the Court ORDERS the Government to respond to the following questions on or before July 17, 2026. 1. Has the Secretary of the Interior or any other high-ranking official made any statements or given any directives to anyone at the Agency--oral or written--concerning the President&#x27;s statement that they will begin &quot;build[ing] one of the Greatest Golf Courses in the world&quot; by September 1, 2026? Donald J. Trump, Truth Social (June 28, 2026, 2:42 PM), https://truthsocial.com/@realDonaldTrump/posts/116829203090822692; 2. On what date did Clark Construction conduct testing on the excavated soil, and when did NPS receive the results? See Dkt. 38-1 at 2-3 (Nersesian Decl.); 3. Which individuals from the Agency accompanied President Trump during the site visit?; and 4. Who created the conceptual renderings reviewed at that visit, and who currently possesses or maintains those renderings? Lastly, the Court ORDERS the parties to meet and confer regarding proposed language for an interim preservation protocol governing activities at the site pending Court action. Signed by Judge Ana C. Reyes on 7/6/2026. (lcacr3)</td></tr>
 <tr><td>2026-07-02</td><td>nan</td><td></td></tr>
 <tr><td>2026-07-02</td><td>nan</td><td>Minute Entry for proceedings held before Judge Ana C. Reyes: Motion Hearing held on 7/2/2026 re 8 Motion to Stay or in the alternative Motion for Preliminary Injunction and 34 Motion to Dismiss for Lack of Jurisdiction and for Failure to State a Claim. Motions heard and taken under advisement. (Court Reporter: Sonja Reeves) (zcdw) Modified on 8/10/2026 to correct hearing date (zcdw).</td></tr>
-<tr><td>2026-07-01</td><td>nan</td><td>MINUTE ORDER. In preparation for tomorrow's motion hearing, the Court ORDERS the Government to be prepared to discuss: (1) Whether anyone at the National Garden of American Heroes Foundation or the O'Rourke Group has communicated with the National Park Service or the Department of the Interior regarding the proposed golf course and, if so, the nature and substance of those communications; (2) What commitments, if any, the Secretary of Interior or his delegates have made concerning President Trump's statements that they "will build one of the Greatest Golf Courses in the world." Donald J. Trump, Truth Social (June 28, 2026, 2:42 PM), https://truthsocial.com/@realDonaldTrump/posts/116829203090822692; (3) How the Government intends to undertake the actions listed in its Motion to Dismiss--including "contract for architectural and design services" and "compliance with NEPA, Section 106, Section 7 of the Endangered Species Act, the Organic Act, and any other applicable laws and regulations"--by September 1, 2026. Dkt. [34-1] at 24; see Trump, supra; (4) On what basis Mr. Fazio has been appointed or designated as the architect or designer of the proposed golf course. See Trump, supra; (5) Whether NPS or the Department of the Interior has entered into any contract or agreement--oral or written--with respect to the construction of the proposed golf course by September 1, 2026; and (6) Whether any blueprints, plans, or conceptual designs for the proposed golf course exist and, if so, the current status of their review or approval. Signed by Judge Ana C. Reyes on 7/1/2026. (lcacr3)</td></tr>
+<tr><td>2026-07-01</td><td>nan</td><td>MINUTE ORDER. In preparation for tomorrow&#x27;s motion hearing, the Court ORDERS the Government to be prepared to discuss: (1) Whether anyone at the National Garden of American Heroes Foundation or the O&#x27;Rourke Group has communicated with the National Park Service or the Department of the Interior regarding the proposed golf course and, if so, the nature and substance of those communications; (2) What commitments, if any, the Secretary of Interior or his delegates have made concerning President Trump&#x27;s statements that they &quot;will build one of the Greatest Golf Courses in the world.&quot; Donald J. Trump, Truth Social (June 28, 2026, 2:42 PM), https://truthsocial.com/@realDonaldTrump/posts/116829203090822692; (3) How the Government intends to undertake the actions listed in its Motion to Dismiss--including &quot;contract for architectural and design services&quot; and &quot;compliance with NEPA, Section 106, Section 7 of the Endangered Species Act, the Organic Act, and any other applicable laws and regulations&quot;--by September 1, 2026. Dkt. [34-1] at 24; see Trump, supra; (4) On what basis Mr. Fazio has been appointed or designated as the architect or designer of the proposed golf course. See Trump, supra; (5) Whether NPS or the Department of the Interior has entered into any contract or agreement--oral or written--with respect to the construction of the proposed golf course by September 1, 2026; and (6) Whether any blueprints, plans, or conceptual designs for the proposed golf course exist and, if so, the current status of their review or approval. Signed by Judge Ana C. Reyes on 7/1/2026. (lcacr3)</td></tr>
 <tr><td>2026-07-01</td><td>nan</td><td></td></tr>
 <tr><td>2026-07-01</td><td>nan</td><td></td></tr>
-<tr><td>2026-06-30</td><td>nan</td><td>MINUTE ORDER granting 59 The Walter J. Travis Society's Unopposed Motion for Leave to File Amicus Brief. Signed by Judge Ana C. Reyes on 6/30/2026. (lcacr3)</td></tr>
+<tr><td>2026-06-30</td><td>nan</td><td>MINUTE ORDER granting 59 The Walter J. Travis Society&#x27;s Unopposed Motion for Leave to File Amicus Brief. Signed by Judge Ana C. Reyes on 6/30/2026. (lcacr3)</td></tr>
 
-  </table>
+    </table></div>
+  </details>
+
+    </div>
+  </details>
+
+  <details class="section" open>
+    <summary>Media Interest <span class="toggle-label" aria-hidden="true"></span></summary>
+    <div>
+      <img src="media_coverage_over_time.png" alt="Weekly coverage volume chart">
+      <p style="font-family:Arial,sans-serif; font-size:0.9rem; color:#4A4A4A;">
+        Each point counts retrieved articles observed by GDELT during the week ending on the
+        displayed Sunday (UTC). Dates are observation dates, not necessarily publication dates.
+        The first and last weeks may be partial. Counts reflect the retrieved sample
+        (up to 250 articles), not all news coverage or audience engagement.
+      </p>
+    </div>
+  </details>
+
+  <details class="section" open>
+    <summary>Email Subscription <span class="toggle-label" aria-hidden="true"></span></summary>
+    <div style="font-family: Arial, sans-serif;">
+    <p style="font-size:0.88rem; color:#4A4A4A; margin:6px 0 12px;">Only sent when there's genuinely new hearing or notice activity &mdash; not a daily digest.</p>
+    <form action="https://buttondown.com/api/emails/embed-subscribe/tbilkitty" method="post" target="popupwindow"
+          onsubmit="window.open('https://buttondown.com/tbilkitty', 'popupwindow')" style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input type="email" name="email" placeholder="you@example.com" required style="flex:1; padding:8px 10px; border:1px solid #D8D3C7; border-radius:4px;">
+      <input type="submit" value="Subscribe" style="background:#2C5F4F; color:#fff; border:none; padding:8px 16px; border-radius:4px; font-weight:bold; cursor:pointer;">
+    </form>
+    </div>
+  </details>
 </body>
 </html>
