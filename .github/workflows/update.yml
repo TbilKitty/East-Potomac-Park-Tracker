@@ -34,6 +34,7 @@ jobs:
           git add -A
           if ! git diff --quiet || ! git diff --staged --quiet; then
             git commit -m "Automated daily update"
-            git pull --rebase origin main
+            git fetch origin main
+            git merge origin/main -X ours --no-edit || true
             git push
           fi
