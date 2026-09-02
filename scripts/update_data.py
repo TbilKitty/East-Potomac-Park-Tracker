@@ -183,6 +183,18 @@ def summarize_text(text, num_sentences=2):
 
 ARTICLE_STORE_PATH = "data/articles_seen.json"
 
+# Recovered from the site history at commit e5d84e8cc3d3bec614ebe5ca331449057d443734.
+RECOVERED_ARTICLES = [{'url': 'https://wtop.com/dc/2026/06/lawmakers-say-white-house-demolition-debris-at-east-potomac-park-poses-health-risk/',
+  'title': 'Lawmakers say White House demolition debris at East Potomac Park '
+           'poses health risk',
+  'domain': 'wtop.com',
+  'seendate': '2026-06-27 00:15:00+00:00'},
+ {'url': 'https://www.yahoo.com/news/politics/articles/democrats-demand-trump-remove-east-164805508.html',
+  'title': 'Democrats demand Trump remove East Wing debris  recklessly  dumped '
+           'at East Potomac Park',
+  'domain': 'yahoo.com',
+  'seendate': '2026-06-26 20:15:00+00:00'}]
+
 
 def load_article_store(path=ARTICLE_STORE_PATH):
     """Every article ever found, keyed by URL, with its cached scraped text."""
@@ -192,7 +204,7 @@ def load_article_store(path=ARTICLE_STORE_PATH):
                 items = json.load(f)
             return {item["url"]: item for item in items}
         except (json.JSONDecodeError, KeyError, OSError) as e:
-            print(f"Could not load article store, starting fresh: {e}")
+            raise RuntimeError("Article archive could not be read; refusing to overwrite it.") from e
     return {}
 
 
@@ -200,8 +212,9 @@ def save_article_store(store, path=ARTICLE_STORE_PATH):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     # Don't persist internal sort helpers.
     clean = [{k: v for k, v in item.items() if not k.startswith("_")} for item in store.values()]
-    with open(path, "w") as f:
+    with open(path + ".tmp", "w") as f:
         json.dump(clean, f, indent=2, default=str)
+    os.replace(path + ".tmp", path)
 
 
 def merge_new_articles_into_store(store, df_media):
@@ -239,12 +252,22 @@ def rank_stored_articles_by_novelty(store):
     items = list(store.values())
     for item in items:
         item["_seendate_dt"] = pd.to_datetime(item["seendate"], errors="coerce", utc=True)
-    items = [i for i in items if pd.notna(i["_seendate_dt"])]
-    items.sort(key=lambda x: x["_seendate_dt"])
+    # Keep undated records too; do not silently remove them from the list.
+    items.sort(key=lambda x: (pd.isna(x["_seendate_dt"]),
+                             x["_seendate_dt"] if pd.notna(x["_seendate_dt"]) else pd.Timestamp.max.tz_localize("UTC"),
+                             x["url"]))
 
     texts = [item.get("fetched_text") or item.get("title", "") for item in items]
     vectorizer = TfidfVectorizer(stop_words="english", max_features=2000)
-    tfidf_matrix = vectorizer.fit_transform(texts)
+    try:
+        tfidf_matrix = vectorizer.fit_transform(texts)
+    except ValueError:
+        # No usable vocabulary: retain every article without inventing scores.
+        for item in items:
+            item["novelty"] = None
+            item["summary"] = item.get("title", "")
+            item.pop("_seendate_dt", None)
+        return items
 
     seen_vector = None
     for i, item in enumerate(items):
@@ -312,6 +335,19 @@ def main():
     fr_notices += get_federal_register_notices("East Potomac", "interior-department")
     hearing_entries = flag_hearing_entries(df_docket)
 
+    article_store = load_article_store()
+    for article in RECOVERED_ARTICLES:
+        if article["url"] not in article_store:
+            article_store[article["url"]] = dict(article, fetched_text=article["title"])
+    media_path = "data/east_potomac_media.csv"
+    if os.path.exists(media_path):
+        try:
+            previous_media = pd.read_csv(media_path)
+        except pd.errors.EmptyDataError:
+            previous_media = pd.DataFrame()
+        merge_new_articles_into_store(article_store, previous_media)
+    save_article_store(article_store)
+
     print("Fetching news articles...", flush=True)
     # --- Media (rolling 90-day window, GDELT's actual coverage range) ---
     start = (now - pd.Timedelta(days=90)).strftime("%Y%m%d%H%M%S")
@@ -332,12 +368,14 @@ def main():
             df_media = pd.read_csv("data/east_potomac_media.csv")
             if not df_media.empty:
                 df_media["seendate"] = pd.to_datetime(df_media["seendate"])
-    df_media.to_csv("data/east_potomac_media.csv", index=False)
+    # An empty result or failed search must never erase the saved snapshot.
+    if not df_media.empty:
+        df_media.to_csv(media_path + ".tmp", index=False)
+        os.replace(media_path + ".tmp", media_path)
 
     # --- Article store: merge in only genuinely new URLs, then re-rank the
     # full accumulated history so nothing that's already been featured
     # disappears, and novelty scores stay comparable across runs. ---
-    article_store = load_article_store()
     new_count = merge_new_articles_into_store(article_store, df_media)
     print(f"{new_count} new article(s) this run; {len(article_store)} total in store.", flush=True)
 
@@ -418,7 +456,8 @@ def main():
         json.dump(sorted(current_items), f)
 
     def render_article_div(a):
-        pct = round(a["novelty"] * 100)
+        pct = round(a["novelty"] * 100) if a["novelty"] is not None else None
+        score_label = f"{pct}% novelty score" if pct is not None else "Not scored"
         seendate_dt = pd.to_datetime(a["seendate"], errors="coerce")
         date_str = seendate_dt.strftime("%b %d, %Y") if pd.notna(seendate_dt) else str(a["seendate"])
         safe_title = html_module.escape(str(a["title"]))
@@ -429,7 +468,7 @@ def main():
         <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
             <a href="{safe_url}" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">{safe_title}</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">{pct}% new info</span>
+            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">{score_label}</span>
           </div>
           <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">{safe_domain} &middot; {date_str}</div>
           <div style="font-size:0.92rem; color:#333;">{safe_summary}</div>
@@ -444,7 +483,7 @@ def main():
     if rest_articles:
         rest_rows = "".join(render_article_div(a) for a in rest_articles)
         article_rows += (
-            f'<details><summary>Show {len(rest_articles)} more article'
+            f'<details class="more-articles"><summary>Show {len(rest_articles)} more article'
             f'{"s" if len(rest_articles) != 1 else ""}</summary>{rest_rows}</details>'
         )
     if not article_rows:
@@ -514,6 +553,14 @@ def main():
   <p style="font-family: Arial, sans-serif; font-size: 0.72rem; color: #4A4A4A; margin: 0 0 28px;">Photo: NPS / NCR Photo Library (public domain)</p>
 
   <h1>East Potomac Park &mdash; Case Tracker</h1>
+  <div class="visit-counter" style="display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin:12px 0; font-family:Arial,sans-serif; font-size:0.85rem; color:#4A4A4A;">
+    <a href="https://hits.sh/tbilkitty.github.io/East-Potomac-Park-Tracker/" target="_blank" rel="noopener" aria-label="View page visit statistics" title="Visits, not unique people. Some of these are my dumb ass checking whether I finally fixed the page. Sry.">
+      <img src="https://hits.sh/tbilkitty.github.io/East-Potomac-Park-Tracker.svg?style=flat-square&amp;label=Page%20visits&amp;color=2c5f4f&amp;labelColor=333333"
+           alt="Page visit counter unavailable" height="24" referrerpolicy="no-referrer"
+           style="display:block; height:24px; width:auto; max-width:100%; margin:0; border:0; border-radius:3px;">
+    </a>
+    <span>Since this counter was added &middot; visits, not unique people</span>
+  </div>
   <p class="updated">Automatically updated daily. Last updated: {updated}</p>
 
   <div style="display:flex; gap:10px; flex-wrap:wrap; font-family: Arial, sans-serif; margin-bottom: 24px;">
@@ -527,8 +574,9 @@ def main():
     <summary>News Articles <span class="toggle-label" aria-hidden="true"></span></summary>
     <div>
   <p style="font-family: Arial, sans-serif; font-size: 0.85rem; color: #4A4A4A;">
-    Ranked by how much genuinely new information each one adds, compared to everything already covered
-    by earlier articles &mdash; not just by outlet or recency.
+    All saved articles are retained and ranked by estimated text novelty compared with
+    earlier saved articles. This automated score is not a fact-check or a measure of importance.
+    The top three appear below; expand the list to see the rest.
   </p>
   <p>{len(ranked_articles)} ranked articles</p>
   <div>{article_rows}</div>
@@ -557,8 +605,29 @@ def main():
     <summary>Public Search Interest <span class="toggle-label" aria-hidden="true"></span></summary>
     <div>
       <p style="font-family:Arial,sans-serif;">&ldquo;East Potomac Park&rdquo; &middot; United States &middot; Past 3 months &middot; Google Web Search</p>
-      <div id="search-interest-chart" style="min-height:420px; width:100%;"></div>
-      <p id="search-interest-status" style="font-family:Arial,sans-serif; font-size:0.9rem;">Loading Google Trends&hellip;</p>
+      <div id="search-interest-chart" style="width:100%; max-width:480px; margin:0 auto;">
+        <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/4564_RC01/embed_loader.js"></script>
+        <script type="text/javascript">
+          if (window.trends && window.trends.embed) {{
+            trends.embed.renderExploreWidget("TIMESERIES", {{"comparisonItem":[{{"keyword":"East Potomac Park","geo":"US","time":"today 3-m"}}],"category":0,"property":""}}, {{"exploreQuery":"date=today%203-m&geo=US&q=East%20Potomac%20Park&hl=en","guestPath":"https://trends.google.com:443/trends/embed/"}});
+          }}
+        </script>
+        <script>
+          (function () {{
+            const host = document.getElementById('search-interest-chart');
+            const frame = host.querySelector('iframe');
+            if (frame) {{
+              frame.title = 'Google search interest for East Potomac Park over the past three months';
+              frame.style.width = '100%';
+              frame.style.minHeight = '420px';
+            }} else {{
+              const message = document.createElement('p');
+              message.textContent = 'The chart could not load. Open Google Trends using the link below.';
+              host.appendChild(message);
+            }}
+          }})();
+        </script>
+      </div>
       <p style="font-family:Arial,sans-serif; font-size:0.9rem; color:#4A4A4A;">
         Relative search interest, scaled from 0 to 100: 100 marks peak interest in this
         period and region. These are not search counts. Low search volume can appear
@@ -569,41 +638,7 @@ def main():
         Data source: <a href="https://trends.google.com/trends/explore?date=today%203-m&amp;geo=US&amp;q=East%20Potomac%20Park&amp;hl=en" target="_blank" rel="noopener">Google Trends &mdash; open the interactive chart</a>.
         If the embedded chart is unavailable, use this link to check the source.
       </p>
-      <script>
-        (function () {{
-          const host = document.getElementById('search-interest-chart');
-          const status = document.getElementById('search-interest-status');
-          const loader = document.createElement('script');
-          loader.src = 'https://ssl.gstatic.com/trends_nrtr/4031_RC01/embed_loader.js';
-          loader.async = true;
-          function unavailable() {{
-            status.textContent = 'The embedded chart could not load. Open Google Trends using the link below.';
-            host.style.minHeight = '0';
-          }}
-          loader.onerror = unavailable;
-          loader.onload = function () {{
-            try {{
-              trends.embed.renderExploreWidgetTo(host, 'TIMESERIES', {{
-                comparisonItem: [{{keyword: 'East Potomac Park', geo: 'US', time: 'today 3-m'}}],
-                category: 0,
-                property: ''
-              }}, {{
-                exploreQuery: 'date=today%203-m&geo=US&q=East%20Potomac%20Park&hl=en',
-                guestPath: 'https://trends.google.com:443/trends/embed/',
-                width: '100%',
-                locale: 'en'
-              }});
-              const frame = host.querySelector('iframe');
-              if (frame) {{
-                frame.title = 'Google search interest for East Potomac Park in the United States over the past three months';
-                frame.style.minHeight = '420px';
-                status.textContent = 'Chart supplied by Google Trends. Availability depends on Google and sufficient search data.';
-              }} else {{ unavailable(); }}
-            }} catch (error) {{ unavailable(); }}
-          }};
-          document.head.appendChild(loader);
-        }})();
-      </script>
+
       <noscript><p>Enable JavaScript to view this chart, or open Google Trends using the link above.</p></noscript>
     </div>
   </details>
