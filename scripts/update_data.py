@@ -6,6 +6,10 @@ from datetime import datetime, timezone
 
 import requests
 import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 DOCKET_ID = 72278895  # DC Preservation League v. Department of Interior, 1:26-cv-00477
 API_TOKEN = os.environ.get("COURTLISTENER_TOKEN", "")
@@ -112,6 +116,20 @@ def send_email_update(subject, body):
         print("Email update sent.")
     except requests.exceptions.RequestException as e:
         print(f"Email send failed: {e}")
+
+
+def fetch_search_interest():
+    try:
+        from pytrends.request import TrendReq
+        pytrends = TrendReq(hl='en-US', tz=360, timeout=(10, 25))
+        pytrends.build_payload(["East Potomac Park"], timeframe='today 3-m', geo='US')
+        df = pytrends.interest_over_time()
+        if df.empty:
+            return None
+        return df
+    except Exception as e:
+        print(f"Google Trends fetch failed: {e}")
+        return None
 
 
 import re
@@ -383,6 +401,27 @@ def main():
     ranked_articles = rank_stored_articles_by_novelty(article_store)
     save_article_store(article_store)
 
+    print("Fetching Google Trends search interest...", flush=True)
+    trend_df = fetch_search_interest()
+    if trend_df is not None and not trend_df.empty:
+        fig, ax = plt.subplots(figsize=(8, 4))
+        ax.plot(trend_df.index, trend_df["East Potomac Park"], marker="o", color="#2C5F4F", linewidth=2)
+        ax.fill_between(trend_df.index, trend_df["East Potomac Park"], color="#2C5F4F", alpha=0.08)
+        ax.set_title("Search Interest \u2014 \u201cEast Potomac Park\u201d (Google Trends, US)")
+        ax.set_ylabel("Relative interest (0\u2013100)")
+        ax.set_ylim(0, 100)
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %d, %Y"))
+        ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+        ax.spines[["top", "right"]].set_visible(False)
+        fig.autofmt_xdate(rotation=40)
+        plt.tight_layout()
+        plt.savefig("search_interest.png", dpi=150)
+        plt.close()
+        trends_available = True
+    else:
+        trends_available = os.path.exists("search_interest.png")
+        print("Using previously saved trends chart (today's fetch failed or returned nothing).", flush=True)
+
     print("Rendering the updated page...", flush=True)
     # --- Render index.html ---
     updated = now.strftime("%B %d, %Y at %H:%M UTC")
@@ -488,6 +527,12 @@ def main():
         )
     if not article_rows:
         article_rows = "<p>No articles available to rank this run.</p>"
+
+    trends_html = (
+        '<img src="search_interest.png" alt="Google Trends search interest for East Potomac Park" style="width:100%; border-radius:8px;">'
+        if trends_available else
+        '<p>Search interest data not available this run.</p>'
+    )
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -607,37 +652,10 @@ def main():
 
       <p style="font-family:Arial,sans-serif;">
         &ldquo;East Potomac Park&rdquo; &middot; United States &middot;
-        Past 3 months &middot; Google Web Search
+        Past 3 months &middot; Google Trends
       </p>
 
-      <div style="width:100%; overflow:hidden;">
-        <script type="text/javascript"
-                src="https://ssl.gstatic.com/trends_nrtr/4564_RC01/embed_loader.js">
-        </script>
-
-        <script type="text/javascript">
-          trends.embed.renderExploreWidget(
-            "TIMESERIES",
-            {
-              "comparisonItem": [
-                {
-                  "keyword": "East Potomac Park",
-                  "geo": "US",
-                  "time": "today 3-m"
-                }
-              ],
-              "category": 0,
-              "property": ""
-            },
-            {
-              "exploreQuery":
-                "date=today%203-m&geo=US&q=East%20Potomac%20Park&hl=en",
-              "guestPath":
-                "https://trends.google.com:443/trends/embed/"
-            }
-          );
-        </script>
-      </div>
+      {trends_html}
 
       <p style="font-family:Arial,sans-serif; font-size:0.9rem; color:#4A4A4A;">
         Relative search interest, scaled from 0 to 100:
