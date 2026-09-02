@@ -601,45 +601,61 @@ def main():
     </div>
   </details>
 
-  <details class="section" open>
+    <details class="section" open>
     <summary>Public Search Interest <span class="toggle-label" aria-hidden="true"></span></summary>
     <div>
-      <p style="font-family:Arial,sans-serif;">&ldquo;East Potomac Park&rdquo; &middot; United States &middot; Past 3 months &middot; Google Web Search</p>
-      <div id="search-interest-chart" style="width:100%; max-width:480px; margin:0 auto;">
-        <script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/4564_RC01/embed_loader.js"></script>
-        <script type="text/javascript">
-          if (window.trends && window.trends.embed) {{
-            trends.embed.renderExploreWidget("TIMESERIES", {{"comparisonItem":[{{"keyword":"East Potomac Park","geo":"US","time":"today 3-m"}}],"category":0,"property":""}}, {{"exploreQuery":"date=today%203-m&geo=US&q=East%20Potomac%20Park&hl=en","guestPath":"https://trends.google.com:443/trends/embed/"}});
-          }}
-        </script>
-        <script>
-          (function () {{
-            const host = document.getElementById('search-interest-chart');
-            const frame = host.querySelector('iframe');
-            if (frame) {{
-              frame.title = 'Google search interest for East Potomac Park over the past three months';
-              frame.style.width = '100%';
-              frame.style.minHeight = '420px';
-            }} else {{
-              const message = document.createElement('p');
-              message.textContent = 'The chart could not load. Open Google Trends using the link below.';
-              host.appendChild(message);
-            }}
-          }})();
-        </script>
-      </div>
-      <p style="font-family:Arial,sans-serif; font-size:0.9rem; color:#4A4A4A;">
-        Relative search interest, scaled from 0 to 100: 100 marks peak interest in this
-        period and region. These are not search counts. Low search volume can appear
-        as zero or insufficient data. Search activity measures attention, not support
-        for a particular outcome.
-      </p>
-      <p style="font-family:Arial,sans-serif; font-size:0.9rem;">
-        Data source: <a href="https://trends.google.com/trends/explore?date=today%203-m&amp;geo=US&amp;q=East%20Potomac%20Park&amp;hl=en" target="_blank" rel="noopener">Google Trends &mdash; open the interactive chart</a>.
-        If the embedded chart is unavailable, use this link to check the source.
+
+      <p style="font-family:Arial,sans-serif;">
+        &ldquo;East Potomac Park&rdquo; &middot; United States &middot;
+        Past 3 months &middot; Google Web Search
       </p>
 
-      <noscript><p>Enable JavaScript to view this chart, or open Google Trends using the link above.</p></noscript>
+      <div style="width:100%; overflow:hidden;">
+        <script type="text/javascript"
+                src="https://ssl.gstatic.com/trends_nrtr/4564_RC01/embed_loader.js">
+        </script>
+
+        <script type="text/javascript">
+          trends.embed.renderExploreWidget(
+            "TIMESERIES",
+            {
+              "comparisonItem": [
+                {
+                  "keyword": "East Potomac Park",
+                  "geo": "US",
+                  "time": "today 3-m"
+                }
+              ],
+              "category": 0,
+              "property": ""
+            },
+            {
+              "exploreQuery":
+                "date=today%203-m&geo=US&q=East%20Potomac%20Park&hl=en",
+              "guestPath":
+                "https://trends.google.com:443/trends/embed/"
+            }
+          );
+        </script>
+      </div>
+
+      <p style="font-family:Arial,sans-serif; font-size:0.9rem; color:#4A4A4A;">
+        Relative search interest, scaled from 0 to 100:
+        100 marks peak interest in this period and region.
+        These are not search counts. Low search volume can appear
+        as zero or insufficient data. Search activity measures
+        attention, not support for a particular outcome.
+      </p>
+
+      <p style="font-family:Arial,sans-serif; font-size:0.9rem;">
+        Data source:
+        <a href="https://trends.google.com/trends/explore?date=today%203-m&amp;geo=US&amp;q=East%20Potomac%20Park&amp;hl=en"
+           target="_blank"
+           rel="noopener">
+          Google Trends &mdash; open the interactive chart
+        </a>.
+      </p>
+
     </div>
   </details>
 
