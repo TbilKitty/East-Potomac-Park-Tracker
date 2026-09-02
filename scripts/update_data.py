@@ -181,26 +181,73 @@ def summarize_text(text, num_sentences=2):
         return " ".join(sentences[:num_sentences])
 
 
-def rank_articles_by_novelty(df_media, max_articles=30):
+ARTICLE_STORE_PATH = "data/articles_seen.json"
+
+
+def load_article_store(path=ARTICLE_STORE_PATH):
+    """Every article ever found, keyed by URL, with its cached scraped text."""
+    if os.path.exists(path):
+        try:
+            with open(path) as f:
+                items = json.load(f)
+            return {item["url"]: item for item in items}
+        except (json.JSONDecodeError, KeyError, OSError) as e:
+            print(f"Could not load article store, starting fresh: {e}")
+    return {}
+
+
+def save_article_store(store, path=ARTICLE_STORE_PATH):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    # Don't persist internal sort helpers.
+    clean = [{k: v for k, v in item.items() if not k.startswith("_")} for item in store.values()]
+    with open(path, "w") as f:
+        json.dump(clean, f, indent=2, default=str)
+
+
+def merge_new_articles_into_store(store, df_media):
+    """Fetch + cache text only for URLs we haven't seen before."""
+    new_count = 0
     if df_media.empty:
+        return new_count
+    for _, row in df_media.iterrows():
+        url = row.get("url")
+        if not url or url in store:
+            continue
+        text = fetch_article_text(url)
+        time.sleep(1)  # be polite to the sites we're fetching from
+        seendate = row.get("seendate")
+        seendate_str = seendate.isoformat() if hasattr(seendate, "isoformat") else str(seendate)
+        store[url] = {
+            "url": url,
+            "title": row.get("title", "(untitled)"),
+            "domain": row.get("domain", ""),
+            "seendate": seendate_str,
+            "fetched_text": text if text else row.get("title", ""),
+        }
+        new_count += 1
+    return new_count
+
+
+def rank_stored_articles_by_novelty(store):
+    """Recompute novelty over the FULL accumulated history so scores stay
+    comparable across old and newly-added articles, then sort for display
+    (most novel first). Order of computation is always chronological by
+    seendate so results are stable regardless of when the script runs."""
+    if not store:
         return []
 
-    df = df_media.sort_values("seendate", ascending=True).head(max_articles).copy()
+    items = list(store.values())
+    for item in items:
+        item["_seendate_dt"] = pd.to_datetime(item["seendate"], errors="coerce", utc=True)
+    items = [i for i in items if pd.notna(i["_seendate_dt"])]
+    items.sort(key=lambda x: x["_seendate_dt"])
 
-    texts = []
-    for _, row in df.iterrows():
-        text = fetch_article_text(row["url"])
-        texts.append(text if text else row.get("title", ""))
-        time.sleep(1)  # be polite to the sites we're fetching from
-
-    df["fetched_text"] = texts
-
+    texts = [item.get("fetched_text") or item.get("title", "") for item in items]
     vectorizer = TfidfVectorizer(stop_words="english", max_features=2000)
-    tfidf_matrix = vectorizer.fit_transform(df["fetched_text"])
+    tfidf_matrix = vectorizer.fit_transform(texts)
 
-    results = []
     seen_vector = None
-    for i in range(len(df)):
+    for i, item in enumerate(items):
         current = tfidf_matrix[i]
         if seen_vector is None:
             novelty = 1.0
@@ -208,19 +255,13 @@ def rank_articles_by_novelty(df_media, max_articles=30):
             sim = cosine_similarity(current, seen_vector)[0][0]
             novelty = max(0.0, 1.0 - sim)
         seen_vector = current if seen_vector is None else seen_vector + current
+        item["novelty"] = novelty
+        item["summary"] = summarize_text(texts[i])
 
-        row = df.iloc[i]
-        results.append({
-            "title": row.get("title", "(untitled)"),
-            "url": row["url"],
-            "domain": row.get("domain", ""),
-            "seendate": row["seendate"],
-            "novelty": novelty,
-            "summary": summarize_text(row["fetched_text"]),
-        })
-
-    results.sort(key=lambda r: r["novelty"], reverse=True)
-    return results
+    items.sort(key=lambda r: r["novelty"], reverse=True)
+    for item in items:
+        item.pop("_seendate_dt", None)
+    return items
 
 
 PHOTO_URL = "https://www.nps.gov/npgallery/GetAsset/36B74D30-DE82-4B2E-8A20-F83F69B55B39"
@@ -293,8 +334,16 @@ def main():
                 df_media["seendate"] = pd.to_datetime(df_media["seendate"])
     df_media.to_csv("data/east_potomac_media.csv", index=False)
 
-    print("Summarizing up to 30 articles; this may take several minutes...", flush=True)
-    ranked_articles = rank_articles_by_novelty(df_media, max_articles=30)
+    # --- Article store: merge in only genuinely new URLs, then re-rank the
+    # full accumulated history so nothing that's already been featured
+    # disappears, and novelty scores stay comparable across runs. ---
+    article_store = load_article_store()
+    new_count = merge_new_articles_into_store(article_store, df_media)
+    print(f"{new_count} new article(s) this run; {len(article_store)} total in store.", flush=True)
+
+    print("Re-ranking full article history by novelty...", flush=True)
+    ranked_articles = rank_stored_articles_by_novelty(article_store)
+    save_article_store(article_store)
 
     print("Rendering the updated page...", flush=True)
     # --- Render index.html ---
@@ -368,15 +417,15 @@ def main():
     with open(prev_path, "w") as f:
         json.dump(sorted(current_items), f)
 
-    article_rows = ""
-    for a in ranked_articles:
+    def render_article_div(a):
         pct = round(a["novelty"] * 100)
-        date_str = a["seendate"].strftime("%b %d, %Y") if hasattr(a["seendate"], "strftime") else str(a["seendate"])
+        seendate_dt = pd.to_datetime(a["seendate"], errors="coerce")
+        date_str = seendate_dt.strftime("%b %d, %Y") if pd.notna(seendate_dt) else str(a["seendate"])
         safe_title = html_module.escape(str(a["title"]))
         safe_domain = html_module.escape(str(a["domain"]))
         safe_summary = html_module.escape(str(a["summary"]))
         safe_url = html_module.escape(str(a["url"]))
-        article_rows += f"""
+        return f"""
         <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
             <a href="{safe_url}" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">{safe_title}</a>
@@ -386,6 +435,18 @@ def main():
           <div style="font-size:0.92rem; color:#333;">{safe_summary}</div>
         </div>
         """
+
+    TOP_N_VISIBLE = 3
+    top_articles = ranked_articles[:TOP_N_VISIBLE]
+    rest_articles = ranked_articles[TOP_N_VISIBLE:]
+
+    article_rows = "".join(render_article_div(a) for a in top_articles)
+    if rest_articles:
+        rest_rows = "".join(render_article_div(a) for a in rest_articles)
+        article_rows += (
+            f'<details><summary>Show {len(rest_articles)} more article'
+            f'{"s" if len(rest_articles) != 1 else ""}</summary>{rest_rows}</details>'
+        )
     if not article_rows:
         article_rows = "<p>No articles available to rank this run.</p>"
 
