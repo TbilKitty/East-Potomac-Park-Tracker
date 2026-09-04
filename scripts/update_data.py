@@ -48,7 +48,7 @@ def get_docket_entries(docket_id):
         if url:
             remaining = deadline - time.monotonic()
             if remaining <= 13:
-                raise requests.exceptions.Timeout("CourtListener fetch budget exhausted.")
+                raise requests.exceptions.Timeout("CourtListener  budget exhausted.")
             time.sleep(13)
     return entries
 
@@ -85,7 +85,7 @@ def get_federal_register_notices(term, agency):
         resp.raise_for_status()
         return resp.json().get("results", [])
     except requests.exceptions.RequestException as e:
-        print(f"Federal Register fetch failed: {e}")
+        print(f"Federal Register  failed: {e}")
         return []
 
 
@@ -118,18 +118,17 @@ def send_email_update(subject, body):
         print(f"Email send failed: {e}")
 
 
-def fetch_search_interest():
-    try:
-        from pytrends.request import TrendReq
-        pytrends = TrendReq(hl='en-US', tz=360, timeout=(10, 25))
-        pytrends.build_payload(["East Potomac Park"], timeframe='today 3-m', geo='US')
-        df = pytrends.interest_over_time()
-        if df.empty:
-            return None
-        return df
-    except Exception as e:
-        print(f"Google Trends fetch failed: {e}")
-        return None
+trends_html = f"""
+<script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/4179_RC01/embed_loader.js"></script>
+<div class="trends-widget" style="font-family:Arial,sans-serif;"></div>
+<script type="text/javascript">
+  trends.embed.renderExploreWidget(
+    "TIMESERIES",
+    {{"comparisonItem":[{{"keyword":"East Potomac Park","geo":"US","time":"today 3-m"}}],"category":0,"property":""}},
+    {{"exploreQuery":"date=today%203-m&geo=US&q=East%20Potomac%20Park&hl=en","guestPath":"https://trends.google.com:443/trends/embed/"}}
+  );
+</script>
+"""
 
 
 import re
@@ -333,20 +332,23 @@ def main():
     photo_src = ensure_header_photo()
 
     # --- Docket ---
-    df_docket = pd.DataFrame(columns=["date_filed", "entry_number", "description"])
+     df_docket = pd.DataFrame(columns=["date_filed", "entry_number", "description"])
     try:
         entries = get_docket_entries(DOCKET_ID)
         if entries:
             df_docket = pd.DataFrame(entries)
+            for col in ["date_filed", "entry_number", "description"]:
+                if col not in df_docket.columns:
+                    df_docket[col] = None
             df_docket = df_docket[["date_filed", "entry_number", "description"]].sort_values(
                 "date_filed", ascending=False
             )
-    except requests.exceptions.RequestException as e:
-        print(f"CourtListener fetch failed, keeping previous data if any: {e}")
+    except (requests.exceptions.RequestException, KeyError) as e:
+        print(f"CourtListener fetch/parse failed, keeping previous data if any: {e}")
         if os.path.exists("data/east_potomac_docket.csv"):
             df_docket = pd.read_csv("data/east_potomac_docket.csv")
     df_docket.to_csv("data/east_potomac_docket.csv", index=False)
-
+#below line was left from prior file
     print("Fetching public notices...", flush=True)
     # --- Upcoming hearings / notices ---
     fr_notices = get_federal_register_notices("East Potomac", "national-park-service")
