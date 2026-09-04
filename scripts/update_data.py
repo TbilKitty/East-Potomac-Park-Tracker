@@ -325,14 +325,12 @@ def ensure_header_photo():
         print(f"Header photo download failed; using NPS source: {exc}")
         return PHOTO_URL
 
-
 def main():
     os.makedirs("data", exist_ok=True)
     now = datetime.now(timezone.utc)
     photo_src = ensure_header_photo()
-
     # --- Docket ---
-     df_docket = pd.DataFrame(columns=["date_filed", "entry_number", "description"])
+    df_docket = pd.DataFrame(columns=["date_filed", "entry_number", "description"])
     try:
         entries = get_docket_entries(DOCKET_ID)
         if entries:
