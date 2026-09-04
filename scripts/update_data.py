@@ -345,7 +345,6 @@ def main():
         if os.path.exists("data/east_potomac_docket.csv"):
             df_docket = pd.read_csv("data/east_potomac_docket.csv")
     df_docket.to_csv("data/east_potomac_docket.csv", index=False)
-#below line was left from prior file
     print("Fetching public notices...", flush=True)
     # --- Upcoming hearings / notices ---
     fr_notices = get_federal_register_notices("East Potomac", "national-park-service")
