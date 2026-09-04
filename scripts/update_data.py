@@ -341,8 +341,7 @@ def main():
                 if col not in df_docket.columns:
                     df_docket[col] = None
             df_docket = df_docket[["date_filed", "entry_number", "description"]].sort_values(
-                "date_filed", ascending=False
-            )
+                "date_filed", ascending=False)
     except (requests.exceptions.RequestException, KeyError) as e:
         print(f"CourtListener fetch/parse failed, keeping previous data if any: {e}")
         if os.path.exists("data/east_potomac_docket.csv"):
