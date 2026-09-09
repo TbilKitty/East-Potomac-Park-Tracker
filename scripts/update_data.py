@@ -370,19 +370,19 @@ def main():
     end = now.strftime("%Y%m%d%H%M%S")
     df_media = pd.DataFrame()
     #below copy/pasted to add Hains Point inquiries
-    try:
+        try:
         articles = gdelt_search(
-    '("East Potomac Park" OR "Hains Point") AND '
-    '(Trump OR "White House" OR redevelopment OR "golf course" OR "National Park Service")',
-    start,
-    end
-)
-if articles:
-    df_media = pd.DataFrame(articles)
-    df_media["seendate"] = pd.to_datetime(df_media["seendate"])
-    # GDELT searches the article text, not just its headline. Keep stories
-    # whose headlines use shorthand such as “Hains” or “Hains Point.”
-    df_media = df_media.drop_duplicates(subset=["url"])
+            '("East Potomac Park" OR "Hains Point") AND '
+            '(Trump OR "White House" OR redevelopment OR "golf course" OR "National Park Service")',
+            start,
+            end
+        )
+        if articles:
+            df_media = pd.DataFrame(articles)
+            df_media["seendate"] = pd.to_datetime(df_media["seendate"])
+            # Keep stories whose headlines use “Hains” or “Hains Point.”
+            df_media = df_media.drop_duplicates(subset=["url"])
+
     except Exception as e:
         print(f"GDELT fetch failed, keeping previous data if any: {e}")
         if os.path.exists("data/east_potomac_media.csv"):
