@@ -2,6 +2,7 @@ import os
 import json
 import time
 import html as html_module
+import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
 import requests
@@ -70,6 +71,34 @@ def gdelt_search(query, start, end, maxrecords=250, retries=3):
                 return []
             time.sleep(10)
     return []
+
+
+def google_news_search(query, max_records=100):
+    """Return recent Google News RSS items in the same shape as GDELT items."""
+    url = "https://news.google.com/rss/search"
+    params = {"q": query, "hl": "en-US", "gl": "US", "ceid": "US:en"}
+    try:
+        resp = requests.get(url, params=params, timeout=30)
+        resp.raise_for_status()
+        root = ET.fromstring(resp.content)
+    except (requests.RequestException, ET.ParseError) as exc:
+        print(f"Google News RSS fetch failed: {exc}")
+        return []
+
+    articles = []
+    for item in root.findall("./channel/item")[:max_records]:
+        title = item.findtext("title", "").strip()
+        link = item.findtext("link", "").strip()
+        source = item.find("source")
+        domain = source.text.strip() if source is not None and source.text else "Google News"
+        published = pd.to_datetime(item.findtext("pubDate", ""), errors="coerce", utc=True)
+        articles.append({
+            "url": link,
+            "title": title,
+            "domain": domain,
+            "seendate": published,
+        })
+    return articles
 
 
 def get_federal_register_notices(term, agency):
@@ -369,26 +398,28 @@ def main():
     start = (now - pd.Timedelta(days=90)).strftime("%Y%m%d%H%M%S")
     end = now.strftime("%Y%m%d%H%M%S")
     df_media = pd.DataFrame()
-    #below copy/pasted to add Hains Point inquiries
+    news_query = (
+        '("East Potomac Park" OR "Hains Point") AND '
+        '(Trump OR "White House" OR redevelopment OR "golf course" OR "National Park Service")'
+    )
+    media_frames = []
     try:
-        articles = gdelt_search(
-            '("East Potomac Park" OR "Hains Point") AND '
-            '(Trump OR "White House" OR redevelopment OR "golf course" OR "National Park Service")',
-            start,
-            end
-        )
-        if articles:
-            df_media = pd.DataFrame(articles)
-            df_media["seendate"] = pd.to_datetime(df_media["seendate"])
-            # Keep stories whose headlines use “Hains” or “Hains Point.”
-            df_media = df_media.drop_duplicates(subset=["url"])
-
+        gdelt_articles = gdelt_search(news_query, start, end)
+        if gdelt_articles:
+            media_frames.append(pd.DataFrame(gdelt_articles))
     except Exception as e:
-        print(f"GDELT fetch failed, keeping previous data if any: {e}")
-        if os.path.exists("data/east_potomac_media.csv"):
-            df_media = pd.read_csv("data/east_potomac_media.csv")
-            if not df_media.empty:
-                df_media["seendate"] = pd.to_datetime(df_media["seendate"])
+        print(f"GDELT fetch failed: {e}")
+
+    # Google News RSS prevents a quiet GDELT rate limit from producing an
+    # apparently successful but empty daily update.
+    google_articles = google_news_search(news_query)
+    if google_articles:
+        media_frames.append(pd.DataFrame(google_articles))
+
+    if media_frames:
+        df_media = pd.concat(media_frames, ignore_index=True)
+        df_media["seendate"] = pd.to_datetime(df_media["seendate"], errors="coerce", utc=True)
+        df_media = df_media.drop_duplicates(subset=["url"])
     # An empty result or failed search must never erase the saved snapshot.
     if not df_media.empty:
         df_media.to_csv(media_path + ".tmp", index=False)
