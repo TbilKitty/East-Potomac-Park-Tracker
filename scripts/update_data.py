@@ -371,13 +371,12 @@ def main():
     df_media = pd.DataFrame()
     try:
         articles = gdelt_search('"East Potomac Park"', start, end)
-        if articles:
-            df_media = pd.DataFrame(articles)
-            df_media["seendate"] = pd.to_datetime(df_media["seendate"])
-            # Belt-and-suspenders: GDELT's query filtering isn't fully reliable,
-            # so double-check locally that the park is actually mentioned.
-            mask = df_media["title"].str.contains("east potomac", case=False, na=False)
-            df_media = df_media[mask]
+if articles:
+    df_media = pd.DataFrame(articles)
+    df_media["seendate"] = pd.to_datetime(df_media["seendate"])
+    # GDELT searches the article text, not just its headline. Keep stories
+    # whose headlines use shorthand such as “Hains” or “Hains Point.”
+    df_media = df_media.drop_duplicates(subset=["url"])
     except Exception as e:
         print(f"GDELT fetch failed, keeping previous data if any: {e}")
         if os.path.exists("data/east_potomac_media.csv"):
