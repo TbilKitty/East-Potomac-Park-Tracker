@@ -370,7 +370,7 @@ def main():
     end = now.strftime("%Y%m%d%H%M%S")
     df_media = pd.DataFrame()
     #below copy/pasted to add Hains Point inquiries
-        try:
+    try:
         articles = gdelt_search(
             '("East Potomac Park" OR "Hains Point") AND '
             '(Trump OR "White House" OR redevelopment OR "golf course" OR "National Park Service")',
