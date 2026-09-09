@@ -398,10 +398,9 @@ def main():
     start = (now - pd.Timedelta(days=90)).strftime("%Y%m%d%H%M%S")
     end = now.strftime("%Y%m%d%H%M%S")
     df_media = pd.DataFrame()
-    news_query = (
-        '("East Potomac Park" OR "Hains Point") AND '
-        '(Trump OR "White House" OR redevelopment OR "golf course" OR "National Park Service")'
-    )
+    # Only collect stories that explicitly mention one of the two places.
+    # Do not use broad political keywords here: they pull unrelated coverage.
+    news_query = '"East Potomac Park" OR "Hains Point"'
     media_frames = []
     try:
         gdelt_articles = gdelt_search(news_query, start, end)
