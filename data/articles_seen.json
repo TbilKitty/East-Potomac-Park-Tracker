@@ -5,7 +5,7 @@
     "domain": "wtop.com",
     "seendate": "2026-06-27 00:15:00+00:00",
     "fetched_text": "Lawmakers say White House demolition debris at East Potomac Park poses health risk",
-    "novelty": 0.7346211049739991,
+    "novelty": 0.7753513671516721,
     "summary": "Lawmakers say White House demolition debris at East Potomac Park poses health risk"
   },
   {
@@ -14,7 +14,7 @@
     "domain": "yahoo.com",
     "seendate": "2026-06-26 20:15:00+00:00",
     "fetched_text": "Democrats demand Trump remove East Wing debris  recklessly  dumped at East Potomac Park",
-    "novelty": 0.7276905670831009,
+    "novelty": 0.7747433433716616,
     "summary": "Democrats demand Trump remove East Wing debris  recklessly  dumped at East Potomac Park"
   },
   {
@@ -23,7 +23,7 @@
     "domain": "axios.com",
     "seendate": "2026-08-28T07:00:00+00:00",
     "fetched_text": "Tree removals at East Potomac golf course raise alarms - axios.com",
-    "novelty": 0.7854370826561188,
+    "novelty": 0.8047650944245699,
     "summary": "Tree removals at East Potomac golf course raise alarms - axios.com"
   },
   {
@@ -32,7 +32,7 @@
     "domain": "Journal-News.com",
     "seendate": "2026-09-07T14:03:27+00:00",
     "fetched_text": "East Potomac Park Golf Course - Journal-News.com",
-    "novelty": 0.4294670963518672,
+    "novelty": 0.4438598005360358,
     "summary": "East Potomac Park Golf Course - Journal-News.com"
   },
   {
@@ -41,7 +41,7 @@
     "domain": "WUSA9",
     "seendate": "2026-09-03T19:30:00+00:00",
     "fetched_text": "150 trees cut down so far at East Potomac Park as Trump Administration defends work at the golf course - WUSA9",
-    "novelty": 0.681896345543803,
+    "novelty": 0.689777285430138,
     "summary": "150 trees cut down so far at East Potomac Park as Trump Administration defends work at the golf course - WUSA9"
   },
   {
@@ -50,7 +50,7 @@
     "domain": "DC News Now",
     "seendate": "2026-09-05T16:25:00+00:00",
     "fetched_text": "Reaction: Judge weighs in on East Potomac Park - DC News Now",
-    "novelty": 0.6939728789338278,
+    "novelty": 0.6625573982586519,
     "summary": "Reaction: Judge weighs in on East Potomac Park - DC News Now"
   },
   {
@@ -59,7 +59,7 @@
     "domain": "nbcwashington.com",
     "seendate": "2026-09-03T19:20:08+00:00",
     "fetched_text": "East Potomac Park: Judge allows continued tree work by Trump administration - nbcwashington.com",
-    "novelty": 0.7641684267524376,
+    "novelty": 0.7673107813551567,
     "summary": "East Potomac Park: Judge allows continued tree work by Trump administration - nbcwashington.com"
   },
   {
@@ -68,7 +68,7 @@
     "domain": "WTOP News",
     "seendate": "2026-09-05T11:33:04+00:00",
     "fetched_text": "A DC golf course for \u2018the people\u2019 faces a Trump makeover - WTOP News",
-    "novelty": 0.6764433235796508,
+    "novelty": 0.6265828844564857,
     "summary": "A DC golf course for \u2018the people\u2019 faces a Trump makeover - WTOP News"
   },
   {
@@ -77,7 +77,7 @@
     "domain": "City Cast DC",
     "seendate": "2026-09-03T21:53:55+00:00",
     "fetched_text": "Park Service Has Removed 150 Trees at East Potomac Park - City Cast DC",
-    "novelty": 0.6980593180148889,
+    "novelty": 0.6966718736411761,
     "summary": "Park Service Has Removed 150 Trees at East Potomac Park - City Cast DC"
   },
   {
@@ -86,7 +86,7 @@
     "domain": "The Washington Post",
     "seendate": "2026-08-28T07:00:00+00:00",
     "fetched_text": "Trees are coming down by the dozen as Trump\u2019s D.C. golf makeover nears - The Washington Post",
-    "novelty": 0.8205040312114831,
+    "novelty": 0.8270584990853197,
     "summary": "Trees are coming down by the dozen as Trump\u2019s D.C. golf makeover nears - The Washington Post"
   },
   {
@@ -95,7 +95,7 @@
     "domain": "washingtonsun.com",
     "seendate": "2026-08-31T09:17:45+00:00",
     "fetched_text": "At East Potomac Park, Trees Are Falling and Tensions Are Rising - washingtonsun.com",
-    "novelty": 0.8222938281942898,
+    "novelty": 0.8278601825878765,
     "summary": "At East Potomac Park, Trees Are Falling and Tensions Are Rising - washingtonsun.com"
   },
   {
@@ -104,7 +104,7 @@
     "domain": "Potomac Conservancy",
     "seendate": "2026-09-01T17:30:08+00:00",
     "fetched_text": "More trees are up for the chopping blog at East Potomac Park - Potomac Conservancy",
-    "novelty": 0.8138426317455971,
+    "novelty": 0.815808780364719,
     "summary": "More trees are up for the chopping blog at East Potomac Park - Potomac Conservancy"
   },
   {
@@ -113,7 +113,7 @@
     "domain": "WJLA",
     "seendate": "2026-09-02T08:50:44+00:00",
     "fetched_text": "More than 60 trees removed at East Potomac Park: What happens next? - WJLA",
-    "novelty": 0.8009776285629475,
+    "novelty": 0.8002342500958246,
     "summary": "More than 60 trees removed at East Potomac Park: What happens next?"
   },
   {
@@ -122,7 +122,7 @@
     "domain": "axios.com",
     "seendate": "2026-09-08T16:20:55+00:00",
     "fetched_text": "\"Hands Off Hains\" is D.C.'s newest resistance merch - axios.com",
-    "novelty": 0.9166358741277283,
+    "novelty": 0.9215139269990704,
     "summary": "\"Hands Off Hains\" is D.C.'s newest resistance merch - axios.com"
   },
   {
@@ -131,7 +131,7 @@
     "domain": "DC News Now",
     "seendate": "2026-09-03T20:40:41+00:00",
     "fetched_text": "Government sheds more light on work at East Potomac Park - DC News Now",
-    "novelty": 0.753167850804501,
+    "novelty": 0.751290264632539,
     "summary": "Government sheds more light on work at East Potomac Park - DC News Now"
   },
   {
@@ -140,7 +140,7 @@
     "domain": "nbcwashington.com",
     "seendate": "2026-08-29T07:00:00+00:00",
     "fetched_text": "Cyclists rally to save Hains Point in East Potomac Park - nbcwashington.com",
-    "novelty": 0.6806691579769478,
+    "novelty": 0.680035549022874,
     "summary": "Cyclists rally to save Hains Point in East Potomac Park - nbcwashington.com"
   },
   {
@@ -149,7 +149,7 @@
     "domain": "WUSA9",
     "seendate": "2026-09-03T20:23:00+00:00",
     "fetched_text": "150 trees cut down so far at East Potomac Park - WUSA9",
-    "novelty": 0.7500316232763876,
+    "novelty": 0.7520383315547134,
     "summary": "150 trees cut down so far at East Potomac Park - WUSA9"
   },
   {
@@ -158,7 +158,7 @@
     "domain": "WTOP News",
     "seendate": "2026-08-29T07:00:00+00:00",
     "fetched_text": "\u2018America\u2019s national parks are not for sale\u2019: Cyclists rally at Hains Point over proposed golf course changes - WTOP News",
-    "novelty": 0.7975209746756174,
+    "novelty": 0.8015662349160448,
     "summary": "\u2018America\u2019s national parks are not for sale\u2019: Cyclists rally at Hains Point over proposed golf course changes - WTOP News"
   },
   {
@@ -167,7 +167,7 @@
     "domain": "DC News Now",
     "seendate": "2026-09-03T23:39:13+00:00",
     "fetched_text": "Government Sheds Light on Work happening at East Potomac Park - DC News Now",
-    "novelty": 0.7159738659421746,
+    "novelty": 0.7233219381622418,
     "summary": "Government Sheds Light on Work happening at East Potomac Park - DC News Now"
   },
   {
@@ -176,7 +176,7 @@
     "domain": "nbcwashington.com",
     "seendate": "2026-08-29T07:00:00+00:00",
     "fetched_text": "Cyclists rally to save Hains Point in East Potomac Park - nbcwashington.com",
-    "novelty": 0.7347823892152869,
+    "novelty": 0.7288773345518593,
     "summary": "Cyclists rally to save Hains Point in East Potomac Park - nbcwashington.com"
   },
   {
@@ -185,7 +185,7 @@
     "domain": "Greater Greater Washington",
     "seendate": "2026-08-27T07:00:00+00:00",
     "fetched_text": "Congress made Hains Point a public park. Will it stay that way? - Greater Greater Washington",
-    "novelty": 0.8680983646617173,
+    "novelty": 0.8571231686504649,
     "summary": "Congress made Hains Point a public park. Will it stay that way?"
   },
   {
@@ -194,7 +194,7 @@
     "domain": "WUSA9",
     "seendate": "2026-08-29T07:00:00+00:00",
     "fetched_text": "Hundreds protest Trump\u2019s East Potomac Park renovation plans - WUSA9",
-    "novelty": 0.6972550884613856,
+    "novelty": 0.687378037641027,
     "summary": "Hundreds protest Trump\u2019s East Potomac Park renovation plans - WUSA9"
   },
   {
@@ -203,7 +203,7 @@
     "domain": "nbcwashington.com",
     "seendate": "2026-07-18T07:00:00+00:00",
     "fetched_text": "Cyclists protest Trump plan to renovate East Potomac Park into championship golf course - nbcwashington.com",
-    "novelty": 0.713280489806689,
+    "novelty": 0.7382789681977273,
     "summary": "Cyclists protest Trump plan to renovate East Potomac Park into championship golf course - nbcwashington.com"
   },
   {
@@ -212,7 +212,7 @@
     "domain": "Jonesboro Sun",
     "seendate": "2026-09-05T11:18:19+00:00",
     "fetched_text": "A golf course for \u2018the people\u2019 faces a presidential makeover - Jonesboro Sun",
-    "novelty": 0.893991138469062,
+    "novelty": 0.8745929756175903,
     "summary": "A golf course for \u2018the people\u2019 faces a presidential makeover - Jonesboro Sun"
   },
   {
@@ -221,7 +221,7 @@
     "domain": "India Today",
     "seendate": "2026-09-05T11:44:38+00:00",
     "fetched_text": "Trump golf plan sparks fears for affordable access at East Potomac Park - India Today",
-    "novelty": 0.8063376186604285,
+    "novelty": 0.8144808429899983,
     "summary": "Trump golf plan sparks fears for affordable access at East Potomac Park - India Today"
   },
   {
@@ -230,7 +230,7 @@
     "domain": "LinkedIn",
     "seendate": "2026-09-05T13:02:54+00:00",
     "fetched_text": "WASHINGTON \u2014 A pack of cyclists whisked by along the circuit at East Potomac Park while the golf course parking lot filled with luxury SUVs parked next to older, inexpensive economy cars, all with the Washington Monument in the background. - LinkedIn",
-    "novelty": 0.8487576282042849,
+    "novelty": 0.8537359316311087,
     "summary": "WASHINGTON \u2014 A pack of cyclists whisked by along the circuit at East Potomac Park while the golf course parking lot filled with luxury SUVs parked next to older, inexpensive economy cars, all with the Washington Monument in the background."
   },
   {
@@ -239,7 +239,7 @@
     "domain": "Yahoo",
     "seendate": "2026-09-04T20:59:34+00:00",
     "fetched_text": "Reaction: Judge weighs in on East Potomac Park - Yahoo",
-    "novelty": 0.7866571277868595,
+    "novelty": 0.7782259565522847,
     "summary": "Reaction: Judge weighs in on East Potomac Park - Yahoo"
   },
   {
@@ -248,7 +248,7 @@
     "domain": "Mother Jones",
     "seendate": "2026-08-11T07:00:00+00:00",
     "fetched_text": "Fore! Trump\u2019s DC Golf Course Is Already in the Rough - Mother Jones",
-    "novelty": 0.8097306788875994,
+    "novelty": 0.8253318282886444,
     "summary": "Trump\u2019s DC Golf Course Is Already in the Rough - Mother Jones"
   },
   {
@@ -257,7 +257,7 @@
     "domain": "DC News Now",
     "seendate": "2026-08-30T13:21:04+00:00",
     "fetched_text": "Cyclists rally at Hains Point in East Potomac Park - DC News Now",
-    "novelty": 0.5124050047769071,
+    "novelty": 0.5140457616300034,
     "summary": "Cyclists rally at Hains Point in East Potomac Park - DC News Now"
   },
   {
@@ -266,7 +266,7 @@
     "domain": "WTOP News",
     "seendate": "2026-09-01T20:12:45+00:00",
     "fetched_text": "\u2018The best place to cycle in the whole city\u2019: Blind riders fear changes at Hains Point - WTOP News",
-    "novelty": 0.8734058672428002,
+    "novelty": 0.8719532397399256,
     "summary": "\u2018The best place to cycle in the whole city\u2019: Blind riders fear changes at Hains Point - WTOP News"
   },
   {
@@ -275,7 +275,7 @@
     "domain": "Yahoo",
     "seendate": "2026-09-03T23:39:13+00:00",
     "fetched_text": "Government Sheds Light on Work happening at East Potomac Park - Yahoo",
-    "novelty": 0.8016053675032302,
+    "novelty": 0.8079534941851659,
     "summary": "Government Sheds Light on Work happening at East Potomac Park - Yahoo"
   },
   {
@@ -284,7 +284,7 @@
     "domain": "Yahoo",
     "seendate": "2026-09-03T20:49:42+00:00",
     "fetched_text": "150 trees cut down at East Potomac Park - Yahoo",
-    "novelty": 0.717416312974194,
+    "novelty": 0.7141098679986528,
     "summary": "150 trees cut down at East Potomac Park - Yahoo"
   },
   {
@@ -293,7 +293,7 @@
     "domain": "WUSA9",
     "seendate": "2026-08-29T07:00:00+00:00",
     "fetched_text": "Hundreds protest Trump\u2019s East Potomac Park renovation plans - WUSA9",
-    "novelty": 0.6415764803515895,
+    "novelty": 0.637536514897773,
     "summary": "Hundreds protest Trump\u2019s East Potomac Park renovation plans - WUSA9"
   },
   {
@@ -302,7 +302,7 @@
     "domain": "Goshen News",
     "seendate": "2026-09-05T11:18:19+00:00",
     "fetched_text": "A golf course for \u2018the people\u2019 faces a presidential makeover - Goshen News",
-    "novelty": 0.7961970900598094,
+    "novelty": 0.7769679387993791,
     "summary": "A golf course for \u2018the people\u2019 faces a presidential makeover - Goshen News"
   },
   {
@@ -311,7 +311,7 @@
     "domain": "WJLA",
     "seendate": "2026-09-02T09:02:46+00:00",
     "fetched_text": "More than 60 trees removed at East Potomac Park: What happens next? - WJLA",
-    "novelty": 0.7633912729284626,
+    "novelty": 0.7679223650331066,
     "summary": "More than 60 trees removed at East Potomac Park: What happens next?"
   },
   {
@@ -320,7 +320,7 @@
     "domain": "WUSA9",
     "seendate": "2026-07-30T07:00:00+00:00",
     "fetched_text": "'This place is sacred' | Runners warn East Potomac Park redevelopment could impact iconic DC race routes - WUSA9",
-    "novelty": 0.8464619907528268,
+    "novelty": 0.856669441854593,
     "summary": "'This place is sacred' | Runners warn East Potomac Park redevelopment could impact iconic DC race routes - WUSA9"
   },
   {
@@ -329,7 +329,7 @@
     "domain": "Quiver Quantitative",
     "seendate": "2026-08-31T20:21:00+00:00",
     "fetched_text": "Press Release: Norton, Raskin, Beyer and Ivey Question Trump Administration\u2019s East Potomac Park Redevelopment Plan - Quiver Quantitative",
-    "novelty": 0.805086699275084,
+    "novelty": 0.8107527897045446,
     "summary": "Press Release: Norton, Raskin, Beyer and Ivey Question Trump Administration\u2019s East Potomac Park Redevelopment Plan - Quiver Quantitative"
   },
   {
@@ -338,7 +338,7 @@
     "domain": "Dayton Daily News",
     "seendate": "2026-09-01T20:28:35+00:00",
     "fetched_text": "East Potomac Park Golf Course - Dayton Daily News",
-    "novelty": 0.658431301849187,
+    "novelty": 0.5989229173543489,
     "summary": "East Potomac Park Golf Course - Dayton Daily News"
   },
   {
@@ -347,7 +347,7 @@
     "domain": "The Herald Journal",
     "seendate": "2026-09-01T20:28:36+00:00",
     "fetched_text": "East Potomac Park Golf Course - The Herald Journal",
-    "novelty": 0.5790343596921721,
+    "novelty": 0.5847473525320949,
     "summary": "East Potomac Park Golf Course - The Herald Journal"
   },
   {
@@ -356,7 +356,7 @@
     "domain": "CNN",
     "seendate": "2026-08-29T07:00:00+00:00",
     "fetched_text": "Cyclists protest Trump\u2019s proposed overhaul of East Potomac Park - CNN",
-    "novelty": 0.7479954861854361,
+    "novelty": 0.7483233312938666,
     "summary": "Cyclists protest Trump\u2019s proposed overhaul of East Potomac Park - CNN"
   },
   {
@@ -365,7 +365,7 @@
     "domain": "The Herald Journal",
     "seendate": "2026-09-01T20:08:44+00:00",
     "fetched_text": "APTOPIX East Potomac Park Golf Course - The Herald Journal",
-    "novelty": 0.7182213084829581,
+    "novelty": 0.7237734375377748,
     "summary": "APTOPIX East Potomac Park Golf Course - The Herald Journal"
   },
   {
@@ -374,7 +374,7 @@
     "domain": "City Cast DC",
     "seendate": "2026-08-28T07:00:00+00:00",
     "fetched_text": "The Trump Administration Has Been Cutting Trees at East Potomac - City Cast DC",
-    "novelty": 0.771767749689607,
+    "novelty": 0.7757529985739444,
     "summary": "The Trump Administration Has Been Cutting Trees at East Potomac - City Cast DC"
   },
   {
@@ -383,7 +383,7 @@
     "domain": "The Herald Journal",
     "seendate": "2026-09-01T20:29:27+00:00",
     "fetched_text": "East Potomac Park Golf Course - The Herald Journal",
-    "novelty": 0.5433996199195601,
+    "novelty": 0.5537598997362626,
     "summary": "East Potomac Park Golf Course - The Herald Journal"
   },
   {
@@ -392,7 +392,7 @@
     "domain": "The Herald Journal",
     "seendate": "2026-09-01T20:29:28+00:00",
     "fetched_text": "East Potomac Park Golf Course - The Herald Journal",
-    "novelty": 0.5072358607074055,
+    "novelty": 0.5220417542870774,
     "summary": "East Potomac Park Golf Course - The Herald Journal"
   },
   {
@@ -401,7 +401,7 @@
     "domain": "The Herald Journal",
     "seendate": "2026-09-01T20:28:35+00:00",
     "fetched_text": "East Potomac Park Golf Course - The Herald Journal",
-    "novelty": 0.6213928810074718,
+    "novelty": 0.6207413271257367,
     "summary": "East Potomac Park Golf Course - The Herald Journal"
   },
   {
@@ -410,7 +410,7 @@
     "domain": "Post Register",
     "seendate": "2026-09-01T17:25:53+00:00",
     "fetched_text": "East Potomac Park Golf Course - Post Register",
-    "novelty": 0.6200937528140587,
+    "novelty": 0.6185791619485445,
     "summary": "East Potomac Park Golf Course - Post Register"
   },
   {
@@ -419,7 +419,7 @@
     "domain": "Post Register",
     "seendate": "2026-09-01T20:29:27+00:00",
     "fetched_text": "East Potomac Park Golf Course - Post Register",
-    "novelty": 0.5541390813369232,
+    "novelty": 0.5595572522858037,
     "summary": "East Potomac Park Golf Course - Post Register"
   },
   {
@@ -428,7 +428,7 @@
     "domain": "Yahoo",
     "seendate": "2026-08-30T13:06:28+00:00",
     "fetched_text": "Cyclists rally at Hains Point in East Potomac Park - Yahoo",
-    "novelty": 0.6310270089616385,
+    "novelty": 0.6200098044896888,
     "summary": "Cyclists rally at Hains Point in East Potomac Park - Yahoo"
   },
   {
@@ -437,7 +437,7 @@
     "domain": "AlterNet",
     "seendate": "2026-08-28T07:00:00+00:00",
     "fetched_text": "Trump cuts down oldest cherry blossoms in DC for his golf course - AlterNet",
-    "novelty": 0.7690780668824849,
+    "novelty": 0.7900096151746218,
     "summary": "Trump cuts down oldest cherry blossoms in DC for his golf course - AlterNet"
   },
   {
@@ -446,7 +446,7 @@
     "domain": "axios.com",
     "seendate": "2026-07-30T07:00:00+00:00",
     "fetched_text": "Exclusive: Congress presses Trump on D.C. golf course plans - axios.com",
-    "novelty": 0.7508339276724488,
+    "novelty": 0.7663321487408322,
     "summary": "Exclusive: Congress presses Trump on D.C. golf course plans - axios.com"
   },
   {
@@ -455,7 +455,7 @@
     "domain": "Yahoo",
     "seendate": "2026-08-29T07:00:00+00:00",
     "fetched_text": "NPS cutting down trees at East Potomac Park - Yahoo",
-    "novelty": 0.8212130572757383,
+    "novelty": 0.8203353511439337,
     "summary": "NPS cutting down trees at East Potomac Park - Yahoo"
   },
   {
@@ -464,7 +464,7 @@
     "domain": "Hindustan Times",
     "seendate": "2026-09-01T22:38:18+00:00",
     "fetched_text": "How many of DC's Japanese cherry trees did Trump chop down? Inside East Potomac Park golf course overhaul | Hindustan Times - Hindustan Times",
-    "novelty": 0.7897059156414509,
+    "novelty": 0.7930337089304822,
     "summary": "How many of DC's Japanese cherry trees did Trump chop down? Inside East Potomac Park golf course overhaul | Hindustan Times - Hindustan Times"
   },
   {
@@ -473,7 +473,7 @@
     "domain": "Goshen News",
     "seendate": "2026-09-01T17:52:22+00:00",
     "fetched_text": "East Potomac Park Golf Course - Goshen News",
-    "novelty": 0.579753055520981,
+    "novelty": 0.5874833283581093,
     "summary": "East Potomac Park Golf Course - Goshen News"
   },
   {
@@ -482,7 +482,7 @@
     "domain": "Modern Ghana",
     "seendate": "2026-08-30T07:00:00+00:00",
     "fetched_text": "Cyclists protest Trump\u2019s proposed overhaul of East Potomac Park - Modern Ghana",
-    "novelty": 0.6908255038688118,
+    "novelty": 0.7007333220997677,
     "summary": "Cyclists protest Trump\u2019s proposed overhaul of East Potomac Park - Modern Ghana"
   },
   {
@@ -491,7 +491,7 @@
     "domain": "Sportico.com",
     "seendate": "2026-08-03T07:00:00+00:00",
     "fetched_text": "Congress Demands Trump Preserve East Potomac Park Golf Courses - Sportico.com",
-    "novelty": 0.7970012288640801,
+    "novelty": 0.7975628694740979,
     "summary": "Congress Demands Trump Preserve East Potomac Park Golf Courses - Sportico.com"
   },
   {
@@ -500,7 +500,7 @@
     "domain": "goSkagit",
     "seendate": "2026-09-01T20:36:16+00:00",
     "fetched_text": "APTOPIX East Potomac Park Golf Course - goSkagit",
-    "novelty": 0.6742942931533991,
+    "novelty": 0.6739411684866948,
     "summary": "APTOPIX East Potomac Park Golf Course - goSkagit"
   },
   {
@@ -509,7 +509,7 @@
     "domain": "ABC News - Breaking News, Latest News and Videos",
     "seendate": "2026-06-28T07:00:00+00:00",
     "fetched_text": "Trump says work will begin on DC golf course despite judge's warning - ABC News - Breaking News, Latest News and Videos",
-    "novelty": 0.829601028341783,
+    "novelty": 0.8341769534431122,
     "summary": "Trump says work will begin on DC golf course despite judge's warning - ABC News - Breaking News, Latest News and Videos"
   },
   {
@@ -518,7 +518,7 @@
     "domain": "washingtontimes.com",
     "seendate": "2026-08-11T07:00:00+00:00",
     "fetched_text": "East Potomac Park\u2019s renovation tests Trump\u2019s role as steward - washingtontimes.com",
-    "novelty": 0.8193360817297777,
+    "novelty": 0.8216443876072732,
     "summary": "East Potomac Park\u2019s renovation tests Trump\u2019s role as steward - washingtontimes.com"
   },
   {
@@ -527,7 +527,7 @@
     "domain": "Bluefield Daily Telegraph",
     "seendate": "2026-09-01T20:29:28+00:00",
     "fetched_text": "East Potomac Park Golf Course - Bluefield Daily Telegraph",
-    "novelty": 0.6788378527731527,
+    "novelty": 0.6325257247483052,
     "summary": "East Potomac Park Golf Course - Bluefield Daily Telegraph"
   },
   {
@@ -536,7 +536,7 @@
     "domain": "Yahoo",
     "seendate": "2026-08-30T07:00:00+00:00",
     "fetched_text": "Hundreds of cyclists, runners, and birders protest Trump redevelopment of East Potomac Park - Yahoo",
-    "novelty": 0.6830489904927771,
+    "novelty": 0.6791225344934981,
     "summary": "Hundreds of cyclists, runners, and birders protest Trump redevelopment of East Potomac Park - Yahoo"
   },
   {
@@ -545,7 +545,7 @@
     "domain": "Post Register",
     "seendate": "2026-08-24T07:00:00+00:00",
     "fetched_text": "East Potomac Park Golf Course - Post Register",
-    "novelty": 0.6697536372736959,
+    "novelty": 0.6758261490852868,
     "summary": "East Potomac Park Golf Course - Post Register"
   },
   {
@@ -554,7 +554,7 @@
     "domain": "Rutland Herald",
     "seendate": "2026-08-24T07:00:00+00:00",
     "fetched_text": "East Potomac Park Golf Course - Rutland Herald",
-    "novelty": 0.7503847895923849,
+    "novelty": 0.759496268110388,
     "summary": "East Potomac Park Golf Course - Rutland Herald"
   },
   {
@@ -563,7 +563,7 @@
     "domain": "Goshen News",
     "seendate": "2026-08-24T07:00:00+00:00",
     "fetched_text": "East Potomac Park Golf Course - Goshen News",
-    "novelty": 0.6238831488430261,
+    "novelty": 0.6535629504177647,
     "summary": "East Potomac Park Golf Course - Goshen News"
   },
   {
@@ -572,7 +572,7 @@
     "domain": "CNN",
     "seendate": "2026-07-18T07:00:00+00:00",
     "fetched_text": "Par for the course: Trump forging ahead with DC golf course makeover without input from oversight panels - CNN",
-    "novelty": 0.8419361431445103,
+    "novelty": 0.8574840873289489,
     "summary": "Par for the course: Trump forging ahead with DC golf course makeover without input from oversight panels - CNN"
   },
   {
@@ -581,7 +581,7 @@
     "domain": "The Washington Post",
     "seendate": "2026-07-09T07:00:00+00:00",
     "fetched_text": "Opinion | Trump\u2019s golf course project could ruin a perfect D.C. running route - The Washington Post",
-    "novelty": 0.8145984772000125,
+    "novelty": 0.8254685387320072,
     "summary": "Opinion | Trump\u2019s golf course project could ruin a perfect D.C. running route - The Washington Post"
   },
   {
@@ -590,7 +590,7 @@
     "domain": "Modern Ghana",
     "seendate": "2026-08-30T02:35:28+00:00",
     "fetched_text": "Cyclists protest Trump\u2019s proposed overhaul of East Potomac Park - Modern Ghana",
-    "novelty": 0.741790451890713,
+    "novelty": 0.7473602411985217,
     "summary": "Cyclists protest Trump\u2019s proposed overhaul of East Potomac Park - Modern Ghana"
   },
   {
@@ -599,7 +599,7 @@
     "domain": "Bluefield Daily Telegraph",
     "seendate": "2026-08-17T20:43:40+00:00",
     "fetched_text": "East Potomac Park Golf Course - Bluefield Daily Telegraph",
-    "novelty": 0.7995624103521363,
+    "novelty": 0.7980451156934155,
     "summary": "East Potomac Park Golf Course - Bluefield Daily Telegraph"
   },
   {
@@ -608,7 +608,7 @@
     "domain": "WJLA",
     "seendate": "2026-07-20T07:00:00+00:00",
     "fetched_text": "Bikers, runners concerned about East Potomac Park's trail amid Trump's golf course plans - WJLA",
-    "novelty": 0.7625828549387639,
+    "novelty": 0.764224029539705,
     "summary": "Bikers, runners concerned about East Potomac Park's trail amid Trump's golf course plans - WJLA"
   },
   {
@@ -617,7 +617,7 @@
     "domain": "WUSA9",
     "seendate": "2026-07-30T07:00:00+00:00",
     "fetched_text": "Runners express concern that East Potomac Park redevelopment could impact iconic DC race routes - WUSA9",
-    "novelty": 0.7674344483961022,
+    "novelty": 0.7881500438138559,
     "summary": "Runners express concern that East Potomac Park redevelopment could impact iconic DC race routes - WUSA9"
   },
   {
@@ -626,7 +626,7 @@
     "domain": "nbcwashington.com",
     "seendate": "2026-07-18T07:00:00+00:00",
     "fetched_text": "DC cycling community protests plans to renovate East Potomac Park - nbcwashington.com",
-    "novelty": 0.7903360871342546,
+    "novelty": 0.7905691644928163,
     "summary": "DC cycling community protests plans to renovate East Potomac Park - nbcwashington.com"
   },
   {
@@ -635,7 +635,7 @@
     "domain": "Democracy Defenders Fund",
     "seendate": "2026-07-20T22:29:20+00:00",
     "fetched_text": "Legal Challenge Brought Against Effort by Trump-Vance Administration to Stymie Public Access to East Potomac Park, Create Exclusive Golf Course for President - Democracy Defenders Fund",
-    "novelty": 0.8682643291683942,
+    "novelty": 0.8723285164169512,
     "summary": "Legal Challenge Brought Against Effort by Trump-Vance Administration to Stymie Public Access to East Potomac Park, Create Exclusive Golf Course for President - Democracy Defenders Fund"
   },
   {
@@ -644,7 +644,7 @@
     "domain": "washingtonsun.com",
     "seendate": "2026-07-22T07:00:00+00:00",
     "fetched_text": "From Cycling to Fishing, Concerns About East Potomac\u2019s Future Go Beyond Golf - washingtonsun.com",
-    "novelty": 0.8213553017240709,
+    "novelty": 0.8379661492593735,
     "summary": "From Cycling to Fishing, Concerns About East Potomac\u2019s Future Go Beyond Golf - washingtonsun.com"
   },
   {
@@ -653,7 +653,7 @@
     "domain": "Washington Examiner",
     "seendate": "2026-07-30T07:00:00+00:00",
     "fetched_text": "Raskin pushes for details about Potomac golf course renovation as cost estimate remains elusive - Washington Examiner",
-    "novelty": 0.882475011311503,
+    "novelty": 0.8835882599137352,
     "summary": "Raskin pushes for details about Potomac golf course renovation as cost estimate remains elusive - Washington Examiner"
   },
   {
@@ -662,7 +662,7 @@
     "domain": "WTOP News",
     "seendate": "2026-06-26T07:00:00+00:00",
     "fetched_text": "Lawmakers say White House demolition debris at East Potomac Park poses health risk - WTOP News",
-    "novelty": 0.9410857042786697,
+    "novelty": 0.9331348292069197,
     "summary": "Lawmakers say White House demolition debris at East Potomac Park poses health risk - WTOP News"
   },
   {
@@ -671,7 +671,7 @@
     "domain": "apnews.com",
     "seendate": "2026-05-09T07:00:00+00:00",
     "fetched_text": "President of Parks and Rec? Trump asserts authority over public spaces in DC - apnews.com",
-    "novelty": 0.9559277054748906,
+    "novelty": 0.9633331283568699,
     "summary": "President of Parks and Rec? Trump asserts authority over public spaces in DC - apnews.com"
   },
   {
@@ -680,7 +680,7 @@
     "domain": "WTOP News",
     "seendate": "2026-07-09T07:00:00+00:00",
     "fetched_text": "Va. and Md. senators press Trump administration for \u2018basic\u2019 DC golf course plans - WTOP News",
-    "novelty": 0.8023492316338477,
+    "novelty": 0.7960267977773623,
     "summary": "senators press Trump administration for \u2018basic\u2019 DC golf course plans - WTOP News"
   },
   {
@@ -698,7 +698,7 @@
     "domain": "Quiver Quantitative",
     "seendate": "2026-07-30T07:00:00+00:00",
     "fetched_text": "Press Release: Beyer, Raskin, Norton and Ivey Seek Details on East Potomac Park Redevelopment Plan - Quiver Quantitative",
-    "novelty": 0.915515631955371,
+    "novelty": 0.9172453677051654,
     "summary": "Press Release: Beyer, Raskin, Norton and Ivey Seek Details on East Potomac Park Redevelopment Plan - Quiver Quantitative"
   },
   {
@@ -707,7 +707,7 @@
     "domain": "The Hill",
     "seendate": "2026-06-26T07:00:00+00:00",
     "fetched_text": "Democrats demand Trump remove East Wing debris \u2018recklessly\u2019 dumped at East Potomac Park - The Hill",
-    "novelty": 0.9494836793285248,
+    "novelty": 0.9501781830752041,
     "summary": "Democrats demand Trump remove East Wing debris \u2018recklessly\u2019 dumped at East Potomac Park - The Hill"
   },
   {
@@ -716,7 +716,7 @@
     "domain": "WUSA9",
     "seendate": "2026-07-31T07:00:00+00:00",
     "fetched_text": "Dozens of lawmakers pen letter opposing Trump's planned overhaul of East Potomac Golf Links - WUSA9",
-    "novelty": 0.8224930540346695,
+    "novelty": 0.83510172238292,
     "summary": "Dozens of lawmakers pen letter opposing Trump's planned overhaul of East Potomac Golf Links - WUSA9"
   },
   {
@@ -725,7 +725,7 @@
     "domain": "DC News Now",
     "seendate": "2026-06-26T23:30:09+00:00",
     "fetched_text": "Democratic lawmakers demand debris be removed from East Potomac Park - DC News Now",
-    "novelty": 0.5931099757194683,
+    "novelty": 0.6485333533110669,
     "summary": "Democratic lawmakers demand debris be removed from East Potomac Park - DC News Now"
   },
   {
@@ -734,7 +734,7 @@
     "domain": "The Washington Post",
     "seendate": "2026-05-09T07:00:00+00:00",
     "fetched_text": "Those who love this D.C. park fear Trump\u2019s golf proposal will push them out - The Washington Post",
-    "novelty": 0.9716347534044901,
+    "novelty": 0.970869232726547,
     "summary": "Those who love this D.C. park fear Trump\u2019s golf proposal will push them out - The Washington Post"
   },
   {
@@ -743,7 +743,7 @@
     "domain": "DC News Now",
     "seendate": "2026-06-26T07:00:00+00:00",
     "fetched_text": "Democratic lawmakers demand debris be removed from East Potomac Park - DC News Now",
-    "novelty": 0.7737900244300538,
+    "novelty": 0.7973962583769774,
     "summary": "Democratic lawmakers demand debris be removed from East Potomac Park - DC News Now"
   },
   {
@@ -752,7 +752,7 @@
     "domain": "WUSA9",
     "seendate": "2026-06-18T07:00:00+00:00",
     "fetched_text": "5 rescued from boat fire at DC's Hains Point - WUSA9",
-    "novelty": 0.4821677174030057,
+    "novelty": 0.35640735752098085,
     "summary": "5 rescued from boat fire at DC's Hains Point - WUSA9"
   },
   {
@@ -761,7 +761,7 @@
     "domain": "WJLA",
     "seendate": "2026-07-20T07:00:00+00:00",
     "fetched_text": "Bikers, runners concerned about East Potomac Park's trail amid Trump's golf course plans - WJLA",
-    "novelty": 0.6731634174129092,
+    "novelty": 0.6894914404527877,
     "summary": "Bikers, runners concerned about East Potomac Park's trail amid Trump's golf course plans - WJLA"
   },
   {
@@ -770,7 +770,7 @@
     "domain": "Snopes",
     "seendate": "2026-07-09T07:00:00+00:00",
     "fetched_text": "Is Trump admin cutting down oldest DC cherry trees to make way for golf course? - Snopes",
-    "novelty": 0.8465795064094813,
+    "novelty": 0.8596649134051152,
     "summary": "Is Trump admin cutting down oldest DC cherry trees to make way for golf course?"
   },
   {
@@ -779,7 +779,7 @@
     "domain": "\u041c\u0435\u0436\u0430. \u041d\u043e\u0432\u0438\u043d\u0438 \u0423\u043a\u0440\u0430\u0457\u043d\u0438.",
     "seendate": "2026-07-18T07:00:00+00:00",
     "fetched_text": "Trump administration moves to convert East Potomac Park into championship golf course - \u041c\u0435\u0436\u0430. \u041d\u043e\u0432\u0438\u043d\u0438 \u0423\u043a\u0440\u0430\u0457\u043d\u0438.",
-    "novelty": 0.8631878808843472,
+    "novelty": 0.8697119994499778,
     "summary": "Trump administration moves to convert East Potomac Park into championship golf course - \u041c\u0435\u0436\u0430."
   },
   {
@@ -788,7 +788,7 @@
     "domain": "DC News Now",
     "seendate": "2026-06-17T21:43:45+00:00",
     "fetched_text": "5 people rescued after boat fire at Hains Point in DC - DC News Now",
-    "novelty": 0.6288998249085667,
+    "novelty": 0.5490726613035459,
     "summary": "5 people rescued after boat fire at Hains Point in DC - DC News Now"
   },
   {
@@ -797,7 +797,7 @@
     "domain": "WUSA9",
     "seendate": "2026-06-03T07:00:00+00:00",
     "fetched_text": "Questions mount over the future of a running and cycling route in Hains Point - WUSA9",
-    "novelty": 0.8998628055773216,
+    "novelty": 0.9127441776788796,
     "summary": "Questions mount over the future of a running and cycling route in Hains Point - WUSA9"
   },
   {
@@ -806,7 +806,7 @@
     "domain": "The Washington Post",
     "seendate": "2026-06-30T07:00:00+00:00",
     "fetched_text": "Photos from Trump\u2019s golf course tour reveal extensive overhaul of East Potomac - The Washington Post",
-    "novelty": 0.8437084257737084,
+    "novelty": 0.8549361758540327,
     "summary": "Photos from Trump\u2019s golf course tour reveal extensive overhaul of East Potomac - The Washington Post"
   },
   {
@@ -815,7 +815,7 @@
     "domain": "DC News Now",
     "seendate": "2026-06-17T07:00:00+00:00",
     "fetched_text": "5 people rescued after boat fire at Hains Point in DC - DC News Now",
-    "novelty": 0.8905844756312385,
+    "novelty": 0.7984109098933471,
     "summary": "5 people rescued after boat fire at Hains Point in DC - DC News Now"
   },
   {
@@ -824,7 +824,7 @@
     "domain": "WUSA9",
     "seendate": "2026-06-18T07:00:00+00:00",
     "fetched_text": "5 rescued from boat fire at DC's Hains Point - WUSA9",
-    "novelty": 0.3376813281644122,
+    "novelty": 0.2708962196025625,
     "summary": "5 rescued from boat fire at DC's Hains Point - WUSA9"
   },
   {
@@ -833,7 +833,7 @@
     "domain": "The Business Journals",
     "seendate": "2026-05-12T07:00:00+00:00",
     "fetched_text": "Viewpoint: What D.C. will lose when Trump takes over East Potomac Park - The Business Journals",
-    "novelty": 0.9286863964144259,
+    "novelty": 0.9214807310666879,
     "summary": "will lose when Trump takes over East Potomac Park - The Business Journals"
   },
   {
@@ -842,7 +842,7 @@
     "domain": "axios.com",
     "seendate": "2026-05-11T07:00:00+00:00",
     "fetched_text": "New group fights Trump's upscale plans for East Potomac golf course - axios.com",
-    "novelty": 0.7980667728096332,
+    "novelty": 0.8115985062613142,
     "summary": "New group fights Trump's upscale plans for East Potomac golf course - axios.com"
   },
   {
@@ -851,7 +851,7 @@
     "domain": "GearJunkie",
     "seendate": "2026-07-02T07:00:00+00:00",
     "fetched_text": "Trump\u2019s D.C. Golf Course Plan Could Scrap Historic Cherry Trees and a Beloved Riverside Trail - GearJunkie",
-    "novelty": 0.8530056696316055,
+    "novelty": 0.8719948350882023,
     "summary": "Golf Course Plan Could Scrap Historic Cherry Trees and a Beloved Riverside Trail - GearJunkie"
   },
   {
@@ -869,7 +869,7 @@
     "domain": "nbcwashington.com",
     "seendate": "2026-06-28T07:00:00+00:00",
     "fetched_text": "Trump says golf course renovation will have Washington hosting \u2018major' tournament - nbcwashington.com",
-    "novelty": 0.9120147359633926,
+    "novelty": 0.8322388286736984,
     "summary": "Trump says golf course renovation will have Washington hosting \u2018major' tournament - nbcwashington.com"
   },
   {
@@ -878,7 +878,7 @@
     "domain": "People.com",
     "seendate": "2026-07-02T07:00:00+00:00",
     "fetched_text": "Trump\u2019s New D.C. Golf Course Threatens to Scrap Historic Cherry Blossoms and Beloved Riverside Bike Trail - People.com",
-    "novelty": 0.8749514473095217,
+    "novelty": 0.8843528537292549,
     "summary": "Golf Course Threatens to Scrap Historic Cherry Blossoms and Beloved Riverside Bike Trail - People.com"
   },
   {
@@ -887,7 +887,7 @@
     "domain": "Yahoo",
     "seendate": "2026-07-30T07:00:00+00:00",
     "fetched_text": "Runners concerned about future of East Potomac Park - Yahoo",
-    "novelty": 0.7766314093622633,
+    "novelty": 0.7821780762364925,
     "summary": "Runners concerned about future of East Potomac Park - Yahoo"
   },
   {
@@ -896,7 +896,7 @@
     "domain": "axios.com",
     "seendate": "2026-05-04T07:00:00+00:00",
     "fetched_text": "Fight over East Potomac golf course heats up - axios.com",
-    "novelty": 0.9859532434151669,
+    "novelty": 0.9655941069276437,
     "summary": "Fight over East Potomac golf course heats up - axios.com"
   },
   {
@@ -905,7 +905,7 @@
     "domain": "MyNorthwest.com",
     "seendate": "2026-07-02T07:00:00+00:00",
     "fetched_text": "Judge seeks stronger Trump assurances on plans for DC golf course project - MyNorthwest.com",
-    "novelty": 0.8331536726208447,
+    "novelty": 0.7651497596549934,
     "summary": "Judge seeks stronger Trump assurances on plans for DC golf course project - MyNorthwest.com"
   },
   {
@@ -914,7 +914,241 @@
     "domain": "The Washington Post",
     "seendate": "2026-06-06T07:00:00+00:00",
     "fetched_text": "Trump\u2019s plan for golf course threatens pillar of D.C. cycling culture - The Washington Post",
-    "novelty": 0.8360623965179141,
+    "novelty": 0.8522663928383186,
     "summary": "Trump\u2019s plan for golf course threatens pillar of D.C. cycling culture - The Washington Post"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQWEJUMWUwTDNZTUwweUpzMFFBSEhGUmI0ZGRoeFFVa0hfUlh6X2tUOC0zaTQ0Wm5sMTExUUtYQ25Cbld4TnhKbUNnQUE1YlZDaC1UWXdNWERQeWozaWtmcDgxY2lJc1BKOUZDSjBpeENXbVJpcVc0aWFQR21aZm53WXZwWHg2MzhCOGlnMVl3RFVoUUhVaENnWGFCd0o?oc=5",
+    "title": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - Midland Reporter-Telegram",
+    "domain": "Midland Reporter-Telegram",
+    "seendate": "2026-09-16T22:09:56+00:00",
+    "fetched_text": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - Midland Reporter-Telegram",
+    "novelty": 0.737641152608633,
+    "summary": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - Midland Reporter-Telegram"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMilAJBVV95cUxOZlhvd0pmU3NLVEd6SDc4M0xnOWZhVjNLRUxkc3RNRFFocFFDRUozNmlNQlI5NVlDSVpiXzhEaDZ2aFh4SlRiZUNhUHFxM1lqLTJGZTQzbXBuMUEzdWFKWFk3SzZhcFBoWVFrQnBvamxPNDhrcm9CVXpaSjBwc1dHU2JzTUJPbkszUDhnTGtZWGYwbEpQNWp1VmdFYmxJeUl5MzdNeGVFM0Q5N1dZUEhwSnQwaS1tWnNST2xSN2VTOXFwdVI2UEtsUnBfWFcycmFLc251ZkxibW5FZTI2YmhBQ1YyeHRoU2wwc21WMzhZLXBqN21NSHhOSXJMVW1vTjRPck9heW83S0VNYWxEdkpzZF9KOEM?oc=5",
+    "title": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - Ottumwa Courier",
+    "domain": "Ottumwa Courier",
+    "seendate": "2026-09-16T22:02:56+00:00",
+    "fetched_text": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - Ottumwa Courier",
+    "novelty": 0.7342604123271841,
+    "summary": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - Ottumwa Courier"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMihgJBVV95cUxORWN5aW15UDIxNkh0SHF3UHZYUjl0X2V3OUFxT3RjU2xtMGlZNGRpdU9sTzJjR0NtcXBBS3Y0MzdPY3RoTy1XelVHNzU5YkZSV2l5YUVqaHY0YmFvZFJEWktYQVZWVTV3cnV1RC1IaVBoODVhY2wyZDh3SnJPWWtIaDNSeHhsUTBjT0FmY1U4dGtWTnNjcUtrOUdvTmZvSTBMOS1KdGhkak1xUkdmNFRVdllhbmthQXlfMDdSekNCRERUVkpJRVdtRml0aHRSbUdpN1QwXzNDaE8teW1NQW1UcTJyOUREMHlNQ1NyRl9OcUplY3k3WDE3czY5cWdrdUpxOU01M1l3?oc=5",
+    "title": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - The Register-Herald",
+    "domain": "The Register-Herald",
+    "seendate": "2026-09-16T22:02:56+00:00",
+    "fetched_text": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - The Register-Herald",
+    "novelty": 0.6995315235551445,
+    "summary": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - The Register-Herald"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxOTEN4M19HczBDaGtuOHpiVHRzNGlCb3VhX2tQVXJ5OE96bmtHUnFkUV9jbXVaaHhSNzBpTEQzQjRBVnJrYmc3SEJWVC1WbnNmNmNxd0ZlOW00cTlQMGhGTXlUWUxFRWMwaFh3R1NwNDBOM0wxMVM3YUpMank2T083d3Q1T2VVYTltVXJWRnQxc1RhNy0xYzZSY0swTDRuci1UNzJidDc5dFBNcm5FZzFMZFNOREkzeWtOUTA3X0pRekg?oc=5",
+    "title": "East Potomac Park Golf Course - chronicleonline.com",
+    "domain": "chronicleonline.com",
+    "seendate": "2026-09-15T17:26:59+00:00",
+    "fetched_text": "East Potomac Park Golf Course - chronicleonline.com",
+    "novelty": 0.5897053139225548,
+    "summary": "East Potomac Park Golf Course - chronicleonline.com"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMihwJBVV95cUxPN3BhVzh3aHo3aV80MFVkSjR3QS1xNjFiVHlvYXY4S3pycnZpQUpNU05WZXp5bURfMXpLY3VrVkZndXEtSVlUaEYtaWxXc0RucjV3SS1KREgwSEJ4RzZteENpTGhOQmpTZW1seks4RVpMODdIcFVzVGdzRVYxVGtVRGJxV0Q0VDBKVzZINFZ3eERTQ3pLMHFVTEhMN1lyc3JyOXB4Smw2SVNiVzBZY0Jidy1faElyMEVNNUtWRXBZMGY4VXc4azkyRS1qRGNKLW9qdDAtMFJIYVVlc0VKeFF0RnEzYmFmZlJfU3hIV1ZWY3FMUWtxNjZUTGVnaEMwUFdDN01qYnBFUQ?oc=5",
+    "title": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - The Verde Independent",
+    "domain": "The Verde Independent",
+    "seendate": "2026-09-16T22:02:56+00:00",
+    "fetched_text": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - The Verde Independent",
+    "novelty": 0.7429977275871943,
+    "summary": "Park Service quietly awards contracts to work on Trump\u2019s takeover of East Potomac golf course - The Verde Independent"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNcXg4d2FzbFNYVGtDRnZYNjJmTko2ckQxZFlUc2dQbGptZm5iR3lXVENSeXlhbVhOdm82M3pIUjR1YVZVOFAtNDJxMTJodWlha3VuSDhEYVl6eWFxeHBORm4tNHFIVDhMUW40TmhRUnpzV1VtYU4wejN2QUJpZU5NY0R0NUI1cDNIdUN0TnVnMWFKT3Z6c1BvVGF6eUZDMlZ4Vk1nTVNn?oc=5",
+    "title": "Controversial renovations may begin Tuesday at DC\u2019s East Potomac golf course - WTOP News",
+    "domain": "WTOP News",
+    "seendate": "2026-09-01T07:00:00+00:00",
+    "fetched_text": "Controversial renovations may begin Tuesday at DC\u2019s East Potomac golf course - WTOP News",
+    "novelty": 0.7560307842183894,
+    "summary": "Controversial renovations may begin Tuesday at DC\u2019s East Potomac golf course - WTOP News"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxQelVCVUNLY3hxZ3RleFRkcG85UDFCelFlZm5tWHVzei1uY2hCZWZnSEZqNmNCSTRKTlVOa2lJSk1USkhqcG9WbjYwaDZLSWp3Wi1YbWk4Zy1OUW1LRmZyS1FRSS1raURQblJONEhIalhiLVJzM3g4aWItMG1FM1poMk1fMDBnOExlQVk4Qjlzb2NVcEx1dVpSOVZiZzNZXzJYOWwtYTlSYjloN1RTNWpjazA5b01Zdw?oc=5",
+    "title": "Cyclists protest Trump plan to renovate East Potomac Park into championship golf course - NBC4 Washington",
+    "domain": "NBC4 Washington",
+    "seendate": "2026-07-18T07:00:00+00:00",
+    "fetched_text": "Cyclists protest Trump plan to renovate East Potomac Park into championship golf course - NBC4 Washington",
+    "novelty": 0.7108501260164083,
+    "summary": "Cyclists protest Trump plan to renovate East Potomac Park into championship golf course - NBC4 Washington"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPSU9tYmNmLUlycXZCNEdqelN2bVN2QjlEdFNGdkFCRzJzbVl3YlZWN0MwNmFqUUlCdV9SUm4xS3ROS3YtQTZlYlpmeENLN1FTTUUwNGlObGxINTlNWno3VmM0eHdxQmY5QkMwN1hvcmtSMzg4Vnl2OXdmTXA5bUdaUWFCcWRFVjJmeUJHZEJSWUo?oc=5",
+    "title": "Reaction: Judge weighs in on East Potomac Park - DC News Now",
+    "domain": "DC News Now",
+    "seendate": "2026-09-04T21:13:52+00:00",
+    "fetched_text": "Reaction: Judge weighs in on East Potomac Park - DC News Now",
+    "novelty": 0.6831047504066801,
+    "summary": "Reaction: Judge weighs in on East Potomac Park - DC News Now"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1DZEdFLTlKV0Z3OTZSTUgzQWZVRUs0b0x2ZDVETi1CNzlHODFCbS1zOFdIYUhWTjdaeE51NDFjMURuRzNhQmVqWDZWMzQxMjA3YTc3NzU1a1BjOTgyZFpjQkpacFlFWUJ5SDVqM2Jn?oc=5",
+    "title": "Did Trump cut down dozens of cherry trees for DC golf course renovations? - Snopes",
+    "domain": "Snopes",
+    "seendate": "2026-09-01T07:00:00+00:00",
+    "fetched_text": "Did Trump cut down dozens of cherry trees for DC golf course renovations? - Snopes",
+    "novelty": 0.795791372432441,
+    "summary": "Did Trump cut down dozens of cherry trees for DC golf course renovations?"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxNNy1hNDhFbHgwcV9BbXl6ZTJmXy0zeEJPUXF5REVuQWYwOHRwdVFBcmlJRU9TYlJfa2hTck16SVlENjdWOFpNSGxGV1hEZFZPWlFXeHdYblJreDJrZjZrUkFmMmVfRFNHSGtSMmxZQ1B1a0pVN0M4VWFIckFLeVR6TlFrV21xaUZoRzRfS3NHVmg1cmFLLTFFV1U1M1NlTTB6M3NOdENCeHZOS3U2V3FUT1hmNnhYNzFQNVkyUTJwSQ?oc=5",
+    "title": "East Potomac Park Golf Course - Dayton Daily News",
+    "domain": "Dayton Daily News",
+    "seendate": "2026-09-01T20:57:12+00:00",
+    "fetched_text": "East Potomac Park Golf Course - Dayton Daily News",
+    "novelty": 0.5485678479569326,
+    "summary": "East Potomac Park Golf Course - Dayton Daily News"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPZWJ4cVNCYlJPNlVUUGdpT04wNDdwYUxHY2c2cFVQTzlncTg4cVpscTVaQ1BCV1FxdkhBc1lRdE9Udl9ha05ZNjFVYk9yNXhCdUt5cmpZdFI1TjgxMFNHTEkzaDU1YURIbUhNOHpQcEhGYWxHQjk0RGZ3NE9jWFBTcFRLQkJ2YUJhNUhzazBOTzhSREZ2OHB5WjkwOHJpc1VWb3dLOUpFandKakxJTTRYZVB4VlZvMXNyeWRyN0xXcw?oc=5",
+    "title": "East Potomac Park Golf Course - Dayton Daily News",
+    "domain": "Dayton Daily News",
+    "seendate": "2026-09-01T07:00:00+00:00",
+    "fetched_text": "East Potomac Park Golf Course - Dayton Daily News",
+    "novelty": 0.6611180290130447,
+    "summary": "East Potomac Park Golf Course - Dayton Daily News"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxPcWFldEpSc0lPSldjeTVSNWFIVUVNZ1dkZGJsUGUxc21jWVZHX0tYbXBWMG1NRTZCclp4ZExqSGxGWVNDT1pyLU5CSERKTnFJazRWYU5vWVJSd3k0dVhmSG5yREZqVThBbk5jUWNmQ3J3NFRtR21KN2tsNnN3c1U5VDJ0a1pLWDh1Z2hkLVU4WlFSc1lMWHhxcWl2QmcyWmdBSkxRelU1RjJORWFlR0x6SzZHNEd1Vm9kNVdraEI3OVFJNDA?oc=5",
+    "title": "A golf course for \u2018the people\u2019 faces a presidential makeover - The Independent",
+    "domain": "The Independent",
+    "seendate": "2026-09-05T07:00:00+00:00",
+    "fetched_text": "A golf course for \u2018the people\u2019 faces a presidential makeover - The Independent",
+    "novelty": 0.8841296789074551,
+    "summary": "A golf course for \u2018the people\u2019 faces a presidential makeover - The Independent"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxQSGloUDhoYTF0WDMtTDhYY0F0YmNRU19ydTdUZ3RGdUZCN0hJYTdhcUFoMzRMQXJLZDhSdXZIU2FSMnQzVkNlZ21DamM2R2tzcVNadGRsR0cxYXZOSndMNW1QdmNHaHo3Smc2UFk2ZFg2WE5vRE04TW5FdjRtU25KMGQtdnp5Rllfc3VRc09fVV9ZSnVULVMyYnVTVl8tb2RLaTlUclkyRjBMLTRjalIyYkwyVzhjaU1MNVhWUmtZSnNTLVkycFE?oc=5",
+    "title": "APTOPIX East Potomac Park Golf Course - Rutland Herald",
+    "domain": "Rutland Herald",
+    "seendate": "2026-09-01T20:21:09+00:00",
+    "fetched_text": "APTOPIX East Potomac Park Golf Course - Rutland Herald",
+    "novelty": 0.6996121081342892,
+    "summary": "APTOPIX East Potomac Park Golf Course - Rutland Herald"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPUEZsR1E2QmpTUWllUUNDbnpPRlpIWmtnbUhOSkhma21ZY01CUFgtME5TUWs4OWZCVEkwSk9yZ3BhVWtWNzYzWFh3MVgxa1hzYlpUNTRSWmVvNUlSc2g4YVlzeGxjeG1FSnd5cHkyNVVvV19BcVU3bG5vRFRRN3BnQmgtdWRZd2pJeU1tdFh2aThqRGF4cHFoWTFaSFBvaDFRZDN0bw?oc=5",
+    "title": "Company Denies Felling DC Cherry Trees After Flurry of Negative Reviews - Newsweek",
+    "domain": "Newsweek",
+    "seendate": "2026-09-02T07:00:00+00:00",
+    "fetched_text": "Company Denies Felling DC Cherry Trees After Flurry of Negative Reviews - Newsweek",
+    "novelty": 0.9378657328055375,
+    "summary": "Company Denies Felling DC Cherry Trees After Flurry of Negative Reviews - Newsweek"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE85NUZxRlVBQl9pQ0t6S2tiMm1VbGJqdUpXLUUtQXNPMDZ4WGpxb2xqbHZmalduUFcwWjZwTkRpSzQ2RFBpMEc1ZlF6aXlhOFd3MC02bFNweEtfT3QzbWNPMNIBXEFVX3lxTE9lVWJSMU5VeGIwUEN5b2hIMG9Yai1OaENqLXUyNHBKTWxEV2UwN19MQnJQemxVM0ZFRWxMNlNTWmtOWVlfMUI4bEdHZmMtWlBpWkgxVEk3SXVuTmVU?oc=5",
+    "title": "Cyclists protest Trump\u2019s proposed overhaul of East Potomac Park - modernghana.com",
+    "domain": "modernghana.com",
+    "seendate": "2026-08-30T07:00:00+00:00",
+    "fetched_text": "Cyclists protest Trump\u2019s proposed overhaul of East Potomac Park - modernghana.com",
+    "novelty": 0.6291831747688722,
+    "summary": "Cyclists protest Trump\u2019s proposed overhaul of East Potomac Park - modernghana.com"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxQbldOZnYydk5SNE5HdGVaUFFYQ0QzQzRkSnY2RXFBNldCazlxWmVjeGF1Mkt1NnhOTWt5cWRoQmVoUU8tRDdlRXN4SU5uNXQ4VXpwMEZqeE5MbkVORFN4dzZQeldHRl9OSWtCc25MenR3OU5OMVhGWHRrVzJ0LUVrNnQyVkdBXzZBcU9LdWFpajBDbUZCUlNGb1h0c184Ri1zaGhZYnBjWlpqUGM5TjM2dTdaNzlhbmxNQ0htbEtkbC1kdE11V2Z1T2VqSUJtcHhLNXQwZ1g3cUFJamRqQ3VGTTY5RkN0NWdKNk14SQ?oc=5",
+    "title": "A golf course for \u2018the people\u2019 faces a presidential makeover - Chronicle-Tribune",
+    "domain": "Chronicle-Tribune",
+    "seendate": "2026-09-09T16:35:27+00:00",
+    "fetched_text": "A golf course for \u2018the people\u2019 faces a presidential makeover - Chronicle-Tribune",
+    "novelty": 0.8022219136508384,
+    "summary": "A golf course for \u2018the people\u2019 faces a presidential makeover - Chronicle-Tribune"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxOdFg4SU1EaE00ejg4RVVjZk1ESWtCR2JwS0FnS0p3TU9qQ2tZemw4WVBTTV9ZVlZRWWdNMEI0eHB3emJ2aUk0Wkd6T21fRndmTHNZVlFHNGRXQURmMFdnWDJyWU5IV01hdUFNNVg5Z1FSaFRVN2RBbjVOZGYyTlhhdUthSlNGODVDbGJnUmVUM1QzNGZvVUMwci1weUU3SkJfLVR0NlhOZVNfaVl1ZHdCcHZndklwWFB6Y1drN1FB?oc=5",
+    "title": "East Potomac Park Golf Course - Bluefield Daily Telegraph",
+    "domain": "Bluefield Daily Telegraph",
+    "seendate": "2026-09-01T07:00:00+00:00",
+    "fetched_text": "East Potomac Park Golf Course - Bluefield Daily Telegraph",
+    "novelty": 0.7235906149690546,
+    "summary": "East Potomac Park Golf Course - Bluefield Daily Telegraph"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMi8wFBVV95cUxNSjNqX1RraVpxblVFLU50VTAwaVdfekdTT0J5Z1JlSTFOREM5a2p1NnB6UXU2QmpIeEF2MEU4U2VRRzM5UWxPTWNSaG93c3R0aFhOQ0tUSzlQdEJ6dzduQXBBQjN0SnljOG1ERkpVWURTUzYxU1BjellLcFBDVG9XVS1iZk1PTDdDTlRWem9DQmJOTG84c1FNY3RRUkxINGhycGdZbWh5eU1kcnNVakg2aUFLTk43TkFMYU1lMEpieUNsT0lwdXcwSWpMckM0WThvblJmUEdTT2ZqUXNyT0RqTE84eXNITkY3YnRrbkFDRjR2Wlk?oc=5",
+    "title": "A golf course for \u2018the people\u2019 faces a presidential makeover - Kokomo Tribune",
+    "domain": "Kokomo Tribune",
+    "seendate": "2026-09-05T11:18:19+00:00",
+    "fetched_text": "A golf course for \u2018the people\u2019 faces a presidential makeover - Kokomo Tribune",
+    "novelty": 0.831668749989375,
+    "summary": "A golf course for \u2018the people\u2019 faces a presidential makeover - Kokomo Tribune"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxPdHJiRTQtcmhXR3dZb19FblhEZTVKVXlKSW1rWUdqWnBrRHY4eTVCMTEzU0VvR2hCajdPY0IwNmJya1FKZXExRDV2dFl6LWdqNnhlUk1WWkdWcWR1dlBDUnQ0eXRHY3JLbUxCclZtZEl0UU9ZMmpDLXo0Wkd3Sm1OOGhWOE1oSlotNnVZOVNmaXRYWG50Q3pESnFMS3JpWlA2cDR2dldpU3hzUG5SdC10dmxCV3k3cU5DNUhPdzg0V1ZjWlB0bW5odFd5MXcxcGgzVzhWLWZJdVRiRGxOM3RmUlpBSC0teC1BT1o4Ng?oc=5",
+    "title": "A golf course for \u2018the people\u2019 faces a presidential makeover - Bluefield Daily Telegraph",
+    "domain": "Bluefield Daily Telegraph",
+    "seendate": "2026-09-05T11:18:19+00:00",
+    "fetched_text": "A golf course for \u2018the people\u2019 faces a presidential makeover - Bluefield Daily Telegraph",
+    "novelty": 0.7752533430344505,
+    "summary": "A golf course for \u2018the people\u2019 faces a presidential makeover - Bluefield Daily Telegraph"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQUmRiQkp2eG0tYkV2VEkyRjlyX0xDWU4wd3pQdFZwZUxOdHFrSFJLSi1jeWRvMzJBc0c5c1J1WVRaSWFXRUZRRFVTTVZkczZhOHFtem1ZcTF5Q1AtamRjWjhobGw1dlFIUFZXRTdRN29LVnBPOUptaDRIT1pHbHduYVdqU09OVnZpd2dEbHdOM3JyMWZyc2FJekRhNTVaR1BHS2R6SEIyZUJ2VV80?oc=5",
+    "title": "Judge seeks stronger Trump assurances on plans for DC golf course project - New Haven Register",
+    "domain": "New Haven Register",
+    "seendate": "2026-07-02T07:00:00+00:00",
+    "fetched_text": "Judge seeks stronger Trump assurances on plans for DC golf course project - New Haven Register",
+    "novelty": 0.8458576939103022,
+    "summary": "Judge seeks stronger Trump assurances on plans for DC golf course project - New Haven Register"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxNREVhNmM3aTFkSXlhYURiOG9ObHVYMm9ZRnc5VzA5Q1B5c0paWWJzU2c1YnBScmVMUkRXLTRObDRxVXRIRFhPUUIyOWRFV2hHYmVmV1M5MlcxTlpYcmJ2bGY0NEFnazdzbkg0QVdxU2RERmdsVkdteU1PN0s0UEZIekhCVUtjNTJJbmdDMlBHQVVzZXlCUUdBVjRQV1JWUnJ1R2pzVFZNZnZtdnhqbVFR?oc=5",
+    "title": "DC\u2019s public golf courses will remain open under new deal with Trump administration - WTOP News",
+    "domain": "WTOP News",
+    "seendate": "2026-05-11T07:00:00+00:00",
+    "fetched_text": "DC\u2019s public golf courses will remain open under new deal with Trump administration - WTOP News",
+    "novelty": 0.8733224722507429,
+    "summary": "DC\u2019s public golf courses will remain open under new deal with Trump administration - WTOP News"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxNTU45Y194TW5LblBjSHAyamdRSElWUzdDT1ZpYV9McF92MjB2MGVMbzJzX0xKa2ZIOWV2SzhDOVZsRWRDb2txampuSTRIeHRZbmtPYWdPM1NCZS1ieU03WHJBWnN5MElOeUZfZVBNOHpuMEVGNDhfWm5wUGk1QjJicGJGWmhhbzhrNTdLMkFENkZreXRNZmhNVEc5enJ0X3JOOG9pTllYdlRNZ3NBTXZ4el9jOGloY3JEdWoyaXREYXpxcHZnVHowc1Ztc0kzUQ?oc=5",
+    "title": "5 rescued from burning boat in the Potomac River - WJLA",
+    "domain": "WJLA",
+    "seendate": "2026-06-17T07:00:00+00:00",
+    "fetched_text": "5 rescued from burning boat in the Potomac River - WJLA",
+    "novelty": 0.7192553252580264,
+    "summary": "5 rescued from burning boat in the Potomac River - WJLA"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxQWG5qa3hBdGtZLTlZM183T2FhTGJVSEx2WVpVLTVqZmwtWEhibzQtYklKSS1RZmpXTUJOYVVTNkp0Z0dDVGRQN3MzdjJESC12dmQySTJPUUhVRHItY1RGSU9Ka3ZMc3NiY0ZMQVdWLU1iNW1ub2E4UzkzSHVVX25qejFB?oc=5",
+    "title": "5 rescued from burning boat in the Potomac River - Baltimore Sun",
+    "domain": "Baltimore Sun",
+    "seendate": "2026-06-17T07:00:00+00:00",
+    "fetched_text": "5 rescued from burning boat in the Potomac River - Baltimore Sun",
+    "novelty": 0.9817494077257592,
+    "summary": "5 rescued from burning boat in the Potomac River - Baltimore Sun"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxNWFh2b3ZOdW1qQ0dOdDF1TVY5SUJ5YndSSEFVSU9IWDBBYXhNMWx5ZzAtMUNnOHRWRzYxdkYtX3BKX1VzUVl1MVVDZTlmM05yQmo3dnZlenlxU2c1cXZUMW9Lb09XelVJZmNaR3J6YXdSVjlJcVdUSnB1T293TkUtT2R0dlFWSEFfZ2Zjdm9mZWlNSzcxLXdVaUQ4VHJ1ajU2dGRXMFVZVTFtbmdURUtUWXJaWERMY0hORFRWTzlHaW1RV3FHYlNsT0tnSGlLR25wdEdublpVeHFoOVHSAeABQVVfeXFMT0x1VlZaeTMtVDZKMUZSdFRrMkRNT2xHQVRteFZxOERwMjJfOUZxYVhPcmZ2TzlvaGVxa20zclQ0cUwyWHpBMVg0LTRnU016XzB0M1cwTHI4NVdvM3k5WlhCUV96RVgwbVlVWnVSVURpUjFFbXB0eXJtSW03d2E2ZFJ6dWY0ZDNSeU85Tnh4T1lpLVBudTFuRERUejRnSzU1TGNSRTdOamp2aDZTZ2ZsWUxpaGNEdi01UGF3a1VPVWx0dzBDN2syQmNBRkowQm90Y0RySEpIRzNJRm5kbW5zZ3I?oc=5",
+    "title": "Trump says his renovation plans for a golf course will have Washington hosting a \u2018major\u2019 tournament - mypanhandle.com",
+    "domain": "mypanhandle.com",
+    "seendate": "2026-06-28T07:00:00+00:00",
+    "fetched_text": "Trump says his renovation plans for a golf course will have Washington hosting a \u2018major\u2019 tournament - mypanhandle.com",
+    "novelty": 0.9217824546179612,
+    "summary": "Trump says his renovation plans for a golf course will have Washington hosting a \u2018major\u2019 tournament - mypanhandle.com"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTE5mbzlFTHpXWk40elJ6OTYtN3prRE9xTktvYk1KYkNFamxKTld6LUEyTmFpby1qUUc3MGFadERFbnFvcFJnN194ZDUtYmVucXVzLUwweUpLM1V5VzRONVExYzhablRBdVA5czJHY3UyNG5SVGNlR0czakJGQ1c?oc=5",
+    "title": "5 rescued from boat fire at DC's Hains Point - Yahoo",
+    "domain": "Yahoo",
+    "seendate": "2026-06-18T07:00:00+00:00",
+    "fetched_text": "5 rescued from boat fire at DC's Hains Point - Yahoo",
+    "novelty": 0.49052437939663684,
+    "summary": "5 rescued from boat fire at DC's Hains Point - Yahoo"
+  },
+  {
+    "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxOV3pRamh3d2VveUpLZGRtQ3V6dGViZHhWQTUtdFNKblBTbWlubUdlUWFudlRfWWNmWDc1TGNiTWx1Tzd0N2dKMGgtVDl6WlJ3eHB1bVJYbUZzbHhvNk16OUoxM0FhRVZOQUs1WHNlblpLRlB5M3ZuUFltQmgzNWNHMg?oc=5",
+    "title": "East Potomac Park Renovations \u201cjust mind boggling\u201d - PoPville",
+    "domain": "PoPville",
+    "seendate": "2026-05-04T07:00:00+00:00",
+    "fetched_text": "East Potomac Park Renovations \u201cjust mind boggling\u201d - PoPville",
+    "novelty": 0.9763736989895682,
+    "summary": "East Potomac Park Renovations \u201cjust mind boggling\u201d - PoPville"
   }
 ]
