@@ -694,7 +694,7 @@ if not df_media.empty:
     # --- Article store: merge in only genuinely new URLs, then re-rank the
     # full accumulated history so nothing that's already been featured
     # disappears, and novelty scores stay comparable across runs. ---
-   new_count = merge_new_articles_into_store(article_store, df_media)
+new_count = merge_new_articles_into_store(article_store, df_media)
 duplicate_count = deduplicate_article_store(article_store)
 removed_count = prune_article_store_by_date(article_store, now)
 
