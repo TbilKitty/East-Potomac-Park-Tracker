@@ -657,7 +657,7 @@ def deduplicate_article_store(store):
     store.update(deduplicated)
 return removed
 
-        print("Fetching news articles...", flush=True)
+print("Fetching news articles...", flush=True)
     # --- Media (rolling 90-day window, GDELT's actual coverage range) ---
     start = (now - pd.Timedelta(days=90)).strftime("%Y%m%d%H%M%S")
     end = now.strftime("%Y%m%d%H%M%S")
