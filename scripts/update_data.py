@@ -676,9 +676,9 @@ except Exception as e:
     # Google News RSS prevents a quiet GDELT rate limit from producing an
     # apparently successful but empty daily update.
         google_articles = google_news_search(news_query)
-    if google_articles:
+if google_articles:
         media_frames.append(pd.DataFrame(google_articles))
-    if media_frames:
+if media_frames:
         df_media = pd.concat(media_frames, ignore_index=True)
         df_media["seendate"] = pd.to_datetime(df_media["seendate"], errors="coerce", utc=True)
         df_media = df_media.drop_duplicates(subset=["url"])
@@ -687,7 +687,7 @@ except Exception as e:
             & df_media.apply(lambda row: article_date_is_allowed(row, now), axis=1)
         ].copy()
     # An empty result or failed search must never erase the saved snapshot.
-    if not df_media.empty:
+if not df_media.empty:
         df_media.to_csv(media_path + ".tmp", index=False)
         os.replace(media_path + ".tmp", media_path)
 
