@@ -655,7 +655,7 @@ def deduplicate_article_store(store):
     removed = len(store) - len(deduplicated)
     store.clear()
     store.update(deduplicated)
-    return removed
+return removed
         merge_new_articles_into_store(article_store, previous_media)
     save_article_store(article_store)
 
