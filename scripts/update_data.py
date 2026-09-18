@@ -787,56 +787,43 @@ def main():
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>East Potomac Park Case Tracker</title>
 <style>
-  body {{ font-family: Georgia, serif; max-width: 900px; margin: 0 auto; padding: 40px 20px; background: #FAF7F1; color: #1A1A1A; }}
-  h1 {{ margin-bottom: 4px; }}
-  .updated {{ font-family: Arial, sans-serif; color: #4A4A4A; font-size: 0.85rem; margin-bottom: 32px; }}
-  table {{ width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 0.9rem; margin-bottom: 40px; }}
-  th, td {{ text-align: left; padding: 8px; border-bottom: 1px solid #D8D3C7; vertical-align: top; }}
-  th {{ background: #EFECE4; }}
-  img {{ max-width: 100%; border: 1px solid #D8D3C7; border-radius: 6px; margin-bottom: 24px; display: block; }}
-
-  details {{
+   .project-links {{
+    margin-top: 28px;
+    padding: 22px;
     border: 1px solid #D8D3C7;
     border-radius: 6px;
-    margin-bottom: 12px;
-    background: #fff;
-  }}
-  details summary {{
+    background: #EFECE4;
     font-family: Arial, sans-serif;
-    font-weight: bold;
-    font-size: 0.92rem;
-    padding: 12px 16px;
-    cursor: pointer;
-    list-style: none;
   }}
-  details summary::-webkit-details-marker {{ display: none; }}
-  details summary::before {{
-    content: "\\25B8";
+  .project-links h2 {{
+    margin: 0 0 6px;
+    font-family: Georgia, serif;
+  }}
+  .project-links p {{
+    margin: 0 0 14px;
+    color: #4A4A4A;
+    font-size: 0.9rem;
+  }}
+  .project-link-buttons {{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }}
+  .project-link-buttons a {{
     display: inline-block;
-    margin-right: 8px;
-    transition: transform 0.15s ease;
+    background: #2C5F4F;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 18px;
+    border: 2px solid #2C5F4F;
+    border-radius: 4px;
+    font-weight: bold;
   }}
-  details[open] > summary::before {{ transform: rotate(90deg); }}
-  details > *:not(summary) {{ padding: 0 16px 16px; }}
-  details table {{ margin: 0; }}
-  .section {{ margin-bottom: 24px; }}
-  .section > summary {{ font-size: 1.25rem; padding: 18px 16px; }}
-  summary:focus-visible {{ outline: 3px solid #2C5F4F; outline-offset: 2px; }}
-  .toggle-label {{ float: right; font-size: 0.85rem; font-weight: normal; }}
-  .toggle-label::after {{ content: "Expand"; }}
-  details[open] > summary .toggle-label::after {{ content: "Minimize"; }}
-  .table-scroll {{ overflow-x: auto; }}
-  .signup-actions {{ display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }}
-  .signup-actions form {{ flex: 1 1 320px; min-width: 0; }}
-  .signup-actions input[type="email"] {{ min-width: 0; }}
-  .signup-actions > a {{ text-align: center; }}
-  @media (max-width: 540px) {{
-    .signup-actions form, .signup-actions > a {{ flex-basis: 100%; }}
+  .project-link-buttons a:hover,
+  .project-link-buttons a:focus {{
+    background: #21483C;
+    border-color: #21483C;
   }}
-  details ul {{ margin: 0; padding-left: 20px; }}
-  .about-me > summary {{ font-size: 1rem; padding: 12px 16px; }}
-  .about-me .bio {{ font-size: 1rem; line-height: 1.65; }}
-  .about-me .bio p:last-child {{ margin-bottom: 0; }}
 </style>
 </head>
 <body>
