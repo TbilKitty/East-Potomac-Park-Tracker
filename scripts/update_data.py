@@ -177,13 +177,15 @@ JUNK_CLASS_KEYWORDS = [
     "social", "comment", "sidebar", "advert", "subscribe", "share",
 ]
 
-# Only accept headlines that expressly identify the tracked park. This keeps
-# broad Potomac/DC results and unrelated stories out of the saved archive.
+# A deliberately conservative screen.  The tracker is about Hains Point and
+# East Potomac Park, not general Washington or White House coverage.
 PLACE_TITLE_PATTERN = re.compile(
     r"\b(?:east\s+potomac(?:\s+park)?|hains(?:\s+point)?)\b",
     re.IGNORECASE,
 )
 
+# Keep the public archive focused on the present controversy. Articles with
+# missing dates, dates before 2025, or implausible future dates are excluded.
 ARTICLE_START_DATE = pd.Timestamp("2025-01-01", tz="UTC")
 
 
@@ -197,6 +199,7 @@ def article_date_is_allowed(article, reference_time=None):
 
 
 def prune_article_store_by_date(store, reference_time=None):
+    """Remove out-of-window records so they do not return on later runs."""
     stale_urls = [
         url for url, article in store.items()
         if not article_date_is_allowed(article, reference_time)
@@ -207,6 +210,7 @@ def prune_article_store_by_date(store, reference_time=None):
 
 
 def is_tracker_article(article):
+    """Keep only articles whose headline expressly identifies the park area."""
     return bool(PLACE_TITLE_PATTERN.search(str(article.get("title", ""))))
 
 
@@ -295,21 +299,31 @@ def save_article_store(store, path=ARTICLE_STORE_PATH):
         json.dump(clean, f, indent=2, default=str)
     os.replace(path + ".tmp", path)
 
+
 def normalized_article_title(title):
     """Return a stable comparison key for syndicated copies of one story."""
     title = str(title or "").lower()
+    # Google News appends the publisher after a dash, so syndicated copies
+    # otherwise look like different headlines.
+    title = re.sub(r"\s+[-–—]\s+[^-–—]+$", "", title)
     title = re.sub(r"\s+", " ", title).strip()
     return re.sub(r"[^a-z0-9]+", " ", title).strip()
 
-def deduplicate_article_store(store):
-    """Keep one best source for each identical headline."""
-    best_by_title = {}
 
+def deduplicate_article_store(store):
+    """Keep one best source for each identical headline, including old entries.
+
+    News feeds commonly return the same wire/syndicated story through several
+    URLs. URL-only deduplication leaves all of those copies on the page.
+    Prefer a direct, higher-quality source and then the entry with more usable
+    article text. This deliberately removes only *identical* normalized titles;
+    genuinely different follow-up reporting remains available.
+    """
+    best_by_title = {}
     for url, item in store.items():
         key = normalized_article_title(item.get("title"))
         if not key:
             key = f"url::{url}"
-
         previous = best_by_title.get(key)
         if previous is None:
             best_by_title[key] = (url, item)
@@ -317,13 +331,8 @@ def deduplicate_article_store(store):
 
         def quality(candidate):
             candidate_url, candidate_item = candidate
-            seen = pd.to_datetime(
-                candidate_item.get("seendate"),
-                errors="coerce",
-                utc=True,
-            )
+            seen = pd.to_datetime(candidate_item.get("seendate"), errors="coerce", utc=True)
             seen_value = seen.value if pd.notna(seen) else -1
-
             return (
                 source_quality_score(candidate_item),
                 len(str(candidate_item.get("fetched_text", ""))),
@@ -339,7 +348,8 @@ def deduplicate_article_store(store):
     store.clear()
     store.update(deduplicated)
     return removed
-    
+
+
 def merge_new_articles_into_store(store, df_media):
     """Fetch + cache text only for URLs we haven't seen before."""
     new_count = 0
@@ -386,6 +396,7 @@ HIGH_CONFIDENCE_SOURCES = (
 
 
 def relevance_score(item):
+    """Score direct connection to the park plus issue-specific substance."""
     title = str(item.get("title", "")).lower()
     text = f'{title} {str(item.get("fetched_text", "")).lower()}'
     if "east potomac park" in title:
@@ -399,12 +410,15 @@ def relevance_score(item):
     issue_hits = sum(1 for keyword in ISSUE_KEYWORDS if keyword in text)
     return min(1.0, base + min(issue_hits, 5) * 0.04)
 
+
 def recency_score(seendate, reference_time):
+    """Thirty-day half-life: recent stories lead without erasing older ones."""
     seen = pd.to_datetime(seendate, errors="coerce", utc=True)
     if pd.isna(seen):
         return 0.0
     age_days = max(0.0, (reference_time - seen).total_seconds() / 86400)
     return math.pow(0.5, age_days / 30.0)
+
 
 def source_quality_score(item):
     source = str(item.get("domain", "")).lower()
@@ -414,51 +428,14 @@ def source_quality_score(item):
         return 0.70
     return 0.50
 
-def normalized_article_title(title):
-    """Return a stable comparison key for syndicated copies of one story."""
-    title = str(title or "").lower()
-    title = re.sub(r"\s+[-–—]\s+[^-–—]+$", "", title)
-    title = re.sub(r"\s+", " ", title).strip()
-    return re.sub(r"[^a-z0-9]+", " ", title).strip()
 
-def deduplicate_article_store(store):
-    """Keep one best source for each identical headline."""
-    best_by_title = {}
-
-    for url, item in store.items():
-        key = normalized_article_title(item.get("title"))
-        if not key:
-            key = f"url::{url}"
-
-        previous = best_by_title.get(key)
-        if previous is None:
-            best_by_title[key] = (url, item)
-            continue
-
-        def quality(candidate):
-            candidate_url, candidate_item = candidate
-            seen = pd.to_datetime(
-                candidate_item.get("seendate"), errors="coerce", utc=True
-            )
-            seen_value = seen.value if pd.notna(seen) else -1
-            return (
-                source_quality_score(candidate_item),
-                len(str(candidate_item.get("fetched_text", ""))),
-                seen_value,
-                candidate_url,
-            )
-
-        if quality((url, item)) > quality(previous):
-            best_by_title[key] = (url, item)
-
-    deduplicated = {url: item for url, item in best_by_title.values()}
-    removed = len(store) - len(deduplicated)
-    store.clear()
-    store.update(deduplicated)
-    return removed
-    
 def rank_stored_articles_by_priority(store):
-    """Rank by relevance, recency, novelty, momentum, and source quality."""
+    """Calculate novelty, then rank articles by public-interest priority.
+
+    Priority combines direct relevance, recency, text novelty, cross-source
+    coverage momentum, and a small source-quality signal. Novelty remains
+    visible but no longer determines the top three by itself.
+    """
     if not store:
         return []
 
@@ -475,6 +452,8 @@ def rank_stored_articles_by_priority(store):
     try:
         tfidf_matrix = vectorizer.fit_transform(texts)
     except ValueError:
+        # No usable vocabulary: retain every article without inventing a
+        # novelty score, but still calculate the other priority components.
         reference_time = pd.Timestamp.now(tz="UTC")
         for item in items:
             item["novelty"] = None
@@ -504,6 +483,9 @@ def rank_stored_articles_by_priority(store):
         item["novelty"] = novelty
         item["summary"] = summarize_text(texts[i])
 
+    # A story covered by several different sources in the same seven-day
+    # window receives a momentum boost. Title similarity avoids rewarding
+    # unrelated stories that merely mention the same park.
     titles = [item.get("title", "") for item in items]
     try:
         title_matrix = TfidfVectorizer(stop_words="english").fit_transform(titles)
@@ -538,7 +520,11 @@ def rank_stored_articles_by_priority(store):
         )
 
     items.sort(
-        key=lambda r: (r["priority"], r["recency"], r["novelty"]),
+        key=lambda r: (
+            r["priority"],
+            r["recency"],
+            r["novelty"],
+        ),
         reverse=True,
     )
     for item in items:
@@ -594,6 +580,8 @@ def main():
     hearing_entries = flag_hearing_entries(df_docket)
 
     article_store = load_article_store()
+    # Remove the broad-feed results saved by earlier runs.  This is intentional:
+    # the site should not permanently retain unrelated headlines.
     article_store = {
         url: article for url, article in article_store.items()
         if is_tracker_article(article) and article_date_is_allowed(article, now)
@@ -617,68 +605,32 @@ def main():
                     lambda row: article_date_is_allowed(row, now), axis=1
                 )
             ].copy()
+        merge_new_articles_into_store(article_store, previous_media)
+    save_article_store(article_store)
 
-def deduplicate_article_store(store):
-    """Keep one best source for each identical headline."""
-    best_by_title = {}
-
-    for url, item in store.items():
-        key = normalized_article_title(item.get("title"))
-        if not key:
-            key = f"url::{url}"
-
-        previous = best_by_title.get(key)
-        if previous is None:
-            best_by_title[key] = (url, item)
-            continue
-
-        def quality(candidate):
-            candidate_url, candidate_item = candidate
-            seen = pd.to_datetime(
-                candidate_item.get("seendate"),
-                errors="coerce",
-                utc=True,
-            )
-            seen_value = seen.value if pd.notna(seen) else -1
-
-            return (
-                source_quality_score(candidate_item),
-                len(str(candidate_item.get("fetched_text", ""))),
-                seen_value,
-                candidate_url,
-            )
-
-        if quality((url, item)) > quality(previous):
-            best_by_title[key] = (url, item)
-
-    deduplicated = {url: item for url, item in best_by_title.values()}
-    removed = len(store) - len(deduplicated)
-    store.clear()
-    store.update(deduplicated)
-return removed
-
-print("Fetching news articles...", flush=True)
+    print("Fetching news articles...", flush=True)
     # --- Media (rolling 90-day window, GDELT's actual coverage range) ---
-start = (now - pd.Timedelta(days=90)).strftime("%Y%m%d%H%M%S")
-end = now.strftime("%Y%m%d%H%M%S")
-df_media = pd.DataFrame()
-# Only collect stories that explicitly mention one of the two places.
- # Do not use broad political keywords here: they pull unrelated coverage.
-news_query = '"East Potomac Park" OR "Hains Point"'
-media_frames = []
-try:
+    start = (now - pd.Timedelta(days=90)).strftime("%Y%m%d%H%M%S")
+    end = now.strftime("%Y%m%d%H%M%S")
+    df_media = pd.DataFrame()
+    # Only collect stories that explicitly mention one of the two places.
+    # Do not use broad political keywords here: they pull unrelated coverage.
+    news_query = '"East Potomac Park" OR "Hains Point"'
+    media_frames = []
+    try:
         gdelt_articles = gdelt_search(news_query, start, end)
         if gdelt_articles:
             media_frames.append(pd.DataFrame(gdelt_articles))
-except Exception as e:
+    except Exception as e:
         print(f"GDELT fetch failed: {e}")
 
     # Google News RSS prevents a quiet GDELT rate limit from producing an
     # apparently successful but empty daily update.
-        google_articles = google_news_search(news_query)
-if google_articles:
+    google_articles = google_news_search(news_query)
+    if google_articles:
         media_frames.append(pd.DataFrame(google_articles))
-if media_frames:
+
+    if media_frames:
         df_media = pd.concat(media_frames, ignore_index=True)
         df_media["seendate"] = pd.to_datetime(df_media["seendate"], errors="coerce", utc=True)
         df_media = df_media.drop_duplicates(subset=["url"])
@@ -687,26 +639,19 @@ if media_frames:
             & df_media.apply(lambda row: article_date_is_allowed(row, now), axis=1)
         ].copy()
     # An empty result or failed search must never erase the saved snapshot.
-if not df_media.empty:
+    if not df_media.empty:
         df_media.to_csv(media_path + ".tmp", index=False)
         os.replace(media_path + ".tmp", media_path)
 
     # --- Article store: merge in only genuinely new URLs, then re-rank the
     # full accumulated history so nothing that's already been featured
     # disappears, and novelty scores stay comparable across runs. ---
-new_count = merge_new_articles_into_store(article_store, df_media)
-duplicate_count = deduplicate_article_store(article_store)
-removed_count = prune_article_store_by_date(article_store, now)
-
-print(f"{new_count} new article(s) this run; {len(article_store)} total in store.", flush=True)
-
-if duplicate_count:
-    print(f"Removed {duplicate_count} duplicate syndicated headline(s).", flush=True)
-
-print(f"{new_count} new article(s) this run; {len(article_store)} total in store.", flush=True)
-
-if duplicate_count:
-    print(f"Removed {duplicate_count} duplicate syndicated headline(s).", flush=True)
+    new_count = merge_new_articles_into_store(article_store, df_media)
+    duplicate_count = deduplicate_article_store(article_store)
+    removed_count = prune_article_store_by_date(article_store, now)
+    print(f"{new_count} new article(s) this run; {len(article_store)} total in store.", flush=True)
+    if duplicate_count:
+        print(f"Removed {duplicate_count} duplicate syndicated headline(s).", flush=True)
     if removed_count:
         print(f"Removed {removed_count} article(s) outside the 2025-present window.", flush=True)
 
@@ -892,49 +837,6 @@ if duplicate_count:
   .about-me > summary {{ font-size: 1rem; padding: 12px 16px; }}
   .about-me .bio {{ font-size: 1rem; line-height: 1.65; }}
   .about-me .bio p:last-child {{ margin-bottom: 0; }}
-  .project-links {{
-    margin-top: 28px;
-    padding: 22px;
-    border: 1px solid #D8D3C7;
-    border-radius: 6px;
-    background: #EFECE4;
-    font-family: Arial, sans-serif;
-  }}
-  .project-links h2 {{
-    margin: 0 0 6px;
-    font-family: Georgia, serif;
-  }}
-  .project-links p {{
-    margin: 0 0 14px;
-    color: #4A4A4A;
-    font-size: 0.9rem;
-  }}
-  .project-link-buttons {{
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }}
-  .project-link-buttons a {{
-    display: inline-block;
-    background: #2C5F4F;
-    color: #fff;
-    text-decoration: none;
-    padding: 10px 18px;
-    border: 2px solid #2C5F4F;
-    border-radius: 4px;
-    font-weight: bold;
-  }}
-  .project-link-buttons a:hover,
-  .project-link-buttons a:focus {{
-    background: #21483C;
-    border-color: #21483C;
-  }}
-  @media (max-width: 540px) {{
-    .project-link-buttons a {{
-      flex: 1 1 100%;
-      text-align: center;
-    }}
-  }}
 </style>
 </head>
 <body>
@@ -964,9 +866,10 @@ if duplicate_count:
     <div>
   <p style="font-family: Arial, sans-serif; font-size: 0.85rem; color: #4A4A4A;">
     Articles published from January 1, 2025 through the present are retained. The top three
-    are ranked by a public-interest priority score: 35% direct relevance, 30% recency,
-    20% text novelty, 10% coverage momentum, and 5% source quality. The score is automated
-    and is not a fact-check. Expand the list to see the remaining articles.
+    are ranked by a public-interest priority score:
+    35% direct relevance, 30% recency, 20% text novelty, 10% coverage momentum, and
+    5% source quality. The score is automated and is not a fact-check. Expand the list
+    to see the remaining articles.
   </p>
   <p>{len(ranked_articles)} ranked articles</p>
   <div>{article_rows}</div>
@@ -1039,47 +942,15 @@ if duplicate_count:
     </div>
   </details>
   <details class="section about-me" id="about-me">
-    <summary> Page Dedication <span class="toggle-label" aria-hidden="true"></span></summary>
+    <summary>About Me <span class="toggle-label" aria-hidden="true"></span></summary>
     <div class="bio">
-      <div class="bio">
-  <p>This website is dedicated to those who cherish nature and social justice. &lt;3</p>
-
-  <p>
-    <em>“I do not know if the people of the United States would vote for superior men
-    if they ran for office, but there can be no doubt that such men do not run.”</em>
-    —Alexis de Tocqueville, <cite>Democracy in America</cite>
-  </p>
-
-  <p>
-    <strong>Honorary mention:</strong> Dr. Steven Scalet, longtime Director of Philosophy
-    and Ethics at UBalt and my favorite professor. He is one of the gentlest people I
-    have ever met and has spent years teaching students to think seriously about ethics,
-    justice, and the world they wish to build—a quiet leader among the movers and shakers
-    of social upheaval.
-  </p>
-</div>
-  </details>
-    <section class="project-links" aria-labelledby="more-projects-heading">
-    <h2 id="more-projects-heading">More Civic &amp; Policy Projects</h2>
-    <p>
-      Explore additional tools for Maryland civic engagement and
-      tax-policy analysis.
-    </p>
-
-    <div class="project-link-buttons">
-      <a href="https://mdcivicpower.org/"
-         target="_blank"
-         rel="noopener">
-        Maryland Legislative Tracker &rarr;
-      </a>
-
-      <a href="https://tbilkitty.github.io/SNAP_Back/"
-         target="_blank"
-         rel="noopener">
-        SNAP Back: Tax Policy Reform &rarr;
-      </a>
+      <p>I&rsquo;m a single parent to a wonderful child. I&rsquo;m also a full time law
+      student who works three jobs.</p>
+      <p>My legal interest is in using tax policy to advance social equity.
+      Go UBalt Law!</p>
+      <p>This website is dedicated to those who cherish nature and social justice. <3 </p>
     </div>
-  </section>
+  </details>
 </body>
 </html>"""
 
@@ -1090,4 +961,3 @@ if duplicate_count:
 
 if __name__ == "__main__":
     main()
-
