@@ -762,6 +762,49 @@ def main():
   .about-me > summary {{ font-size: 1rem; padding: 12px 16px; }}
   .about-me .bio {{ font-size: 1rem; line-height: 1.65; }}
   .about-me .bio p:last-child {{ margin-bottom: 0; }}
+  .project-links {{
+    margin-top: 28px;
+    padding: 22px;
+    border: 1px solid #D8D3C7;
+    border-radius: 6px;
+    background: #EFECE4;
+    font-family: Arial, sans-serif;
+  }}
+  .project-links h2 {{
+    margin: 0 0 6px;
+    font-family: Georgia, serif;
+  }}
+  .project-links p {{
+    margin: 0 0 14px;
+    color: #4A4A4A;
+    font-size: 0.9rem;
+  }}
+  .project-link-buttons {{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }}
+  .project-link-buttons a {{
+    display: inline-block;
+    background: #2C5F4F;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 18px;
+    border: 2px solid #2C5F4F;
+    border-radius: 4px;
+    font-weight: bold;
+  }}
+  .project-link-buttons a:hover,
+  .project-link-buttons a:focus {{
+    background: #21483C;
+    border-color: #21483C;
+  }}
+  @media (max-width: 540px) {{
+    .project-link-buttons a {{
+      flex: 1 1 100%;
+      text-align: center;
+    }}
+  }}
 </style>
 </head>
 <body>
@@ -886,6 +929,27 @@ def main():
   </p>
 </div>
   </details>
+    <section class="project-links" aria-labelledby="more-projects-heading">
+    <h2 id="more-projects-heading">More Civic &amp; Policy Projects</h2>
+    <p>
+      Explore additional tools for Maryland civic engagement and
+      tax-policy analysis.
+    </p>
+
+    <div class="project-link-buttons">
+      <a href="https://mdcivicpower.org/"
+         target="_blank"
+         rel="noopener">
+        Maryland Legislative Tracker &rarr;
+      </a>
+
+      <a href="https://tbilkitty.github.io/SNAP_Back/"
+         target="_blank"
+         rel="noopener">
+        SNAP Back: Tax Policy Reform &rarr;
+      </a>
+    </div>
+  </section>
 </body>
 </html>"""
 
