@@ -670,7 +670,7 @@ try:
         gdelt_articles = gdelt_search(news_query, start, end)
         if gdelt_articles:
             media_frames.append(pd.DataFrame(gdelt_articles))
-    except Exception as e:
+except Exception as e:
         print(f"GDELT fetch failed: {e}")
 
     # Google News RSS prevents a quiet GDELT rate limit from producing an
