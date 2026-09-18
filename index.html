@@ -5,56 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>East Potomac Park Case Tracker</title>
 <style>
-  body { font-family: Georgia, serif; max-width: 900px; margin: 0 auto; padding: 40px 20px; background: #FAF7F1; color: #1A1A1A; }
-  h1 { margin-bottom: 4px; }
-  .updated { font-family: Arial, sans-serif; color: #4A4A4A; font-size: 0.85rem; margin-bottom: 32px; }
-  table { width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; font-size: 0.9rem; margin-bottom: 40px; }
-  th, td { text-align: left; padding: 8px; border-bottom: 1px solid #D8D3C7; vertical-align: top; }
-  th { background: #EFECE4; }
-  img { max-width: 100%; border: 1px solid #D8D3C7; border-radius: 6px; margin-bottom: 24px; display: block; }
-
-  details {
+   .project-links {
+    margin-top: 28px;
+    padding: 22px;
     border: 1px solid #D8D3C7;
     border-radius: 6px;
-    margin-bottom: 12px;
-    background: #fff;
-  }
-  details summary {
+    background: #EFECE4;
     font-family: Arial, sans-serif;
-    font-weight: bold;
-    font-size: 0.92rem;
-    padding: 12px 16px;
-    cursor: pointer;
-    list-style: none;
   }
-  details summary::-webkit-details-marker { display: none; }
-  details summary::before {
-    content: "\25B8";
+  .project-links h2 {
+    margin: 0 0 6px;
+    font-family: Georgia, serif;
+  }
+  .project-links p {
+    margin: 0 0 14px;
+    color: #4A4A4A;
+    font-size: 0.9rem;
+  }
+  .project-link-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .project-link-buttons a {
     display: inline-block;
-    margin-right: 8px;
-    transition: transform 0.15s ease;
+    background: #2C5F4F;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 18px;
+    border: 2px solid #2C5F4F;
+    border-radius: 4px;
+    font-weight: bold;
   }
-  details[open] > summary::before { transform: rotate(90deg); }
-  details > *:not(summary) { padding: 0 16px 16px; }
-  details table { margin: 0; }
-  .section { margin-bottom: 24px; }
-  .section > summary { font-size: 1.25rem; padding: 18px 16px; }
-  summary:focus-visible { outline: 3px solid #2C5F4F; outline-offset: 2px; }
-  .toggle-label { float: right; font-size: 0.85rem; font-weight: normal; }
-  .toggle-label::after { content: "Expand"; }
-  details[open] > summary .toggle-label::after { content: "Minimize"; }
-  .table-scroll { overflow-x: auto; }
-  .signup-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-  .signup-actions form { flex: 1 1 320px; min-width: 0; }
-  .signup-actions input[type="email"] { min-width: 0; }
-  .signup-actions > a { text-align: center; }
-  @media (max-width: 540px) {
-    .signup-actions form, .signup-actions > a { flex-basis: 100%; }
+  .project-link-buttons a:hover,
+  .project-link-buttons a:focus {
+    background: #21483C;
+    border-color: #21483C;
   }
-  details ul { margin: 0; padding-left: 20px; }
-  .about-me > summary { font-size: 1rem; padding: 12px 16px; }
-  .about-me .bio { font-size: 1rem; line-height: 1.65; }
-  .about-me .bio p:last-child { margin-bottom: 0; }
 </style>
 </head>
 <body>
@@ -70,7 +57,7 @@
     </a>
     <span>Since this counter was added &middot; visits, not unique people</span>
   </div>
-  <p class="updated">Automatically updated daily. Last updated: September 18, 2026 at 16:35 UTC</p>
+  <p class="updated">Automatically updated daily. Last updated: September 18, 2026 at 17:00 UTC</p>
 
   <div style="display:flex; gap:10px; flex-wrap:wrap; font-family: Arial, sans-serif; margin-bottom: 24px;">
     <a href="write-to-congress.html" style="display:inline-block; background:#2C5F4F; color:#fff; text-decoration:none; padding:10px 18px; border-radius:4px; font-weight:bold;">
@@ -265,7 +252,7 @@
         <div style="border-bottom:1px solid #D8D3C7; padding:16px 0;">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:12px;">
             <a href="https://news.google.com/rss/articles/CBMijgFBVV95cUxONHlhNWtzRTQ0UVAyenlYeU1xa2pqZjRCbWx3OFJNeVBPTnZOQWhrbFZTb3M5S2d1YjFnREdfRUVncjlaQ1BjdEp2YVlOQ2k0WTdvbkFvTC1OcHkxSHRTejVrTGhabzJvQ2pPaFZTcHZqWklCdm5qMUhCbXRmUGtvbjBhMzN0RzRsUDdPMkNn?oc=5" target="_blank" rel="noopener" style="font-weight:bold; color:#1A1A1A; text-decoration:none;">&quot;Hands Off Hains&quot; is D.C.&#x27;s newest resistance merch - axios.com</a>
-            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">70% priority &middot; 90% novelty</span>
+            <span style="font-family:Arial,sans-serif; font-size:0.78rem; font-weight:bold; color:#2C5F4F; white-space:nowrap;">69% priority &middot; 90% novelty</span>
           </div>
           <div style="font-family:Arial,sans-serif; font-size:0.78rem; color:#4A4A4A; margin:2px 0 8px;">axios.com &middot; Sep 08, 2026</div>
           <div style="font-size:0.92rem; color:#333;">&quot;Hands Off Hains&quot; is D.C.&#x27;s newest resistance merch - axios.com</div>
@@ -807,14 +794,24 @@
     </div>
     </div>
   </details>
-  <details class="section about-me" id="about-me">
-    <summary>About Me <span class="toggle-label" aria-hidden="true"></span></summary>
+      <details class="section about-me" id="page-dedication">
+    <summary>Page Dedication <span class="toggle-label" aria-hidden="true"></span></summary>
     <div class="bio">
-      <p>I&rsquo;m a single parent to a wonderful child. I&rsquo;m also a full time law
-      student who works three jobs.</p>
-      <p>My legal interest is in using tax policy to advance social equity.
-      Go UBalt Law!</p>
-      <p>This website is dedicated to those who cherish nature and social justice. <3 </p>
+      <p>This website is dedicated to those who cherish nature and social justice. &lt;3</p>
+
+      <p>
+        <em>“I do not know if the people of the United States would vote for superior men
+        if they ran for office, but there can be no doubt that such men do not run.”</em>
+        — Alexis de Tocqueville, <cite>Democracy in America</cite>
+      </p>
+
+      <p>
+        <strong>Honorary mention:</strong> Dr. Steven Scalet, longtime Director of Philosophy
+        and Ethics at UBalt and my favorite professor. He is one of the gentlest people I
+        have ever met and has spent years teaching students to think seriously about ethics,
+        justice, and the world they wish to build—a quiet leader among the movers and shakers
+        of social upheaval.
+      </p>
     </div>
   </details>
 </body>
