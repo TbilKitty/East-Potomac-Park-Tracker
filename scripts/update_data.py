@@ -177,15 +177,13 @@ JUNK_CLASS_KEYWORDS = [
     "social", "comment", "sidebar", "advert", "subscribe", "share",
 ]
 
-# A deliberately conservative screen.  The tracker is about Hains Point and
-# East Potomac Park, not general Washington or White House coverage.
+# Only accept headlines that expressly identify the tracked park. This keeps
+# broad Potomac/DC results and unrelated stories out of the saved archive.
 PLACE_TITLE_PATTERN = re.compile(
     r"\b(?:east\s+potomac(?:\s+park)?|hains(?:\s+point)?)\b",
     re.IGNORECASE,
 )
 
-# Keep the public archive focused on the present controversy. Articles with
-# missing dates, dates before 2025, or implausible future dates are excluded.
 ARTICLE_START_DATE = pd.Timestamp("2025-01-01", tz="UTC")
 
 
@@ -199,7 +197,6 @@ def article_date_is_allowed(article, reference_time=None):
 
 
 def prune_article_store_by_date(store, reference_time=None):
-    """Remove out-of-window records so they do not return on later runs."""
     stale_urls = [
         url for url, article in store.items()
         if not article_date_is_allowed(article, reference_time)
@@ -210,7 +207,6 @@ def prune_article_store_by_date(store, reference_time=None):
 
 
 def is_tracker_article(article):
-    """Keep only articles whose headline expressly identifies the park area."""
     return bool(PLACE_TITLE_PATTERN.search(str(article.get("title", ""))))
 
 
@@ -346,7 +342,6 @@ HIGH_CONFIDENCE_SOURCES = (
 
 
 def relevance_score(item):
-    """Score direct connection to the park plus issue-specific substance."""
     title = str(item.get("title", "")).lower()
     text = f'{title} {str(item.get("fetched_text", "")).lower()}'
     if "east potomac park" in title:
@@ -362,7 +357,6 @@ def relevance_score(item):
 
 
 def recency_score(seendate, reference_time):
-    """Thirty-day half-life: recent stories lead without erasing older ones."""
     seen = pd.to_datetime(seendate, errors="coerce", utc=True)
     if pd.isna(seen):
         return 0.0
@@ -380,12 +374,7 @@ def source_quality_score(item):
 
 
 def rank_stored_articles_by_priority(store):
-    """Calculate novelty, then rank articles by public-interest priority.
-
-    Priority combines direct relevance, recency, text novelty, cross-source
-    coverage momentum, and a small source-quality signal. Novelty remains
-    visible but no longer determines the top three by itself.
-    """
+    """Rank by relevance, recency, novelty, momentum, and source quality."""
     if not store:
         return []
 
@@ -402,8 +391,6 @@ def rank_stored_articles_by_priority(store):
     try:
         tfidf_matrix = vectorizer.fit_transform(texts)
     except ValueError:
-        # No usable vocabulary: retain every article without inventing a
-        # novelty score, but still calculate the other priority components.
         reference_time = pd.Timestamp.now(tz="UTC")
         for item in items:
             item["novelty"] = None
@@ -433,9 +420,6 @@ def rank_stored_articles_by_priority(store):
         item["novelty"] = novelty
         item["summary"] = summarize_text(texts[i])
 
-    # A story covered by several different sources in the same seven-day
-    # window receives a momentum boost. Title similarity avoids rewarding
-    # unrelated stories that merely mention the same park.
     titles = [item.get("title", "") for item in items]
     try:
         title_matrix = TfidfVectorizer(stop_words="english").fit_transform(titles)
@@ -470,11 +454,7 @@ def rank_stored_articles_by_priority(store):
         )
 
     items.sort(
-        key=lambda r: (
-            r["priority"],
-            r["recency"],
-            r["novelty"],
-        ),
+        key=lambda r: (r["priority"], r["recency"], r["novelty"]),
         reverse=True,
     )
     for item in items:
@@ -530,8 +510,6 @@ def main():
     hearing_entries = flag_hearing_entries(df_docket)
 
     article_store = load_article_store()
-    # Remove the broad-feed results saved by earlier runs.  This is intentional:
-    # the site should not permanently retain unrelated headlines.
     article_store = {
         url: article for url, article in article_store.items()
         if is_tracker_article(article) and article_date_is_allowed(article, now)
@@ -813,10 +791,9 @@ def main():
     <div>
   <p style="font-family: Arial, sans-serif; font-size: 0.85rem; color: #4A4A4A;">
     Articles published from January 1, 2025 through the present are retained. The top three
-    are ranked by a public-interest priority score:
-    35% direct relevance, 30% recency, 20% text novelty, 10% coverage momentum, and
-    5% source quality. The score is automated and is not a fact-check. Expand the list
-    to see the remaining articles.
+    are ranked by a public-interest priority score: 35% direct relevance, 30% recency,
+    20% text novelty, 10% coverage momentum, and 5% source quality. The score is automated
+    and is not a fact-check. Expand the list to see the remaining articles.
   </p>
   <p>{len(ranked_articles)} ranked articles</p>
   <div>{article_rows}</div>
@@ -889,14 +866,25 @@ def main():
     </div>
   </details>
   <details class="section about-me" id="about-me">
-    <summary>About Me <span class="toggle-label" aria-hidden="true"></span></summary>
+    <summary> Page Dedication <span class="toggle-label" aria-hidden="true"></span></summary>
     <div class="bio">
-      <p>I&rsquo;m a single parent to a wonderful child. I&rsquo;m also a full time law
-      student who works three jobs.</p>
-      <p>My legal interest is in using tax policy to advance social equity.
-      Go UBalt Law!</p>
-      <p>This website is dedicated to those who cherish nature and social justice. <3 </p>
-    </div>
+      <div class="bio">
+  <p>This website is dedicated to those who cherish nature and social justice. &lt;3</p>
+
+  <p>
+    <em>“I do not know if the people of the United States would vote for superior men
+    if they ran for office, but there can be no doubt that such men do not run.”</em>
+    —Alexis de Tocqueville, <cite>Democracy in America</cite>
+  </p>
+
+  <p>
+    <strong>Honorary mention:</strong> Dr. Steven Scalet, longtime Director of Philosophy
+    and Ethics at UBalt and my favorite professor. He is one of the gentlest people I
+    have ever met and has spent years teaching students to think seriously about ethics,
+    justice, and the world they wish to build—a quiet leader among the movers and shakers
+    of social upheaval.
+  </p>
+</div>
   </details>
 </body>
 </html>"""
@@ -908,3 +896,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
