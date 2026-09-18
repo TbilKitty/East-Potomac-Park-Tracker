@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import math
 import html as html_module
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -176,6 +177,18 @@ JUNK_CLASS_KEYWORDS = [
     "social", "comment", "sidebar", "advert", "subscribe", "share",
 ]
 
+# A deliberately conservative screen.  The tracker is about Hains Point and
+# East Potomac Park, not general Washington or White House coverage.
+PLACE_TITLE_PATTERN = re.compile(
+    r"\b(?:east\s+potomac(?:\s+park)?|hains(?:\s+point)?|potomac\s+park)\b",
+    re.IGNORECASE,
+)
+
+
+def is_tracker_article(article):
+    """Keep only articles whose headline expressly identifies the park area."""
+    return bool(PLACE_TITLE_PATTERN.search(str(article.get("title", ""))))
+
 
 def fetch_article_text(url, timeout=15, max_chars=4000):
     try:
@@ -287,11 +300,68 @@ def merge_new_articles_into_store(store, df_media):
     return new_count
 
 
-def rank_stored_articles_by_novelty(store):
-    """Recompute novelty over the FULL accumulated history so scores stay
-    comparable across old and newly-added articles, then sort for display
-    (most novel first). Order of computation is always chronological by
-    seendate so results are stable regardless of when the script runs."""
+PRIORITY_WEIGHTS = {
+    "relevance": 0.35,
+    "recency": 0.30,
+    "novelty": 0.20,
+    "momentum": 0.10,
+    "source_quality": 0.05,
+}
+
+ISSUE_KEYWORDS = (
+    "privat", "redevelop", "golf course", "public access", "protest",
+    "lawsuit", "court", "congress", "national park service", "nps",
+    "demolition", "debris", "lease", "contract", "development",
+)
+
+HIGH_CONFIDENCE_SOURCES = (
+    ".gov", "associated press", "apnews", "reuters", "washington post", "wtop",
+    "washingtonian", "dcist", "axios", "nbc", "abc", "cbs", "fox",
+    "cnn", "npr", "politico", "the hill", "yahoo",
+)
+
+
+def relevance_score(item):
+    """Score direct connection to the park plus issue-specific substance."""
+    title = str(item.get("title", "")).lower()
+    text = f'{title} {str(item.get("fetched_text", "")).lower()}'
+    if "east potomac park" in title:
+        base = 0.80
+    elif "hains point" in title:
+        base = 0.78
+    elif "east potomac" in title:
+        base = 0.72
+    else:
+        base = 0.65
+    issue_hits = sum(1 for keyword in ISSUE_KEYWORDS if keyword in text)
+    return min(1.0, base + min(issue_hits, 5) * 0.04)
+
+
+def recency_score(seendate, reference_time):
+    """Thirty-day half-life: recent stories lead without erasing older ones."""
+    seen = pd.to_datetime(seendate, errors="coerce", utc=True)
+    if pd.isna(seen):
+        return 0.0
+    age_days = max(0.0, (reference_time - seen).total_seconds() / 86400)
+    return math.pow(0.5, age_days / 30.0)
+
+
+def source_quality_score(item):
+    source = str(item.get("domain", "")).lower()
+    if source.endswith(".gov") or any(marker in source for marker in HIGH_CONFIDENCE_SOURCES):
+        return 1.0
+    if source and source not in {"google news", "unknown"}:
+        return 0.70
+    return 0.50
+
+
+def rank_stored_articles_by_priority(store):
+    """Calculate novelty, then rank articles by public-interest priority.
+
+    Priority combines direct relevance, recency, text novelty, cross-source
+    coverage momentum, and a small source-quality signal. Novelty remains
+    visible but no longer determines the top three by itself.
+    """
     if not store:
         return []
 
@@ -308,11 +378,23 @@ def rank_stored_articles_by_novelty(store):
     try:
         tfidf_matrix = vectorizer.fit_transform(texts)
     except ValueError:
-        # No usable vocabulary: retain every article without inventing scores.
+        # No usable vocabulary: retain every article without inventing a
+        # novelty score, but still calculate the other priority components.
+        reference_time = pd.Timestamp.now(tz="UTC")
         for item in items:
             item["novelty"] = None
             item["summary"] = item.get("title", "")
+            item["relevance"] = relevance_score(item)
+            item["recency"] = recency_score(item.get("seendate"), reference_time)
+            item["momentum"] = 0.0
+            item["source_quality"] = source_quality_score(item)
+            item["priority"] = (
+                PRIORITY_WEIGHTS["relevance"] * item["relevance"]
+                + PRIORITY_WEIGHTS["recency"] * item["recency"]
+                + PRIORITY_WEIGHTS["source_quality"] * item["source_quality"]
+            )
             item.pop("_seendate_dt", None)
+        items.sort(key=lambda r: (r["priority"], r["recency"]), reverse=True)
         return items
 
     seen_vector = None
@@ -327,7 +409,50 @@ def rank_stored_articles_by_novelty(store):
         item["novelty"] = novelty
         item["summary"] = summarize_text(texts[i])
 
-    items.sort(key=lambda r: r["novelty"], reverse=True)
+    # A story covered by several different sources in the same seven-day
+    # window receives a momentum boost. Title similarity avoids rewarding
+    # unrelated stories that merely mention the same park.
+    titles = [item.get("title", "") for item in items]
+    try:
+        title_matrix = TfidfVectorizer(stop_words="english").fit_transform(titles)
+        title_similarities = cosine_similarity(title_matrix)
+    except ValueError:
+        title_similarities = None
+
+    reference_time = pd.Timestamp.now(tz="UTC")
+    for i, item in enumerate(items):
+        related_sources = set()
+        if title_similarities is not None:
+            for j, other in enumerate(items):
+                if i == j or title_similarities[i][j] < 0.35:
+                    continue
+                first_date = item["_seendate_dt"]
+                second_date = other["_seendate_dt"]
+                if pd.isna(first_date) or pd.isna(second_date):
+                    continue
+                if abs((first_date - second_date).total_seconds()) <= 7 * 86400:
+                    other_source = str(other.get("domain", "")).lower().strip()
+                    current_source = str(item.get("domain", "")).lower().strip()
+                    if other_source and other_source != current_source:
+                        related_sources.add(other_source)
+
+        item["relevance"] = relevance_score(item)
+        item["recency"] = recency_score(item.get("seendate"), reference_time)
+        item["momentum"] = min(1.0, len(related_sources) / 4.0)
+        item["source_quality"] = source_quality_score(item)
+        item["priority"] = sum(
+            PRIORITY_WEIGHTS[factor] * item[factor]
+            for factor in PRIORITY_WEIGHTS
+        )
+
+    items.sort(
+        key=lambda r: (
+            r["priority"],
+            r["recency"],
+            r["novelty"],
+        ),
+        reverse=True,
+    )
     for item in items:
         item.pop("_seendate_dt", None)
     return items
@@ -381,6 +506,12 @@ def main():
     hearing_entries = flag_hearing_entries(df_docket)
 
     article_store = load_article_store()
+    # Remove the broad-feed results saved by earlier runs.  This is intentional:
+    # the site should not permanently retain unrelated headlines.
+    article_store = {
+        url: article for url, article in article_store.items()
+        if is_tracker_article(article)
+    }
     for article in RECOVERED_ARTICLES:
         if article["url"] not in article_store:
             article_store[article["url"]] = dict(article, fetched_text=article["title"])
@@ -390,6 +521,10 @@ def main():
             previous_media = pd.read_csv(media_path)
         except pd.errors.EmptyDataError:
             previous_media = pd.DataFrame()
+        if not previous_media.empty:
+            previous_media = previous_media[
+                previous_media.apply(is_tracker_article, axis=1)
+            ].copy()
         merge_new_articles_into_store(article_store, previous_media)
     save_article_store(article_store)
 
@@ -419,6 +554,7 @@ def main():
         df_media = pd.concat(media_frames, ignore_index=True)
         df_media["seendate"] = pd.to_datetime(df_media["seendate"], errors="coerce", utc=True)
         df_media = df_media.drop_duplicates(subset=["url"])
+        df_media = df_media[df_media.apply(is_tracker_article, axis=1)].copy()
     # An empty result or failed search must never erase the saved snapshot.
     if not df_media.empty:
         df_media.to_csv(media_path + ".tmp", index=False)
@@ -430,8 +566,8 @@ def main():
     new_count = merge_new_articles_into_store(article_store, df_media)
     print(f"{new_count} new article(s) this run; {len(article_store)} total in store.", flush=True)
 
-    print("Re-ranking full article history by novelty...", flush=True)
-    ranked_articles = rank_stored_articles_by_novelty(article_store)
+    print("Re-ranking full article history by public-interest priority...", flush=True)
+    ranked_articles = rank_stored_articles_by_priority(article_store)
     save_article_store(article_store)
 
     print("Rendering the updated page...", flush=True)
@@ -507,8 +643,11 @@ def main():
         json.dump(sorted(current_items), f)
 
     def render_article_div(a):
-        pct = round(a["novelty"] * 100) if a["novelty"] is not None else None
-        score_label = f"{pct}% novelty score" if pct is not None else "Not scored"
+        priority_pct = round(a["priority"] * 100)
+        novelty_pct = round(a["novelty"] * 100) if a["novelty"] is not None else None
+        novelty_label = f"{novelty_pct}% novelty" if novelty_pct is not None else "novelty unavailable"
+        trending_label = " &middot; Trending" if a.get("momentum", 0) >= 0.50 else ""
+        score_label = f"{priority_pct}% priority &middot; {novelty_label}{trending_label}"
         seendate_dt = pd.to_datetime(a["seendate"], errors="coerce")
         date_str = seendate_dt.strftime("%b %d, %Y") if pd.notna(seendate_dt) else str(a["seendate"])
         safe_title = html_module.escape(str(a["title"]))
@@ -637,9 +776,10 @@ def main():
     <summary>News Articles <span class="toggle-label" aria-hidden="true"></span></summary>
     <div>
   <p style="font-family: Arial, sans-serif; font-size: 0.85rem; color: #4A4A4A;">
-    All saved articles are retained and ranked by estimated text novelty compared with
-    earlier saved articles. This automated score is not a fact-check or a measure of importance.
-    The top three appear below; expand the list to see the rest.
+    All saved articles are retained. The top three are ranked by a public-interest priority score:
+    35% direct relevance, 30% recency, 20% text novelty, 10% coverage momentum, and
+    5% source quality. The score is automated and is not a fact-check. Expand the list
+    to see the remaining articles.
   </p>
   <p>{len(ranked_articles)} ranked articles</p>
   <div>{article_rows}</div>
@@ -712,25 +852,14 @@ def main():
     </div>
   </details>
   <details class="section about-me" id="about-me">
-    <summary> Page Dedication <span class="toggle-label" aria-hidden="true"></span></summary>
+    <summary>About Me <span class="toggle-label" aria-hidden="true"></span></summary>
     <div class="bio">
-      <div class="bio">
-  <p>This website is dedicated to those who cherish nature and social justice. &lt;3</p>
-
-  <p>
-    <em>“I do not know if the people of the United States would vote for superior men
-    if they ran for office, but there can be no doubt that such men do not run.”</em>
-    —Alexis de Tocqueville, <cite>Democracy in America</cite>
-  </p>
-
-  <p>
-    <strong>Honorary mention:</strong> Dr. Steven Scalet, longtime Director of Philosophy
-    and Ethics at UBalt and my favorite professor. He is one of the gentlest people I
-    have ever met and has spent years teaching students to think seriously about ethics,
-    justice, and the world they wish to build—a quiet leader among the movers and shakers
-    of social upheaval.
-  </p>
-</div>
+      <p>I&rsquo;m a single parent to a wonderful child. I&rsquo;m also a full time law
+      student who works three jobs.</p>
+      <p>My legal interest is in using tax policy to advance social equity.
+      Go UBalt Law!</p>
+      <p>This website is dedicated to those who cherish nature and social justice. <3 </p>
+    </div>
   </details>
 </body>
 </html>"""
