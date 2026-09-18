@@ -656,8 +656,6 @@ def deduplicate_article_store(store):
     store.clear()
     store.update(deduplicated)
 return removed
-        merge_new_articles_into_store(article_store, previous_media)
-    save_article_store(article_store)
 
     print("Fetching news articles...", flush=True)
     # --- Media (rolling 90-day window, GDELT's actual coverage range) ---
