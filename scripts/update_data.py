@@ -457,7 +457,7 @@ def deduplicate_article_store(store):
     store.update(deduplicated)
     return removed
     
-    def rank_stored_articles_by_priority(store):
+def rank_stored_articles_by_priority(store):
     """Rank by relevance, recency, novelty, momentum, and source quality."""
     if not store:
         return []
