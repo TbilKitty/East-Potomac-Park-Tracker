@@ -577,7 +577,7 @@ def main():
                     lambda row: article_date_is_allowed(row, now), axis=1
                 )
             ].copy()
-            def normalized_article_title(title):
+def normalized_article_title(title):
     """Return a stable comparison key for syndicated copies of one story."""
     title = str(title or "").lower()
     title = re.sub(r"\s+", " ", title).strip()
