@@ -928,7 +928,7 @@ def main():
     </div>
     </div>
   </details>
-    <details class="section about-me" id="page-dedication">
+      <details class="section about-me" id="page-dedication">
     <summary>Page Dedication <span class="toggle-label" aria-hidden="true"></span></summary>
     <div class="bio">
       <p>This website is dedicated to those who cherish nature and social justice. &lt;3</p>
