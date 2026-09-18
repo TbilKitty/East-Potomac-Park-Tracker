@@ -948,6 +948,20 @@ def main():
       </p>
     </div>
   </details>
+    <section class="project-links" aria-labelledby="more-projects-heading">
+    <h2 id="more-projects-heading">More Civic &amp; Policy Projects</h2>
+    <p>Explore additional tools for Maryland civic engagement and tax-policy analysis.</p>
+
+    <div class="project-link-buttons">
+      <a href="https://mdcivicpower.org/" target="_blank" rel="noopener">
+        Maryland Legislative Tracker &rarr;
+      </a>
+
+      <a href="https://tbilkitty.github.io/SNAP_Back/" target="_blank" rel="noopener">
+        SNAP Back: Tax Policy Reform &rarr;
+      </a>
+    </div>
+  </section>
 </body>
 </html>"""
 
