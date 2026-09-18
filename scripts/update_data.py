@@ -675,10 +675,9 @@ except Exception as e:
 
     # Google News RSS prevents a quiet GDELT rate limit from producing an
     # apparently successful but empty daily update.
-    google_articles = google_news_search(news_query)
+        google_articles = google_news_search(news_query)
     if google_articles:
         media_frames.append(pd.DataFrame(google_articles))
-
     if media_frames:
         df_media = pd.concat(media_frames, ignore_index=True)
         df_media["seendate"] = pd.to_datetime(df_media["seendate"], errors="coerce", utc=True)
