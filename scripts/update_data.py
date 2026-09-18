@@ -180,9 +180,33 @@ JUNK_CLASS_KEYWORDS = [
 # A deliberately conservative screen.  The tracker is about Hains Point and
 # East Potomac Park, not general Washington or White House coverage.
 PLACE_TITLE_PATTERN = re.compile(
-    r"\b(?:east\s+potomac(?:\s+park)?|hains(?:\s+point)?|potomac\s+park)\b",
+    r"\b(?:east\s+potomac(?:\s+park)?|hains(?:\s+point)?)\b",
     re.IGNORECASE,
 )
+
+# Keep the public archive focused on the present controversy. Articles with
+# missing dates, dates before 2025, or implausible future dates are excluded.
+ARTICLE_START_DATE = pd.Timestamp("2025-01-01", tz="UTC")
+
+
+def article_date_is_allowed(article, reference_time=None):
+    seen = pd.to_datetime(article.get("seendate"), errors="coerce", utc=True)
+    if pd.isna(seen):
+        return False
+    reference_time = reference_time or pd.Timestamp.now(tz="UTC")
+    reference_time = pd.to_datetime(reference_time, utc=True)
+    return ARTICLE_START_DATE <= seen <= reference_time + pd.Timedelta(days=1)
+
+
+def prune_article_store_by_date(store, reference_time=None):
+    """Remove out-of-window records so they do not return on later runs."""
+    stale_urls = [
+        url for url, article in store.items()
+        if not article_date_is_allowed(article, reference_time)
+    ]
+    for url in stale_urls:
+        del store[url]
+    return len(stale_urls)
 
 
 def is_tracker_article(article):
@@ -283,7 +307,7 @@ def merge_new_articles_into_store(store, df_media):
         return new_count
     for _, row in df_media.iterrows():
         url = row.get("url")
-        if not url or url in store:
+        if not url or url in store or not article_date_is_allowed(row):
             continue
         text = fetch_article_text(url)
         time.sleep(1)  # be polite to the sites we're fetching from
@@ -365,7 +389,7 @@ def rank_stored_articles_by_priority(store):
     if not store:
         return []
 
-    items = list(store.values())
+    items = [item for item in store.values() if article_date_is_allowed(item)]
     for item in items:
         item["_seendate_dt"] = pd.to_datetime(item["seendate"], errors="coerce", utc=True)
     # Keep undated records too; do not silently remove them from the list.
@@ -510,7 +534,7 @@ def main():
     # the site should not permanently retain unrelated headlines.
     article_store = {
         url: article for url, article in article_store.items()
-        if is_tracker_article(article)
+        if is_tracker_article(article) and article_date_is_allowed(article, now)
     }
     for article in RECOVERED_ARTICLES:
         if article["url"] not in article_store:
@@ -522,8 +546,14 @@ def main():
         except pd.errors.EmptyDataError:
             previous_media = pd.DataFrame()
         if not previous_media.empty:
+            previous_media["seendate"] = pd.to_datetime(
+                previous_media["seendate"], errors="coerce", utc=True
+            )
             previous_media = previous_media[
                 previous_media.apply(is_tracker_article, axis=1)
+                & previous_media.apply(
+                    lambda row: article_date_is_allowed(row, now), axis=1
+                )
             ].copy()
         merge_new_articles_into_store(article_store, previous_media)
     save_article_store(article_store)
@@ -554,7 +584,10 @@ def main():
         df_media = pd.concat(media_frames, ignore_index=True)
         df_media["seendate"] = pd.to_datetime(df_media["seendate"], errors="coerce", utc=True)
         df_media = df_media.drop_duplicates(subset=["url"])
-        df_media = df_media[df_media.apply(is_tracker_article, axis=1)].copy()
+        df_media = df_media[
+            df_media.apply(is_tracker_article, axis=1)
+            & df_media.apply(lambda row: article_date_is_allowed(row, now), axis=1)
+        ].copy()
     # An empty result or failed search must never erase the saved snapshot.
     if not df_media.empty:
         df_media.to_csv(media_path + ".tmp", index=False)
@@ -564,7 +597,10 @@ def main():
     # full accumulated history so nothing that's already been featured
     # disappears, and novelty scores stay comparable across runs. ---
     new_count = merge_new_articles_into_store(article_store, df_media)
+    removed_count = prune_article_store_by_date(article_store, now)
     print(f"{new_count} new article(s) this run; {len(article_store)} total in store.", flush=True)
+    if removed_count:
+        print(f"Removed {removed_count} article(s) outside the 2025-present window.", flush=True)
 
     print("Re-ranking full article history by public-interest priority...", flush=True)
     ranked_articles = rank_stored_articles_by_priority(article_store)
@@ -776,7 +812,8 @@ def main():
     <summary>News Articles <span class="toggle-label" aria-hidden="true"></span></summary>
     <div>
   <p style="font-family: Arial, sans-serif; font-size: 0.85rem; color: #4A4A4A;">
-    All saved articles are retained. The top three are ranked by a public-interest priority score:
+    Articles published from January 1, 2025 through the present are retained. The top three
+    are ranked by a public-interest priority score:
     35% direct relevance, 30% recency, 20% text novelty, 10% coverage momentum, and
     5% source quality. The score is automated and is not a fact-check. Expand the list
     to see the remaining articles.
