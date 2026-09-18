@@ -295,7 +295,51 @@ def save_article_store(store, path=ARTICLE_STORE_PATH):
         json.dump(clean, f, indent=2, default=str)
     os.replace(path + ".tmp", path)
 
+def normalized_article_title(title):
+    """Return a stable comparison key for syndicated copies of one story."""
+    title = str(title or "").lower()
+    title = re.sub(r"\s+", " ", title).strip()
+    return re.sub(r"[^a-z0-9]+", " ", title).strip()
 
+def deduplicate_article_store(store):
+    """Keep one best source for each identical headline."""
+    best_by_title = {}
+
+    for url, item in store.items():
+        key = normalized_article_title(item.get("title"))
+        if not key:
+            key = f"url::{url}"
+
+        previous = best_by_title.get(key)
+        if previous is None:
+            best_by_title[key] = (url, item)
+            continue
+
+        def quality(candidate):
+            candidate_url, candidate_item = candidate
+            seen = pd.to_datetime(
+                candidate_item.get("seendate"),
+                errors="coerce",
+                utc=True,
+            )
+            seen_value = seen.value if pd.notna(seen) else -1
+
+            return (
+                source_quality_score(candidate_item),
+                len(str(candidate_item.get("fetched_text", ""))),
+                seen_value,
+                candidate_url,
+            )
+
+        if quality((url, item)) > quality(previous):
+            best_by_title[key] = (url, item)
+
+    deduplicated = {url: item for url, item in best_by_title.values()}
+    removed = len(store) - len(deduplicated)
+    store.clear()
+    store.update(deduplicated)
+    return removed
+    
 def merge_new_articles_into_store(store, df_media):
     """Fetch + cache text only for URLs we haven't seen before."""
     new_count = 0
@@ -574,9 +618,14 @@ def main():
     # --- Article store: merge in only genuinely new URLs, then re-rank the
     # full accumulated history so nothing that's already been featured
     # disappears, and novelty scores stay comparable across runs. ---
-    new_count = merge_new_articles_into_store(article_store, df_media)
-    removed_count = prune_article_store_by_date(article_store, now)
-    print(f"{new_count} new article(s) this run; {len(article_store)} total in store.", flush=True)
+   new_count = merge_new_articles_into_store(article_store, df_media)
+duplicate_count = deduplicate_article_store(article_store)
+removed_count = prune_article_store_by_date(article_store, now)
+
+print(f"{new_count} new article(s) this run; {len(article_store)} total in store.", flush=True)
+
+if duplicate_count:
+    print(f"Removed {duplicate_count} duplicate syndicated headline(s).", flush=True)
     if removed_count:
         print(f"Removed {removed_count} article(s) outside the 2025-present window.", flush=True)
 
