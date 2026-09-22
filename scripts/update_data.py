@@ -834,6 +834,33 @@ def main():
     background: #21483C;
     border-color: #21483C;
   }}
+
+  body {{ background: #f6f7f3; color: #24332d; font-family: Georgia, serif; }}
+  h1 {{ font-size: clamp(1.85rem, 4vw, 2.65rem); line-height: 1.2; margin-bottom: 0.5rem; }}
+  .section {{ margin: 18px 0; border: 1px solid #d8e2da; border-radius: 14px; background: #fff; box-shadow: 0 3px 15px rgba(28,61,45,.06); overflow: hidden; }}
+  .section > summary {{ display: flex; align-items: center; justify-content: space-between; gap: 1rem; cursor: pointer; padding: 20px 24px; color: #214f3e; font: 700 1.2rem/1.3 Arial, sans-serif; list-style: none; }}
+  .section > summary::-webkit-details-marker, .section details > summary::-webkit-details-marker {{ display: none; }}
+  .section > summary:hover, .section > summary:focus-visible {{ background: #edf4ed; }}
+  .section > summary:focus-visible, .section details > summary:focus-visible {{ outline: 3px solid #b89140; outline-offset: -3px; }}
+  .section > summary::after {{ content: '+'; flex: none; width: 1.7rem; height: 1.7rem; display: grid; place-items: center; border-radius: 50%; background: #e7f0e9; font-size: 1.35rem; line-height: 1; }}
+  .section[open] > summary::after {{ content: '−'; }}
+  .section > div {{ padding: 0 24px 24px; }}
+  .section details:not(.section) {{ margin: 14px 0; border: 1px solid #e1e9e1; border-radius: 9px; overflow: hidden; }}
+  .section details:not(.section) > summary {{ cursor: pointer; padding: 12px 16px; background: #f3f7f2; color: #24543f; font: 600 .95rem/1.4 Arial, sans-serif; list-style: none; overflow-wrap: anywhere; }}
+  .section details:not(.section) > summary::before {{ content: '＋'; margin-right: .5rem; }}
+  .section details:not(.section)[open] > summary::before {{ content: '−'; }}
+  .section details:not(.section) > :not(summary) {{ margin: 12px 16px; }}
+  .section p, .section li, .section td {{ line-height: 1.55; }}
+  .section a {{ color: #225c46; }}
+  .section .table-scroll {{ overflow-x: auto; }}
+  .section td, .section th {{ padding: 8px; vertical-align: top; text-align: left; }}
+  .ranking-note {{ font: .9rem/1.5 Arial, sans-serif; color: #4a4a4a; }}
+  @media (max-width: 640px) {{
+    body {{ padding: 14px 14px 36px; }}
+    .section > summary {{ padding: 17px 16px; font-size: 1.08rem; }}
+    .section > div {{ padding: 0 16px 18px; }}
+    .section div[style*="justify-content:space-between"] {{ flex-wrap: wrap; }}
+  }}
 </style>
 </head>
 <body>
@@ -861,14 +888,15 @@ def main():
   <details class="section" open>
     <summary>News Articles <span class="toggle-label" aria-hidden="true"></span></summary>
     <div>
-  <p style="font-family: Arial, sans-serif; font-size: 0.85rem; color: #4A4A4A;">
+<p>{len(ranked_articles)} ranked articles</p>
+  <details class="ranking-info"><summary>How articles are ranked</summary>
+  <p class="ranking-note">
     Articles published from January 1, 2025 through the present are retained. The top three
     are ranked by a public-interest priority score:
     35% direct relevance, 30% recency, 20% text novelty, 10% coverage momentum, and
-    5% source quality. The score is automated and is not a fact-check. Expand the list
-    to see the remaining articles.
+    5% source quality. The score is automated and is not a fact-check.
   </p>
-  <p>{len(ranked_articles)} ranked articles</p>
+  </details>
   <div>{article_rows}</div>
 
     </div>
@@ -891,7 +919,7 @@ def main():
     </div>
   </details>
 
-    <details class="section" open>
+    <details class="section">
     <summary>Public Search Interest <span class="toggle-label" aria-hidden="true"></span></summary>
     <div>
 
@@ -922,7 +950,7 @@ def main():
     </div>
   </details>
 
-  <details class="section" open>
+  <details class="section">
     <summary>Email Subscription <span class="toggle-label" aria-hidden="true"></span></summary>
     <div style="font-family: Arial, sans-serif;">
     <p style="font-size:0.88rem; color:#4A4A4A; margin:6px 0 12px;">Only sent when there's genuinely new hearing or notice activity &mdash; not a daily digest.</p>
