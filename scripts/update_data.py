@@ -148,19 +148,6 @@ def send_email_update(subject, body):
         print(f"Email send failed: {e}")
 
 
-trends_html = f"""
-<script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/4179_RC01/embed_loader.js"></script>
-<div class="trends-widget" style="font-family:Arial,sans-serif;"></div>
-<script type="text/javascript">
-  trends.embed.renderExploreWidget(
-    "TIMESERIES",
-    {{"comparisonItem":[{{"keyword":"East Potomac Park","geo":"US","time":"today 3-m"}}],"category":0,"property":""}},
-    {{"exploreQuery":"date=today%203-m&geo=US&q=East%20Potomac%20Park&hl=en","guestPath":"https://trends.google.com:443/trends/embed/"}}
-  );
-</script>
-"""
-
-
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -769,14 +756,43 @@ def main():
         article_rows = "<p>No articles available to rank this run.</p>"
 
     trends_html = """
-<script type="text/javascript" src="https://ssl.gstatic.com/trends_nrtr/4179_RC01/embed_loader.js"></script>
-<div class="trends-widget" style="font-family:Arial,sans-serif;"></div>
-<script type="text/javascript">
-  trends.embed.renderExploreWidget(
-    "TIMESERIES",
-    {"comparisonItem":[{"keyword":"East Potomac Park","geo":"US","time":"today 3-m"}],"category":0,"property":""},
-    {"exploreQuery":"date=today%203-m&geo=US&q=East%20Potomac%20Park&hl=en","guestPath":"https://trends.google.com:443/trends/embed/"}
-  );
+<div class="trends-widget" id="trends-widget" aria-live="polite">
+  <p id="trends-status">Open this section to load the Google Trends chart.</p>
+</div>
+<script>
+(function () {
+  const section = document.getElementById('search-interest');
+  const widget = document.getElementById('trends-widget');
+  const status = document.getElementById('trends-status');
+  let started = false;
+  function loadChart() {
+    if (started || !section.open) return;
+    started = true;
+    status.textContent = 'Loading Google Trends…';
+    const loader = document.createElement('script');
+    loader.src = 'https://ssl.gstatic.com/trends_nrtr/4179_RC01/embed_loader.js';
+    loader.onload = function () {
+      try {
+        if (!window.trends || !trends.embed) throw new Error('Chart unavailable');
+        trends.embed.renderExploreWidgetTo(
+          widget,
+          'TIMESERIES',
+          {"comparisonItem":[{"keyword":"East Potomac Park","geo":"US","time":"today 3-m"}],"category":0,"property":""},
+          {"exploreQuery":"date=today%203-m&geo=US&q=East%20Potomac%20Park&hl=en","guestPath":"https://trends.google.com:443/trends/embed/"}
+        );
+        status.remove();
+      } catch (error) {
+        status.textContent = 'The chart could not load here. Use the direct Google Trends link below.';
+      }
+    };
+    loader.onerror = function () {
+      status.textContent = 'The chart was blocked. Use the direct Google Trends link below.';
+    };
+    document.head.appendChild(loader);
+  }
+  section.addEventListener('toggle', loadChart);
+  loadChart();
+}());
 </script>
 """
 
@@ -919,7 +935,7 @@ def main():
     </div>
   </details>
 
-    <details class="section">
+    <details class="section" id="search-interest">
     <summary>Public Search Interest <span class="toggle-label" aria-hidden="true"></span></summary>
     <div>
 
