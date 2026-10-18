@@ -1,0 +1,90 @@
+{
+  "last_updated": "2026-10-18T20:19:00Z",
+  "plain_language_overview": "The court has temporarily stopped further tree cutting at East Potomac Golf Course through October 26 and requires advance notice before the government makes other irreversible changes. The court has not yet decided whether longer-term relief should be granted. An evidentiary hearing on the preliminary-injunction request is scheduled for October 19.",
+  "orders_in_effect": [
+    {
+      "title": "Temporary halt on further tree cutting",
+      "summary": "The federal defendants may not fell additional trees at East Potomac Golf Course through October 26, 2026, unless the court enters a further order.",
+      "date": "2026-10-13",
+      "status": "in_effect",
+      "source_label": "October 13 minute order; Docket entry 79 memorandum opinion",
+      "source_url": "https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/"
+    },
+    {
+      "title": "Advance notice required for irreversible changes",
+      "summary": "Through October 26, the government must give the court and the plaintiffs three business days' written notice before making an irreversible modification to a permanent form or feature of the golf course.",
+      "date": "2026-10-13",
+      "status": "in_effect",
+      "source_label": "October 13 minute order",
+      "source_url": "https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/"
+    }
+  ],
+  "decided_issues": [
+    {
+      "title": "Emergency temporary restraining order granted",
+      "summary": "On the limited record then before it, the court found that the plaintiffs had shown likely success on jurisdiction and their NEPA claim, likely irreparable harm, and equities favoring temporary relief. This was a preliminary ruling, not a final decision on the lawsuit's merits.",
+      "date": "2026-10-13",
+      "status": "decided",
+      "source_label": "October 13 minute order and Docket entry 79",
+      "source_url": "https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/"
+    },
+    {
+      "title": "Amended and supplemental complaint permitted",
+      "summary": "The court allowed the plaintiffs to update their complaint because the facts surrounding the project were changing quickly. This ruling allowed the new allegations to be filed; it did not decide whether those allegations are ultimately correct.",
+      "date": "2026-10-15",
+      "status": "decided",
+      "source_label": "October 15 minute order; motion 72",
+      "source_url": "https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/"
+    }
+  ],
+  "pending_issues": [
+    {
+      "title": "Whether longer-term preliminary relief should be granted",
+      "summary": "The plaintiffs' motion for a preliminary injunction and stay remains before the court. The temporary October 13 restrictions do not themselves resolve whether protections will continue for the remainder of the litigation.",
+      "date": "2026-10-14",
+      "status": "pending",
+      "source_label": "Docket entry 80",
+      "source_url": "https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/"
+    },
+    {
+      "title": "Jurisdiction, final agency action, and the NEPA merits",
+      "summary": "The parties continue to dispute whether the court has jurisdiction, whether there is reviewable final agency action, and whether the government complied with NEPA. The temporary restraining-order findings are preliminary and do not finally decide these questions.",
+      "date": "2026-10-16",
+      "status": "pending",
+      "source_label": "Docket entries 80 and 84; October 18 minute order",
+      "source_url": "https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/"
+    },
+    {
+      "title": "Government request to disqualify the judge and release hearing audio",
+      "summary": "The government filed a motion asking that the judge be disqualified and that audio be released. The docket supplied to the tracker does not show that this motion has been decided.",
+      "date": "2026-10-16",
+      "status": "pending",
+      "source_label": "Docket entry 86",
+      "source_url": "https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/"
+    }
+  ],
+  "prior_actions": [
+    {
+      "title": "Short October 12 tree-removal halt",
+      "summary": "The court initially stopped all tree removal until 7:00 a.m. on October 13 or further order. That short order was superseded by the October 13 temporary restraining order extending protection through October 26.",
+      "date": "2026-10-12",
+      "status": "modified",
+      "source_label": "October 12 and October 13 minute orders",
+      "source_url": "https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/"
+    },
+    {
+      "title": "Earlier request for a stay or preliminary injunction deferred",
+      "summary": "In May, the court deferred ruling on the earlier request for a stay or preliminary injunction while the parties completed additional briefing. Later factual developments produced the October emergency proceedings.",
+      "date": "2026-05-05",
+      "status": "modified",
+      "source_label": "May 5 minute order",
+      "source_url": "https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/"
+    }
+  ],
+  "next_event": {
+    "title": "Preliminary-injunction evidentiary hearing",
+    "date": "October 19, 2026 at 10:00 a.m.",
+    "summary": "The court is scheduled to hear evidence and argument concerning the request for longer-term preliminary relief. The hearing is set for Courtroom 12, with public telephone access except while sworn testimony is taken.",
+    "source_url": "https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/"
+  }
+}
