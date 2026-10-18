@@ -73,11 +73,35 @@
   .section .table-scroll { overflow-x: auto; }
   .section td, .section th { padding: 8px; vertical-align: top; text-align: left; }
   .ranking-note { font: .9rem/1.5 Arial, sans-serif; color: #4a4a4a; }
+  .court-summary { margin: 20px 0 26px; padding: 24px; border: 2px solid #2c5f4f; border-radius: 14px; background: #fff; box-shadow: 0 5px 20px rgba(28,61,45,.10); }
+  .court-summary h2 { margin: 2px 0 10px; color: #173f31; font-size: clamp(1.5rem, 3vw, 2rem); }
+  .court-summary h3 { margin: 0 0 10px; color: #214f3e; font: 700 1rem/1.3 Arial, sans-serif; }
+  .summary-kicker { margin: 0; color: #805e18; font: 700 .78rem/1.3 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+  .summary-overview { margin: 0 0 20px; font-size: 1.05rem; }
+  .summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .summary-grid > section { padding: 16px; border: 1px solid #d8e2da; border-radius: 10px; background: #f8faf7; }
+  .court-summary-list { margin: 0; padding: 0; list-style: none; }
+  .court-summary-item { padding: 12px 0; border-top: 1px solid #dfe7df; }
+  .court-summary-item:first-child { padding-top: 0; border-top: 0; }
+  .court-summary-item p { margin: 7px 0; font-size: .94rem; }
+  .court-summary-item small { color: #535f59; font: .78rem/1.4 Arial, sans-serif; }
+  .status-badge { display: inline-block; margin: 0 7px 5px 0; padding: 3px 7px; border-radius: 999px; font: 700 .68rem/1.2 Arial, sans-serif; text-transform: uppercase; }
+  .status-in_effect, .status-decided { background: #dcefe3; color: #15462e; }
+  .status-pending, .status-unclear { background: #fff0c7; color: #684c0b; }
+  .status-expired, .status-modified, .status-vacated { background: #ececec; color: #494949; }
+  .next-event { margin-top: 16px; padding: 15px 17px; border-left: 5px solid #b89140; background: #fff8e7; }
+  .next-event p { margin: 5px 0; }
+  .prior-actions { margin-top: 16px; border-top: 1px solid #d8e2da; padding-top: 12px; }
+  .prior-actions > summary { cursor: pointer; color: #24543f; font: 700 .92rem/1.4 Arial, sans-serif; }
+  .summary-method, .summary-empty { color: #59635f; font: .78rem/1.45 Arial, sans-serif; }
+  .summary-method { margin: 16px 0 0; }
   @media (max-width: 640px) {
     body { padding: 14px 14px 36px; }
     .section > summary { padding: 17px 16px; font-size: 1.08rem; }
     .section > div { padding: 0 16px 18px; }
     .section div[style*="justify-content:space-between"] { flex-wrap: wrap; }
+    .court-summary { padding: 18px 16px; }
+    .summary-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -102,6 +126,39 @@
     </a>
 
   </div>
+
+  <section class="court-summary" aria-labelledby="court-summary-title">
+    <p class="summary-kicker">Plain-English judicial update</p>
+    <h2 id="court-summary-title">What is happening in court?</h2>
+    <p class="summary-overview">The court has temporarily stopped further tree cutting at East Potomac Golf Course through October 26 and requires advance notice before the government makes other irreversible changes. The court has not yet decided whether longer-term relief should be granted. An evidentiary hearing on the preliminary-injunction request is scheduled for October 19.</p>
+    <div class="summary-grid">
+      <section>
+        <h3>Orders currently in effect</h3>
+        <ul class="court-summary-list">
+          <li class="court-summary-item"><div><span class="status-badge status-in_effect">In effect</span><strong>Temporary halt on further tree cutting</strong></div><p>The federal defendants may not fell additional trees at East Potomac Golf Course through October 26, 2026, unless the court enters a further order.</p><small>2026-10-13 &middot; <a href="https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/" target="_blank" rel="noopener">October 13 minute order; Docket entry 79 memorandum opinion</a></small></li>
+          <li class="court-summary-item"><div><span class="status-badge status-in_effect">In effect</span><strong>Advance notice required for irreversible changes</strong></div><p>Through October 26, the government must give the court and the plaintiffs three business days&rsquo; written notice before making an irreversible modification to a permanent form or feature of the golf course.</p><small>2026-10-13 &middot; <a href="https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/" target="_blank" rel="noopener">October 13 minute order</a></small></li>
+        </ul>
+      </section>
+      <section>
+        <h3>Issues already decided</h3>
+        <ul class="court-summary-list">
+          <li class="court-summary-item"><div><span class="status-badge status-decided">Decided</span><strong>Emergency temporary restraining order granted</strong></div><p>On the limited record then before it, the court found likely success on jurisdiction and the NEPA claim, likely irreparable harm, and equities favoring temporary relief. This was preliminary, not a final decision on the lawsuit&rsquo;s merits.</p><small>2026-10-13 &middot; <a href="https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/" target="_blank" rel="noopener">October 13 minute order and Docket entry 79</a></small></li>
+          <li class="court-summary-item"><div><span class="status-badge status-decided">Decided</span><strong>Amended and supplemental complaint permitted</strong></div><p>The court allowed the plaintiffs to update their complaint because the facts were changing quickly. That ruling allowed new allegations to be filed; it did not decide whether they are ultimately correct.</p><small>2026-10-15 &middot; <a href="https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/" target="_blank" rel="noopener">October 15 minute order; motion 72</a></small></li>
+        </ul>
+      </section>
+      <section>
+        <h3>Issues still awaiting a decision</h3>
+        <ul class="court-summary-list">
+          <li class="court-summary-item"><div><span class="status-badge status-pending">Pending</span><strong>Whether longer-term preliminary relief should be granted</strong></div><p>The plaintiffs&rsquo; motion for a preliminary injunction and stay remains before the court. The October 13 restrictions do not decide whether protection will continue for the rest of the litigation.</p><small>2026-10-14 &middot; <a href="https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/" target="_blank" rel="noopener">Docket entry 80</a></small></li>
+          <li class="court-summary-item"><div><span class="status-badge status-pending">Pending</span><strong>Jurisdiction, final agency action, and the NEPA merits</strong></div><p>The parties continue to dispute whether the court has jurisdiction, whether there is reviewable final agency action, and whether the government complied with NEPA. The temporary findings do not finally decide those questions.</p><small>2026-10-16 &middot; <a href="https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/" target="_blank" rel="noopener">Docket entries 80 and 84; October 18 minute order</a></small></li>
+          <li class="court-summary-item"><div><span class="status-badge status-pending">Pending</span><strong>Government request to disqualify the judge and release hearing audio</strong></div><p>The government filed this request, but the docket supplied to the tracker does not show that the court has decided it.</p><small>2026-10-16 &middot; <a href="https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/" target="_blank" rel="noopener">Docket entry 86</a></small></li>
+        </ul>
+      </section>
+    </div>
+    <div class="next-event"><h3>What happens next</h3><p><strong>Preliminary-injunction evidentiary hearing</strong> <span>October 19, 2026 at 10:00 a.m.</span></p><p>The court is scheduled to hear evidence and argument concerning the request for longer-term preliminary relief.</p></div>
+    <details class="prior-actions"><summary>Prior, expired, or superseded court actions</summary><ul class="court-summary-list"><li class="court-summary-item"><div><span class="status-badge status-modified">Modified</span><strong>Short October 12 tree-removal halt</strong></div><p>The initial halt expired on October 13 and was superseded by the October 13 temporary restraining order extending protection through October 26.</p><small>2026-10-12 &middot; <a href="https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/" target="_blank" rel="noopener">October 12 and October 13 minute orders</a></small></li></ul></details>
+    <p class="summary-method">AI-assisted summary generated only from the court docket. Verify the linked docket before relying on it. Last summary update: 2026-10-18T20:19:00Z. Not legal advice.</p>
+  </section>
 
   <details class="section" open>
     <summary>News Articles <span class="toggle-label" aria-hidden="true"></span></summary>
