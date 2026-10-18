@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  models: read
 
 jobs:
   update:
@@ -25,6 +26,9 @@ jobs:
         env:
           COURTLISTENER_TOKEN: ${{ secrets.COURTLISTENER_TOKEN }}
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          # Uses GitHub's automatic workflow token; no separate AI API key is required.
+          MODELS_TOKEN: ${{ github.token }}
+          GITHUB_MODEL: openai/gpt-4.1-mini
         run: python scripts/update_data.py
 
       - name: Commit and push if changed
