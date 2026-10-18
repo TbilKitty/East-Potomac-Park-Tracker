@@ -121,11 +121,225 @@ def get_federal_register_notices(term, agency):
 
 HEARING_KEYWORDS = ["hearing", "conference", "oral argument", "status conference", "scheduling order"]
 
+COURT_SUMMARY_PATH = "data/court_summary.json"
+COURT_DOCKET_URL = "https://www.courtlistener.com/docket/72278895/dc-preservation-league-v-department-of-the-interior/"
+GITHUB_MODELS_URL = "https://models.github.ai/inference/chat/completions"
+GITHUB_MODEL = os.environ.get("GITHUB_MODEL", "openai/gpt-4.1-mini")
+
 def flag_hearing_entries(df_docket):
     if df_docket.empty:
         return df_docket
     mask = df_docket["description"].str.lower().str.contains("|".join(HEARING_KEYWORDS), na=False)
     return df_docket[mask]
+
+
+def empty_court_summary():
+    return {
+        "last_updated": "",
+        "plain_language_overview": "The automated court summary is not available yet. The full docket remains available below.",
+        "orders_in_effect": [],
+        "decided_issues": [],
+        "pending_issues": [],
+        "prior_actions": [],
+        "next_event": None,
+    }
+
+
+def load_court_summary(path=COURT_SUMMARY_PATH):
+    summary = empty_court_summary()
+    if not os.path.exists(path):
+        return summary
+    try:
+        with open(path, encoding="utf-8") as summary_file:
+            saved = json.load(summary_file)
+        if isinstance(saved, dict):
+            for key in summary:
+                if key in saved:
+                    summary[key] = saved[key]
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"Could not read existing court summary: {exc}")
+    return summary
+
+
+def validate_court_summary(candidate, previous, now):
+    """Accept only the expected public-facing structure; otherwise retain prior state."""
+    if not isinstance(candidate, dict):
+        raise ValueError("AI response was not a JSON object")
+    cleaned = empty_court_summary()
+    overview = candidate.get("plain_language_overview")
+    if not isinstance(overview, str) or not overview.strip():
+        raise ValueError("AI response omitted the plain-language overview")
+    cleaned["plain_language_overview"] = overview.strip()[:1800]
+    cleaned["last_updated"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    allowed_statuses = {
+        "in_effect", "decided", "pending", "expired", "modified", "vacated", "unclear"
+    }
+    for section in ("orders_in_effect", "decided_issues", "pending_issues", "prior_actions"):
+        items = candidate.get(section, [])
+        if not isinstance(items, list):
+            raise ValueError(f"AI response field {section} was not a list")
+        for item in items[:12]:
+            if not isinstance(item, dict):
+                continue
+            title = str(item.get("title", "")).strip()
+            text = str(item.get("summary", "")).strip()
+            if not title or not text:
+                continue
+            status = str(item.get("status", "unclear")).strip().lower()
+            if status not in allowed_statuses:
+                status = "unclear"
+            cleaned[section].append({
+                "title": title[:240],
+                "summary": text[:1400],
+                "date": str(item.get("date", "")).strip()[:32],
+                "status": status,
+                "source_label": str(item.get("source_label", "Court docket")).strip()[:160],
+                "source_url": COURT_DOCKET_URL,
+            })
+
+    next_event = candidate.get("next_event")
+    if isinstance(next_event, dict) and str(next_event.get("title", "")).strip():
+        cleaned["next_event"] = {
+            "title": str(next_event.get("title", "")).strip()[:240],
+            "date": str(next_event.get("date", "")).strip()[:64],
+            "summary": str(next_event.get("summary", "")).strip()[:1000],
+            "source_url": COURT_DOCKET_URL,
+        }
+    return cleaned
+
+
+def update_court_summary(df_docket, now):
+    """Use GitHub Models to update a cumulative, source-constrained docket summary."""
+    previous = load_court_summary()
+    token = os.environ.get("MODELS_TOKEN", "")
+    if not token or df_docket.empty:
+        if not token:
+            print("No MODELS_TOKEN set; retaining the existing court summary.")
+        return previous
+
+    recent_entries = []
+    for _, row in df_docket.head(70).iterrows():
+        description = str(row.get("description", "")).strip()
+        if not description or description.lower() == "nan":
+            continue
+        recent_entries.append({
+            "date_filed": str(row.get("date_filed", "")),
+            "entry_number": "" if pd.isna(row.get("entry_number")) else str(row.get("entry_number")),
+            "description": description[:5000],
+        })
+
+    system_prompt = """You are maintaining a plain-English status summary of a federal court case.
+Use ONLY the supplied docket descriptions. Do not use news reports or outside knowledge.
+Return valid JSON and no prose outside JSON.
+
+Legal accuracy rules:
+1. Separate orders currently in effect, issues actually decided, issues still pending, and prior/expired actions.
+2. A motion, allegation, party filing, proposed order, or presidential statement is not a court decision.
+3. Preserve a previously pending issue unless a later docket entry expressly resolves, withdraws, moots, or supersedes it.
+4. Never call an expired TRO active. Move expired, vacated, modified, or superseded relief to prior_actions.
+5. Describe the practical effect in ordinary language, but do not broaden the operative terms.
+6. If status cannot be established from the docket description, use status "unclear" and say so.
+7. Include only legally or practically significant items. Do not treat routine scheduling or appearances as merits rulings.
+8. Use dates and docket entry numbers in source_label whenever available.
+
+Required schema:
+{
+  "plain_language_overview": "string",
+  "orders_in_effect": [{"title":"", "summary":"", "date":"YYYY-MM-DD", "status":"in_effect|unclear", "source_label":""}],
+  "decided_issues": [{"title":"", "summary":"", "date":"YYYY-MM-DD", "status":"decided|modified|vacated", "source_label":""}],
+  "pending_issues": [{"title":"", "summary":"", "date":"YYYY-MM-DD", "status":"pending|unclear", "source_label":""}],
+  "prior_actions": [{"title":"", "summary":"", "date":"YYYY-MM-DD", "status":"expired|modified|vacated|decided", "source_label":""}],
+  "next_event": {"title":"", "date":"", "summary":""} or null
+}"""
+    user_payload = {
+        "as_of_utc": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "previous_cumulative_summary": previous,
+        "recent_docket_entries": recent_entries,
+    }
+    request_body = {
+        "model": GITHUB_MODEL,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
+        ],
+        "temperature": 0.1,
+        "max_tokens": 3500,
+        "response_format": {"type": "json_object"},
+    }
+    try:
+        response = requests.post(
+            GITHUB_MODELS_URL,
+            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+            json=request_body,
+            timeout=90,
+        )
+        response.raise_for_status()
+        content = response.json()["choices"][0]["message"]["content"].strip()
+        if content.startswith("```"):
+            content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content, flags=re.IGNORECASE)
+        updated_summary = validate_court_summary(json.loads(content), previous, now)
+        with open(COURT_SUMMARY_PATH + ".tmp", "w", encoding="utf-8") as summary_file:
+            json.dump(updated_summary, summary_file, indent=2, ensure_ascii=False)
+        os.replace(COURT_SUMMARY_PATH + ".tmp", COURT_SUMMARY_PATH)
+        print("Court summary updated with GitHub Models.")
+        return updated_summary
+    except (requests.RequestException, KeyError, IndexError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        print(f"AI court summary failed; retaining existing summary: {exc}")
+        return previous
+
+
+def render_court_summary(summary):
+    labels = {
+        "in_effect": "In effect", "decided": "Decided", "pending": "Pending",
+        "expired": "Expired", "modified": "Modified", "vacated": "Vacated", "unclear": "Status unclear",
+    }
+
+    def render_items(items):
+        if not items:
+            return '<p class="summary-empty">No items are currently listed in this category.</p>'
+        rows = []
+        for item in items:
+            status = item.get("status", "unclear")
+            source = html_module.escape(item.get("source_url") or COURT_DOCKET_URL, quote=True)
+            source_label = html_module.escape(item.get("source_label") or "Court docket")
+            date = html_module.escape(item.get("date") or "Date not stated")
+            rows.append(
+                '<li class="court-summary-item">'
+                f'<div><span class="status-badge status-{html_module.escape(status)}">{labels.get(status, "Status unclear")}</span>'
+                f'<strong>{html_module.escape(item.get("title", "Court development"))}</strong></div>'
+                f'<p>{html_module.escape(item.get("summary", ""))}</p>'
+                f'<small>{date} &middot; <a href="{source}" target="_blank" rel="noopener">{source_label}</a></small>'
+                '</li>'
+            )
+        return '<ul class="court-summary-list">' + "".join(rows) + '</ul>'
+
+    next_event = summary.get("next_event")
+    next_html = ""
+    if isinstance(next_event, dict) and next_event.get("title"):
+        next_html = (
+            '<div class="next-event"><h3>What happens next</h3>'
+            f'<p><strong>{html_module.escape(next_event.get("title", ""))}</strong>'
+            f' <span>{html_module.escape(next_event.get("date", ""))}</span></p>'
+            f'<p>{html_module.escape(next_event.get("summary", ""))}</p></div>'
+        )
+    updated = html_module.escape(summary.get("last_updated") or "Not yet generated")
+    overview = html_module.escape(summary.get("plain_language_overview") or "Summary unavailable.")
+    return f"""
+  <section class="court-summary" aria-labelledby="court-summary-title">
+    <p class="summary-kicker">Plain-English judicial update</p>
+    <h2 id="court-summary-title">What is happening in court?</h2>
+    <p class="summary-overview">{overview}</p>
+    <div class="summary-grid">
+      <section><h3>Orders currently in effect</h3>{render_items(summary.get('orders_in_effect', []))}</section>
+      <section><h3>Issues already decided</h3>{render_items(summary.get('decided_issues', []))}</section>
+      <section><h3>Issues still awaiting a decision</h3>{render_items(summary.get('pending_issues', []))}</section>
+    </div>
+    {next_html}
+    <details class="prior-actions"><summary>Prior, expired, or superseded court actions</summary>{render_items(summary.get('prior_actions', []))}</details>
+    <p class="summary-method">AI-assisted summary generated only from the court docket. Verify the linked docket before relying on it. Last summary update: {updated}. Not legal advice.</p>
+  </section>
+"""
 
 
 def send_email_update(subject, body):
@@ -560,6 +774,8 @@ def main():
         if os.path.exists("data/east_potomac_docket.csv"):
             df_docket = pd.read_csv("data/east_potomac_docket.csv")
     df_docket.to_csv("data/east_potomac_docket.csv", index=False)
+    court_summary = update_court_summary(df_docket, now)
+    court_summary_html = render_court_summary(court_summary)
     print("Fetching public notices...", flush=True)
     # --- Upcoming hearings / notices ---
     fr_notices = get_federal_register_notices("East Potomac", "national-park-service")
@@ -871,11 +1087,35 @@ def main():
   .section .table-scroll {{ overflow-x: auto; }}
   .section td, .section th {{ padding: 8px; vertical-align: top; text-align: left; }}
   .ranking-note {{ font: .9rem/1.5 Arial, sans-serif; color: #4a4a4a; }}
+  .court-summary {{ margin: 20px 0 26px; padding: 24px; border: 2px solid #2c5f4f; border-radius: 14px; background: #fff; box-shadow: 0 5px 20px rgba(28,61,45,.10); }}
+  .court-summary h2 {{ margin: 2px 0 10px; color: #173f31; font-size: clamp(1.5rem, 3vw, 2rem); }}
+  .court-summary h3 {{ margin: 0 0 10px; color: #214f3e; font: 700 1rem/1.3 Arial, sans-serif; }}
+  .summary-kicker {{ margin: 0; color: #805e18; font: 700 .78rem/1.3 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }}
+  .summary-overview {{ margin: 0 0 20px; font-size: 1.05rem; }}
+  .summary-grid {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }}
+  .summary-grid > section {{ padding: 16px; border: 1px solid #d8e2da; border-radius: 10px; background: #f8faf7; }}
+  .court-summary-list {{ margin: 0; padding: 0; list-style: none; }}
+  .court-summary-item {{ padding: 12px 0; border-top: 1px solid #dfe7df; }}
+  .court-summary-item:first-child {{ padding-top: 0; border-top: 0; }}
+  .court-summary-item p {{ margin: 7px 0; font-size: .94rem; }}
+  .court-summary-item small {{ color: #535f59; font: .78rem/1.4 Arial, sans-serif; }}
+  .status-badge {{ display: inline-block; margin: 0 7px 5px 0; padding: 3px 7px; border-radius: 999px; font: 700 .68rem/1.2 Arial, sans-serif; text-transform: uppercase; }}
+  .status-in_effect, .status-decided {{ background: #dcefe3; color: #15462e; }}
+  .status-pending, .status-unclear {{ background: #fff0c7; color: #684c0b; }}
+  .status-expired, .status-modified, .status-vacated {{ background: #ececec; color: #494949; }}
+  .next-event {{ margin-top: 16px; padding: 15px 17px; border-left: 5px solid #b89140; background: #fff8e7; }}
+  .next-event p {{ margin: 5px 0; }}
+  .prior-actions {{ margin-top: 16px; border-top: 1px solid #d8e2da; padding-top: 12px; }}
+  .prior-actions > summary {{ cursor: pointer; color: #24543f; font: 700 .92rem/1.4 Arial, sans-serif; }}
+  .summary-method, .summary-empty {{ color: #59635f; font: .78rem/1.45 Arial, sans-serif; }}
+  .summary-method {{ margin: 16px 0 0; }}
   @media (max-width: 640px) {{
     body {{ padding: 14px 14px 36px; }}
     .section > summary {{ padding: 17px 16px; font-size: 1.08rem; }}
     .section > div {{ padding: 0 16px 18px; }}
     .section div[style*="justify-content:space-between"] {{ flex-wrap: wrap; }}
+    .court-summary {{ padding: 18px 16px; }}
+    .summary-grid {{ grid-template-columns: 1fr; }}
   }}
 </style>
 </head>
@@ -900,6 +1140,8 @@ def main():
     </a>
 
   </div>
+
+  {court_summary_html}
 
   <details class="section" open>
     <summary>News Articles <span class="toggle-label" aria-hidden="true"></span></summary>
