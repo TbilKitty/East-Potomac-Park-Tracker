@@ -28,29 +28,44 @@ def get_docket_entries(docket_id):
     while url:
         remaining = deadline - time.monotonic()
         if remaining <= 0 or pages >= 20:
-            raise requests.exceptions.Timeout("CourtListener fetch limit reached; use saved docket data.")
+            print("CourtListener fetch limit reached; keeping fetched pages.")
+            break
         print(f"CourtListener: fetching page {pages + 1}...", flush=True)
-        resp = requests.get(url, params=params, headers=headers, timeout=min(30, remaining))
+        try:
+            resp = requests.get(url, params=params, headers=headers, timeout=min(30, remaining))
+        except requests.RequestException as exc:
+            if not entries:
+                raise
+            print(f"CourtListener request failed; keeping {len(entries)} fetched entries: {exc}")
+            break
         if resp.status_code == 429:
             rate_limit_retries += 1
             if rate_limit_retries > 3:
                 resp.raise_for_status()
             delay = 15 * rate_limit_retries
             if time.monotonic() + delay >= deadline:
-                raise requests.exceptions.Timeout("CourtListener rate limit exceeded fetch budget.")
+                print("CourtListener rate limit exceeded fetch budget; keeping fetched pages.")
+                break
             print(f"CourtListener rate limited; retry {rate_limit_retries}/3 in {delay}s.", flush=True)
             time.sleep(delay)
             continue
-        resp.raise_for_status()
-        data = resp.json()
-        entries.extend(data["results"])
+        try:
+            resp.raise_for_status()
+            data = resp.json()
+            entries.extend(data["results"])
+        except (requests.RequestException, ValueError, KeyError) as exc:
+            if not entries:
+                raise
+            print(f"CourtListener page failed; keeping {len(entries)} fetched entries: {exc}")
+            break
         pages += 1
         url = data.get("next")
         params = {}
         if url:
             remaining = deadline - time.monotonic()
             if remaining <= 13:
-                raise requests.exceptions.Timeout("CourtListener  budget exhausted.")
+                print("CourtListener time budget exhausted; keeping fetched pages.")
+                break
             time.sleep(13)
     return entries
 
@@ -275,10 +290,23 @@ Required schema:
             timeout=90,
         )
         response.raise_for_status()
-        content = response.json()["choices"][0]["message"]["content"].strip()
+        try:
+            response_data = response.json()
+        except ValueError as exc:
+            raise ValueError(f"GitHub Models returned a non-JSON HTTP response (status {response.status_code}, content-type {response.headers.get('Content-Type', 'unknown')})") from exc
+        choice = response_data["choices"][0]
+        content = (choice["message"].get("content") or "").strip()
+        if not content:
+            raise ValueError(f"GitHub Models returned empty content (finish_reason={choice.get('finish_reason')})")
+        if choice.get("finish_reason") == "length":
+            raise ValueError("GitHub Models response was truncated; retaining existing summary")
         if content.startswith("```"):
             content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content, flags=re.IGNORECASE)
-        updated_summary = validate_court_summary(json.loads(content), previous, now)
+        try:
+            candidate = json.loads(content)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"GitHub Models returned invalid JSON (length={len(content)}, finish_reason={choice.get('finish_reason')}): {exc}") from exc
+        updated_summary = validate_court_summary(candidate, previous, now)
         with open(COURT_SUMMARY_PATH + ".tmp", "w", encoding="utf-8") as summary_file:
             json.dump(updated_summary, summary_file, indent=2, ensure_ascii=False)
         os.replace(COURT_SUMMARY_PATH + ".tmp", COURT_SUMMARY_PATH)
@@ -763,17 +791,36 @@ def main():
     try:
         entries = get_docket_entries(DOCKET_ID)
         if entries:
-            df_docket = pd.DataFrame(entries)
+            fetched = pd.DataFrame(entries)
             for col in ["date_filed", "entry_number", "description"]:
-                if col not in df_docket.columns:
-                    df_docket[col] = None
-            df_docket = df_docket[["date_filed", "entry_number", "description"]].sort_values(
-                "date_filed", ascending=False)
-    except (requests.exceptions.RequestException, KeyError) as e:
+                if col not in fetched.columns:
+                    fetched[col] = None
+            fetched = fetched[["date_filed", "entry_number", "description"]]
+            cache_path = "data/east_potomac_docket.csv"
+            if os.path.exists(cache_path):
+                try:
+                    cached = pd.read_csv(cache_path)
+                    for col in ["date_filed", "entry_number", "description"]:
+                        if col not in cached.columns:
+                            cached[col] = None
+                    fetched = pd.concat([fetched, cached[["date_filed", "entry_number", "description"]]], ignore_index=True)
+                except (OSError, pd.errors.ParserError, pd.errors.EmptyDataError) as exc:
+                    print(f"Could not merge cached docket: {exc}")
+            # Preserve distinct same-day minute entries; fetched entries take precedence.
+            df_docket = fetched.drop_duplicates(subset=["date_filed", "entry_number", "description"]).sort_values(
+                "date_filed", ascending=False, kind="stable")
+            print(f"CourtListener: saved {len(df_docket)} merged docket entries.")
+        else:
+            raise ValueError("CourtListener returned no docket entries")
+    except (requests.exceptions.RequestException, KeyError, ValueError) as e:
         print(f"CourtListener fetch/parse failed, keeping previous data if any: {e}")
         if os.path.exists("data/east_potomac_docket.csv"):
-            df_docket = pd.read_csv("data/east_potomac_docket.csv")
-    df_docket.to_csv("data/east_potomac_docket.csv", index=False)
+            try:
+                df_docket = pd.read_csv("data/east_potomac_docket.csv")
+            except (OSError, pd.errors.ParserError, pd.errors.EmptyDataError) as exc:
+                print(f"Could not read cached docket: {exc}")
+    if not df_docket.empty:
+        df_docket.to_csv("data/east_potomac_docket.csv", index=False)
     court_summary = update_court_summary(df_docket, now)
     court_summary_html = render_court_summary(court_summary)
     print("Fetching public notices...", flush=True)
