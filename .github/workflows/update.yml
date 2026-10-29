@@ -1,8 +1,10 @@
 name: Update East Potomac Park Tracker
 
 on:
+  workflow_dispatch:
   schedule:
-    - cron: '0 12 * * *'  # daily at 12:00 UTC (8am ET)
+    - cron: '30 3 * * *'
+      timezone: 'America/New_York'  # daily at 12:00 UTC (8am ET)
   workflow_dispatch:       # lets you also trigger it manually from the Actions tab
 
 permissions:
