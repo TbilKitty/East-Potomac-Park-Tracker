@@ -1328,7 +1328,7 @@ def main():
       </a>
 
       <a href="https://tbilkitty.github.io/MTA_Accountability_Tracker/" target="_blank" rel="noopener">
-        Baltimore MTA Accountability Tracker &rarr;
+        MTA Accountability Tracker &rarr;
       </a>
     </div>
   </section>
