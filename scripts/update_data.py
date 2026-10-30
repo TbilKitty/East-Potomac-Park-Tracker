@@ -3,8 +3,10 @@ import json
 import time
 import math
 import html as html_module
+import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 import requests
 import pandas as pd
@@ -148,6 +150,94 @@ def flag_hearing_entries(df_docket):
     return df_docket[mask]
 
 
+EASTERN = ZoneInfo("America/New_York")
+MONTHS = "January|February|March|April|May|June|July|August|September|October|November|December"
+DATE_RE = re.compile(rf"(\d{{4}}-\d{{2}}-\d{{2}})|(\d{{1,2}}/\d{{1,2}}/\d{{4}})|((?:{MONTHS})\.? \d{{1,2}},? \d{{4}})", re.IGNORECASE)
+TIME_RE = re.compile(r"(\d{1,2}:\d{2}\s*[ap]\.?m\.?)", re.IGNORECASE)
+
+
+def parse_event_date(text):
+    """First calendar date in text (2026-10-30, 10/30/2026, or October 30, 2026), else None."""
+    m = DATE_RE.search(str(text or ""))
+    if not m:
+        return None
+    raw = m.group(0).replace(".", "").replace(",", "")
+    for fmt in ("%Y-%m-%d", "%m/%d/%Y", "%B %d %Y"):
+        try:
+            return datetime.strptime(raw, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+SCHEDULED_RE = re.compile(
+    r"(?P<label>[A-Z][^.;]{2,90}?)\s+(?:is\s+)?(?:set|reset|scheduled|rescheduled|continued)\s+(?:for|to)\s+(?:tomorrow,\s+)?"
+    r"(?P<date>\d{1,2}/\d{1,2}/\d{4}|(?:" + MONTHS + r")\.? \d{1,2},? \d{4})", re.IGNORECASE)
+DUE_RE = re.compile(
+    r"(?P<label>[A-Z][^.;]{2,90}?)\s+(?:due|shall be filed|must be filed)\s+(?:by|on|no later than)\s+"
+    r"(?P<date>\d{1,2}/\d{1,2}/\d{4}|(?:" + MONTHS + r")\.? \d{1,2},? \d{4})", re.IGNORECASE)
+HEARING_WORDS = ("hearing", "argument", "conference", "trial", "status")
+
+
+def docket_calendar(df_docket, today):
+    """Upcoming hearings and deadlines read directly from docket text (no AI).
+
+    Scheduling entries ("Set/Reset Deadlines/Hearings: Oral Argument set for
+    10/30/2026 at 10:00 AM ...") follow a standard court format. The newest
+    entry for an event wins, and dates later marked vacated are dropped.
+    """
+    if df_docket is None or df_docket.empty:
+        return []
+    rows = df_docket.dropna(subset=["description"]).sort_values("date_filed", ascending=False, kind="stable")
+    vacated_dates, found = set(), {}
+    for _, row in rows.iterrows():
+        text = re.sub(r"\s+", " ", str(row["description"]))
+        if re.search(r"vacat|cancel+ed|taken off the calendar", text, re.IGNORECASE):
+            for m in DATE_RE.finditer(text):
+                d = parse_event_date(m.group(0))
+                if d:
+                    vacated_dates.add(d)
+            continue
+        body = text.split("Hearings:", 1)[1] if "Hearings:" in text else text
+        for regex, kind in ((SCHEDULED_RE, "event"), (DUE_RE, "deadline")):
+            for m in regex.finditer(body):
+                day = parse_event_date(m.group("date"))
+                if day is None or day < today:
+                    continue
+                label = m.group("label").strip(" ,:-")
+                if re.search(r"transcript|redaction request", label, re.IGNORECASE):
+                    continue  # clerical, not a case event
+                label = re.sub(r"^(MINUTE ORDER\.?|ORDER\.?|It is (?:hereby )?ORDERED that)\s*", "", label, flags=re.IGNORECASE)
+                if len(label) > 70 or label.lower().startswith(("the ", "a ", "plaintiffs", "defendants")):
+                    label = "Hearing" if any(w in label.lower() for w in HEARING_WORDS) else ("Deadline" if kind == "deadline" else "Court event")
+                is_hearing = kind == "event" and any(w in label.lower() for w in HEARING_WORDS)
+                key = (day, "hearing" if is_hearing else label.lower()[:40])
+                if key in found:
+                    continue  # a newer entry already set this
+                tail = body[m.end():m.end() + 60]
+                tm = TIME_RE.search(tail)
+                found[key] = {
+                    "date": day, "time": tm.group(1) if tm and kind == "event" else "",
+                    "label": label[0].upper() + label[1:], "kind": "hearing" if is_hearing else kind,
+                    "source": f'Docket entry filed {row["date_filed"]}',
+                }
+    items = [v for v in found.values() if v["date"] not in vacated_dates]
+    items.sort(key=lambda v: (v["date"], v["kind"] != "hearing"))
+    return items[:8]
+
+
+def latest_docket_activity(df_docket, n=5):
+    if df_docket is None or df_docket.empty:
+        return []
+    rows = df_docket.dropna(subset=["description"])
+    rows = rows[rows["description"].astype(str).str.strip() != ""].sort_values("date_filed", ascending=False, kind="stable")
+    out = []
+    for _, row in rows.head(n).iterrows():
+        text = re.sub(r"\s+", " ", str(row["description"])).strip()
+        out.append({"date": str(row["date_filed"])[:10], "text": text if len(text) <= 260 else text[:257].rsplit(" ", 1)[0] + "…"})
+    return out
+
+
 def empty_court_summary():
     return {
         "last_updated": "",
@@ -214,6 +304,10 @@ def validate_court_summary(candidate, previous, now):
             })
 
     next_event = candidate.get("next_event")
+    event_day = parse_event_date(f'{(next_event or {}).get("date", "")} {(next_event or {}).get("title", "")}') \
+        if isinstance(next_event, dict) else None
+    if event_day is not None and event_day < now.astimezone(EASTERN).date():
+        next_event = None  # the model reported a past hearing as upcoming
     if isinstance(next_event, dict) and str(next_event.get("title", "")).strip():
         cleaned["next_event"] = {
             "title": str(next_event.get("title", "")).strip()[:240],
@@ -272,6 +366,7 @@ Legal accuracy rules:
 6. If status cannot be established from the docket description, use status "unclear" and say so.
 7. Include only legally or practically significant items. Do not treat routine scheduling or appearances as merits rulings.
 8. Use dates and docket entry numbers in source_label whenever available.
+9. next_event must be a court event scheduled AFTER as_of_utc. If none is scheduled, use null. Never report a past hearing as next.
 
 Required schema:
 {
@@ -287,54 +382,90 @@ Required schema:
         "previous_cumulative_summary": previous,
         "recent_docket_entries": recent_entries,
     }
-    request_body = {
-        "model": GITHUB_MODEL,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
-        ],
-        "temperature": 0.1,
-        "max_tokens": 3500,
-        "response_format": {"type": "json_object"},
-    }
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
+    ]
+    failures = []
+    for model in model_candidates():
+        try:
+            candidate = call_github_model(token, model, messages)
+            updated_summary = validate_court_summary(candidate, previous, now)
+            with open(COURT_SUMMARY_PATH + ".tmp", "w", encoding="utf-8") as summary_file:
+                json.dump(updated_summary, summary_file, indent=2, ensure_ascii=False)
+            os.replace(COURT_SUMMARY_PATH + ".tmp", COURT_SUMMARY_PATH)
+            print(f"Court summary updated with GitHub Models ({model}).")
+            return updated_summary
+        except (requests.RequestException, KeyError, IndexError, TypeError, ValueError, json.JSONDecodeError) as exc:
+            failures.append(f"{model}: {exc}")
+            print(f"AI summary attempt with {model} failed: {exc}", flush=True)
+    available = list_github_models(token)
+    # ::warning:: makes the failure show as a yellow annotation in the Actions tab.
+    print("::warning title=AI court summary failed::Retaining existing summary. "
+          + " | ".join(f[:300] for f in failures)
+          + (f" | Models available to this repo: {', '.join(available[:25])}" if available else ""))
+    return previous
+
+
+def model_candidates():
+    """Preferred model first, then fallbacks in case a model is retired from GitHub Models."""
+    preferred = [m.strip() for m in os.environ.get("GITHUB_MODEL", "").split(",") if m.strip()]
+    fallbacks = ["openai/gpt-5-mini", "openai/gpt-4.1-mini", "openai/gpt-4o-mini"]
+    seen, ordered = set(), []
+    for m in preferred + fallbacks:
+        if m not in seen:
+            seen.add(m)
+            ordered.append(m)
+    return ordered
+
+
+def call_github_model(token, model, messages):
+    body = {"model": model, "messages": messages, "response_format": {"type": "json_object"}}
+    if "gpt-5" in model or "/o" in model:
+        # Reasoning models reject custom temperature and use max_completion_tokens.
+        body["max_completion_tokens"] = 8000
+    else:
+        body["temperature"] = 0.1
+        body["max_tokens"] = 3500
+    response = requests.post(
+        GITHUB_MODELS_URL,
+        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        json=body,
+        timeout=120,
+    )
+    if not response.ok:
+        raise ValueError(f"HTTP {response.status_code}: {response.text[:400]}")
     try:
-        response = requests.post(
-            GITHUB_MODELS_URL,
-            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-            json=request_body,
-            timeout=90,
-        )
-        if not response.ok:
-            raise ValueError(f"GitHub Models HTTP {response.status_code}: {response.text[:500]}")
-        try:
-            response_data = response.json()
-        except ValueError as exc:
-            raise ValueError(f"GitHub Models returned a non-JSON HTTP response (status {response.status_code}, content-type {response.headers.get('Content-Type', 'unknown')})") from exc
-        choice = response_data["choices"][0]
-        content = (choice["message"].get("content") or "").strip()
-        if not content:
-            raise ValueError(f"GitHub Models returned empty content (finish_reason={choice.get('finish_reason')})")
-        if choice.get("finish_reason") == "length":
-            raise ValueError("GitHub Models response was truncated; retaining existing summary")
-        if content.startswith("```"):
-            content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content, flags=re.IGNORECASE)
-        try:
-            candidate = json.loads(content)
-        except json.JSONDecodeError as exc:
-            raise ValueError(f"GitHub Models returned invalid JSON (length={len(content)}, finish_reason={choice.get('finish_reason')}): {exc}") from exc
-        updated_summary = validate_court_summary(candidate, previous, now)
-        with open(COURT_SUMMARY_PATH + ".tmp", "w", encoding="utf-8") as summary_file:
-            json.dump(updated_summary, summary_file, indent=2, ensure_ascii=False)
-        os.replace(COURT_SUMMARY_PATH + ".tmp", COURT_SUMMARY_PATH)
-        print("Court summary updated with GitHub Models.")
-        return updated_summary
-    except (requests.RequestException, KeyError, IndexError, TypeError, ValueError, json.JSONDecodeError) as exc:
-        # ::warning:: makes the failure show as a yellow annotation in the Actions tab.
-        print(f"::warning title=AI court summary failed::Retaining existing summary: {exc}")
-        return previous
+        response_data = response.json()
+    except ValueError as exc:
+        raise ValueError(f"non-JSON HTTP response (status {response.status_code})") from exc
+    choice = response_data["choices"][0]
+    content = (choice["message"].get("content") or "").strip()
+    if not content:
+        raise ValueError(f"empty content (finish_reason={choice.get('finish_reason')})")
+    if choice.get("finish_reason") == "length":
+        raise ValueError("response was truncated")
+    if content.startswith("```"):
+        content = re.sub(r"^```(?:json)?\s*|\s*```$", "", content, flags=re.IGNORECASE)
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"invalid JSON (length={len(content)}): {exc}") from exc
 
 
-def render_court_summary(summary):
+def list_github_models(token):
+    """Best-effort list of model IDs the workflow token can use, for the failure message."""
+    try:
+        r = requests.get("https://models.github.ai/catalog/models",
+                         headers={"Authorization": f"Bearer {token}", "Accept": "application/json"}, timeout=30)
+        if r.ok:
+            return sorted(str(m.get("id")) for m in r.json() if isinstance(m, dict) and m.get("id"))
+    except (requests.RequestException, ValueError):
+        pass
+    return []
+
+
+def render_court_summary(summary, calendar=None, latest=None, today=None):
     labels = {
         "in_effect": "In effect", "decided": "Decided", "pending": "Pending",
         "expired": "Expired", "modified": "Modified", "vacated": "Vacated", "unclear": "Status unclear",
@@ -359,28 +490,63 @@ def render_court_summary(summary):
             )
         return '<ul class="court-summary-list">' + "".join(rows) + '</ul>'
 
-    next_event = summary.get("next_event")
-    next_html = ""
-    if isinstance(next_event, dict) and next_event.get("title"):
-        next_html = (
-            '<div class="next-event"><h3>What happens next</h3>'
-            f'<p><strong>{html_module.escape(next_event.get("title", ""))}</strong>'
-            f' <span>{html_module.escape(next_event.get("date", ""))}</span></p>'
-            f'<p>{html_module.escape(next_event.get("summary", ""))}</p></div>'
-        )
+    today = today or datetime.now(EASTERN).date()
+    calendar = calendar or []
+    latest = latest or []
+
+    def nice(d):
+        return d.strftime("%A, %B ") + str(d.day) + d.strftime(", %Y")
+
+    # "What happens next" comes straight from the docket's scheduling entries,
+    # so it can never show a hearing that has already happened.
+    if calendar:
+        rows = []
+        for ev in calendar:
+            when = "Today" if ev["date"] == today else nice(ev["date"])
+            if ev["time"]:
+                when += f' at {ev["time"]}'
+            kind = {"hearing": "Hearing", "deadline": "Filing deadline"}.get(ev["kind"], "Court date")
+            rows.append(
+                f'<li><strong>{html_module.escape(when)}</strong> &mdash; {html_module.escape(ev["label"])}'
+                f' <span class="cal-kind">{kind}</span><br><small>{html_module.escape(ev["source"])}</small></li>')
+        next_html = ('<div class="next-event"><h3>What happens next</h3>'
+                     '<ul class="court-calendar">' + "".join(rows) + '</ul>'
+                     '<p class="summary-method">Dates are read directly from the court docket\'s scheduling entries, '
+                     'not generated by AI. Courts can move dates; check the linked docket.</p></div>')
+    else:
+        next_html = ('<div class="next-event"><h3>What happens next</h3>'
+                     '<p>No upcoming hearing or filing deadline appears in the docket\'s scheduling entries. '
+                     f'<a href="{COURT_DOCKET_URL}" target="_blank" rel="noopener">Check the docket</a> for the latest.</p></div>')
+
+    # If the AI summary is older than the newest docket activity, say so plainly.
+    summary_day = parse_event_date(summary.get("last_updated"))
+    newest_day = parse_event_date(latest[0]["date"]) if latest else None
+    stale_html = ""
+    if newest_day and (summary_day is None or summary_day < newest_day):
+        as_of = nice(summary_day) if summary_day else "an earlier date"
+        items = "".join(f'<li><strong>{html_module.escape(x["date"])}</strong> &mdash; {html_module.escape(x["text"])}</li>'
+                        for x in latest)
+        stale_html = (
+            '<div class="stale-notice" role="note"><strong>The plain-English summary below has not caught up with the court.</strong> '
+            f'It reflects the docket as of {html_module.escape(as_of)}, and the court has filed newer entries since. '
+            'The most recent are listed here. Treat the summary below as background until it refreshes.'
+            '<h3>Latest court activity</h3><ul class="latest-activity">' + items + '</ul></div>')
     updated = html_module.escape(summary.get("last_updated") or "Not yet generated")
     overview = html_module.escape(summary.get("plain_language_overview") or "Summary unavailable.")
+    if stale_html and summary_day:
+        overview = f"<strong>As of {html_module.escape(nice(summary_day))}:</strong> " + overview
     return f"""
   <section class="court-summary" aria-labelledby="court-summary-title">
     <p class="summary-kicker">Plain-English judicial update</p>
     <h2 id="court-summary-title">What is happening in court?</h2>
+    {next_html}
+    {stale_html}
     <p class="summary-overview">{overview}</p>
     <div class="summary-grid">
       <section><h3>Orders currently in effect</h3>{render_items(summary.get('orders_in_effect', []))}</section>
       <section><h3>Issues already decided</h3>{render_items(summary.get('decided_issues', []))}</section>
       <section><h3>Issues still awaiting a decision</h3>{render_items(summary.get('pending_issues', []))}</section>
     </div>
-    {next_html}
     <details class="prior-actions"><summary>Prior, expired, or superseded court actions</summary>{render_items(summary.get('prior_actions', []))}</details>
     <p class="summary-method">AI-assisted summary generated only from the court docket. Verify the linked docket before relying on it. Last summary update: {updated}. Not legal advice.</p>
   </section>
@@ -845,7 +1011,9 @@ def main():
     if not df_docket.empty:
         df_docket.to_csv("data/east_potomac_docket.csv", index=False)
     court_summary = update_court_summary(df_docket, now)
-    court_summary_html = render_court_summary(court_summary)
+    today_et = now.astimezone(EASTERN).date()
+    court_summary_html = render_court_summary(
+        court_summary, docket_calendar(df_docket, today_et), latest_docket_activity(df_docket), today_et)
     print("Fetching public notices...", flush=True)
     # --- Upcoming hearings / notices ---
     fr_notices = get_federal_register_notices("East Potomac", "national-park-service")
@@ -1175,6 +1343,14 @@ def main():
   .status-expired, .status-modified, .status-vacated {{ background: #ececec; color: #494949; }}
   .next-event {{ margin-top: 16px; padding: 15px 17px; border-left: 5px solid #b89140; background: #fff8e7; }}
   .next-event p {{ margin: 5px 0; }}
+  .court-calendar {{ margin: 6px 0 4px; padding-left: 18px; }}
+  .court-calendar li {{ margin: 6px 0; }}
+  .court-calendar small {{ color: #59635f; font: .76rem/1.4 Arial, sans-serif; }}
+  .cal-kind {{ display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; background: #e7f0e9; color: #214f3e; font: 700 .66rem/1.5 Arial, sans-serif; text-transform: uppercase; vertical-align: 1px; }}
+  .stale-notice {{ margin: 16px 0; padding: 14px 17px; border-left: 5px solid #b34837; background: #fff1ed; font-size: .95rem; }}
+  .stale-notice h3 {{ margin: 12px 0 6px; }}
+  .latest-activity {{ margin: 0; padding-left: 18px; font-size: .88rem; }}
+  .latest-activity li {{ margin: 5px 0; }}
   .prior-actions {{ margin-top: 16px; border-top: 1px solid #d8e2da; padding-top: 12px; }}
   .prior-actions > summary {{ cursor: pointer; color: #24543f; font: 700 .92rem/1.4 Arial, sans-serif; }}
   .summary-method, .summary-empty {{ color: #59635f; font: .78rem/1.45 Arial, sans-serif; }}
@@ -1328,7 +1504,7 @@ def main():
       </a>
 
       <a href="https://tbilkitty.github.io/MTA_Accountability_Tracker/" target="_blank" rel="noopener">
-        MTA Accountability Tracker &rarr;
+        Baltimore MTA Accountability Tracker &rarr;
       </a>
     </div>
   </section>
