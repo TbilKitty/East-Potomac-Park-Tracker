@@ -233,16 +233,31 @@ def update_court_summary(df_docket, now):
             print("No MODELS_TOKEN set; retaining the existing court summary.")
         return previous
 
+    # GitHub Models' free tier caps gpt-4.1-mini at ~8,000 input tokens per
+    # request. Send only entries filed on/after the previous summary date
+    # (with a few days' overlap), trimmed, so the request stays well under it.
+    since = str(previous.get("last_updated") or "")[:10]
+    if since:
+        since = (pd.Timestamp(since) - pd.Timedelta(days=3)).strftime("%Y-%m-%d")
     recent_entries = []
-    for _, row in df_docket.head(70).iterrows():
+    budget_chars = 9000  # ~2,300 tokens for docket text
+    for _, row in df_docket.iterrows():
         description = str(row.get("description", "")).strip()
         if not description or description.lower() == "nan":
             continue
-        recent_entries.append({
-            "date_filed": str(row.get("date_filed", "")),
+        date_filed = str(row.get("date_filed", ""))
+        if since and date_filed < since and len(recent_entries) >= 10:
+            break
+        entry = {
+            "date_filed": date_filed,
             "entry_number": "" if pd.isna(row.get("entry_number")) else str(row.get("entry_number")),
-            "description": description[:5000],
-        })
+            "description": description[:900],
+        }
+        budget_chars -= len(entry["description"]) + 40
+        if budget_chars < 0 or len(recent_entries) >= 40:
+            break
+        recent_entries.append(entry)
+    print(f"AI summary: sending {len(recent_entries)} docket entries (since {since or 'start'}).", flush=True)
 
     system_prompt = """You are maintaining a plain-English status summary of a federal court case.
 Use ONLY the supplied docket descriptions. Do not use news reports or outside knowledge.
@@ -289,7 +304,8 @@ Required schema:
             json=request_body,
             timeout=90,
         )
-        response.raise_for_status()
+        if not response.ok:
+            raise ValueError(f"GitHub Models HTTP {response.status_code}: {response.text[:500]}")
         try:
             response_data = response.json()
         except ValueError as exc:
@@ -313,7 +329,8 @@ Required schema:
         print("Court summary updated with GitHub Models.")
         return updated_summary
     except (requests.RequestException, KeyError, IndexError, TypeError, ValueError, json.JSONDecodeError) as exc:
-        print(f"AI court summary failed; retaining existing summary: {exc}")
+        # ::warning:: makes the failure show as a yellow annotation in the Actions tab.
+        print(f"::warning title=AI court summary failed::Retaining existing summary: {exc}")
         return previous
 
 
@@ -806,6 +823,12 @@ def main():
                     fetched = pd.concat([fetched, cached[["date_filed", "entry_number", "description"]]], ignore_index=True)
                 except (OSError, pd.errors.ParserError, pd.errors.EmptyDataError) as exc:
                     print(f"Could not merge cached docket: {exc}")
+            # Normalize so "106" and "106.0" (CSV round-trip) match, and blank
+            # descriptions don't count as distinct rows.
+            fetched["date_filed"] = fetched["date_filed"].astype(str).str[:10]
+            fetched["entry_number"] = pd.to_numeric(fetched["entry_number"], errors="coerce").astype("Int64")
+            fetched["description"] = fetched["description"].fillna("").astype(str).str.strip()
+            fetched = fetched[fetched["description"] != ""]
             # Preserve distinct same-day minute entries; fetched entries take precedence.
             df_docket = fetched.drop_duplicates(subset=["date_filed", "entry_number", "description"]).sort_values(
                 "date_filed", ascending=False, kind="stable")
