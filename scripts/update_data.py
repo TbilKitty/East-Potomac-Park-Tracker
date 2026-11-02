@@ -156,6 +156,19 @@ DATE_RE = re.compile(rf"(\d{{4}}-\d{{2}}-\d{{2}})|(\d{{1,2}}/\d{{1,2}}/\d{{4}})|
 TIME_RE = re.compile(r"(\d{1,2}:\d{2}\s*[ap]\.?m\.?)", re.IGNORECASE)
 
 
+def eastern_stamp(moment):
+    """'November 2, 2026 at 4:48 AM ET' (handles daylight saving automatically)."""
+    if isinstance(moment, str):
+        moment = pd.to_datetime(moment, errors="coerce", utc=True)
+        if pd.isna(moment):
+            return ""
+        moment = moment.to_pydatetime()
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    local = moment.astimezone(EASTERN)
+    return f"{local.strftime('%B')} {local.day}, {local.year} at {local.strftime('%I:%M %p').lstrip('0')} ET"
+
+
 def parse_event_date(text):
     """First calendar date in text (2026-10-30, 10/30/2026, or October 30, 2026), else None."""
     m = DATE_RE.search(str(text or ""))
@@ -566,7 +579,7 @@ def render_court_summary(summary, calendar=None, latest=None, today=None):
             '<div class="stale-line" role="note">'
             f'<p>This summary was last refreshed <strong>{html_module.escape(as_of)}</strong>. The court has filed more since then.</p>'
             f'<details><summary>See the latest filings</summary><ul class="latest-activity">{items}</ul></details></div>')
-    updated = html_module.escape(summary.get("last_updated") or "Not yet generated")
+    updated = html_module.escape(eastern_stamp(summary.get("last_updated") or "") or "Not yet generated")
     overview = html_module.escape(summary.get("plain_language_overview") or "Summary unavailable.")
     if stale_html and summary_day:
         overview = f'<span class="as-of">As of {html_module.escape(summary_day.strftime("%B ") + str(summary_day.day))}</span> ' + overview
@@ -1137,7 +1150,7 @@ def main():
 
     print("Rendering the updated page...", flush=True)
     # --- Render index.html ---
-    updated = now.strftime("%B %d, %Y at %H:%M UTC")
+    updated = eastern_stamp(now)
 
     docket_rows = ""
     for _, row in df_docket.head(30).iterrows():
