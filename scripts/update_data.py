@@ -126,6 +126,7 @@ def get_federal_register_notices(term, agency):
         "conditions[agencies][]": agency,
         "order": "newest",
         "per_page": 10,
+        "fields[]": ["title", "publication_date", "html_url", "comments_close_on", "type", "agencies"],
     }
     try:
         resp = requests.get(url, params=params, timeout=30)
@@ -478,16 +479,35 @@ def call_github_model(token, model, messages):
         body["max_tokens"] = 3500
     response = requests.post(
         GITHUB_MODELS_URL,
-        headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "X-GitHub-Api-Version": "2022-11-28",
+        },
         json=body,
         timeout=120,
     )
     if not response.ok:
         raise ValueError(f"HTTP {response.status_code}: {response.text[:400]}")
+    raw = response.text.lstrip("\ufeff").strip()
+    if raw.startswith("data:"):
+        # Some gateways answer with a server-sent-event stream even when stream=false.
+        chunks = [line[5:].strip() for line in raw.splitlines() if line.startswith("data:")]
+        chunks = [c for c in chunks if c and c != "[DONE]"]
+        try:
+            parts = [json.loads(c) for c in chunks]
+            text = "".join((p.get("choices") or [{}])[0].get("delta", {}).get("content") or "" for p in parts)
+            raw = json.dumps({"choices": [{"message": {"content": text}, "finish_reason": "stop"}]})
+        except (ValueError, AttributeError, IndexError):
+            pass
     try:
-        response_data = response.json()
+        response_data = json.loads(raw)
     except ValueError as exc:
-        raise ValueError(f"non-JSON HTTP response (status {response.status_code})") from exc
+        snippet = re.sub(r"\s+", " ", raw[:300])
+        raise ValueError(
+            f"non-JSON HTTP response (status {response.status_code}, "
+            f"content-type {response.headers.get('content-type')!r}, url {response.url}): {snippet!r}") from exc
     choice = response_data["choices"][0]
     content = (choice["message"].get("content") or "").strip()
     if not content:
@@ -567,29 +587,14 @@ def render_court_summary(summary, calendar=None, latest=None, today=None):
         next_html = ('<div class="next-event"><h3>What happens next</h3>'
                      '<p class="cal-note">No upcoming hearing or deadline is listed on the docket right now.</p></div>')
 
-    # If the AI summary is older than the newest filing, add one quiet line (filings tucked away).
-    summary_day = parse_event_date(summary.get("last_updated"))
-    newest_day = parse_event_date(latest[0]["date"]) if latest else None
-    stale_html = ""
-    if newest_day and (summary_day is None or summary_day < newest_day):
-        as_of = (summary_day.strftime("%B ") + str(summary_day.day)) if summary_day else "an earlier date"
-        items = "".join(f'<li><span>{html_module.escape(short(parse_event_date(x["date"])) if parse_event_date(x["date"]) else x["date"])}</span>'
-                        f'{html_module.escape(x["text"])}</li>' for x in latest)
-        stale_html = (
-            '<div class="stale-line" role="note">'
-            f'<p>This summary was last refreshed <strong>{html_module.escape(as_of)}</strong>. The court has filed more since then.</p>'
-            f'<details><summary>See the latest filings</summary><ul class="latest-activity">{items}</ul></details></div>')
     updated = html_module.escape(eastern_stamp(summary.get("last_updated") or "") or "Not yet generated")
     overview = html_module.escape(summary.get("plain_language_overview") or "Summary unavailable.")
-    if stale_html and summary_day:
-        overview = f'<span class="as-of">As of {html_module.escape(summary_day.strftime("%B ") + str(summary_day.day))}</span> ' + overview
     return f"""
   <section class="court-summary" aria-labelledby="court-summary-title">
     <p class="summary-kicker">Plain-English judicial update</p>
     <h2 id="court-summary-title">What is happening in court?</h2>
     {next_html}
     <p class="summary-overview">{overview}</p>
-    {stale_html}
     <div class="summary-grid">
       <section><h3>Orders currently in effect</h3>{render_items(summary.get('orders_in_effect', []))}</section>
       <section><h3>Issues already decided</h3>{render_items(summary.get('decided_issues', []))}</section>
@@ -597,6 +602,102 @@ def render_court_summary(summary, calendar=None, latest=None, today=None):
     </div>
     <details class="prior-actions"><summary>Prior, expired, or superseded court actions</summary>{render_items(summary.get('prior_actions', []))}</details>
     <p class="summary-method">AI-assisted summary generated only from the court docket. Verify the linked docket before relying on it. Last summary update: {updated}. Not legal advice.</p>
+  </section>
+"""
+
+
+PUBLIC_INPUT_PATH = "data/public_input.json"
+COURTHOUSE = "E. Barrett Prettyman U.S. Courthouse, 333 Constitution Ave. NW"
+
+
+def load_public_input(path=PUBLIC_INPUT_PATH):
+    try:
+        with open(path, encoding="utf-8") as f:
+            items = json.load(f).get("items", [])
+        return [i for i in items if isinstance(i, dict) and i.get("title")]
+    except (OSError, ValueError, AttributeError) as exc:
+        print(f"Could not read {path}: {exc}")
+        return []
+
+
+def render_public_input(today, calendar=None, notices=None, path=PUBLIC_INPUT_PATH):
+    """'How you can weigh in': hand-curated items plus anything open found automatically.
+
+    Hand-curated items come from data/public_input.json and hide themselves once
+    their date passes. Automatic items: Federal Register notices with an open
+    comment period, and upcoming court hearings (which anyone may attend).
+    """
+    esc = html_module.escape
+
+    def fmt(d):
+        return d.strftime("%a, %b ") + str(d.day)
+
+    cards = []  # (sort_date, html)
+    for item in load_public_input(path):
+        day = parse_event_date(item.get("date"))
+        if day and day < today:
+            continue
+        deadline = parse_event_date(item.get("deadline"))
+        meta = []
+        if day:
+            meta.append(f'<span class="pi-date">{esc(fmt(day))}</span>')
+        if deadline and deadline >= today:
+            meta.append(f'<span class="pi-deadline">{esc(item.get("deadline_label") or "Deadline")}: {esc(fmt(deadline))}</span>')
+        steps = "".join(f"<li>{esc(str(x))}</li>" for x in item.get("steps", []) if x)
+        links = []
+        for i, link in enumerate(l for l in item.get("links", []) if isinstance(l, dict) and l.get("url")):
+            url = esc(str(link["url"]), quote=True)
+            external = ' target="_blank" rel="noopener"' if url.startswith("http") else ""
+            cls = "pi-btn" if i == 0 else "pi-link"
+            links.append(f'<a class="{cls}" href="{url}"{external}>{esc(str(link.get("label") or link["url"]))}</a>')
+        cards.append((day or deadline or datetime.max.date(), (
+            '<li class="pi-card">'
+            + (f'<div class="pi-meta">{"".join(meta)}</div>' if meta else "")
+            + f'<h3>{esc(item["title"])}</h3>'
+            + (f'<p class="pi-who">{esc(item["who"])}</p>' if item.get("who") else "")
+            + (f'<p>{esc(item["summary"])}</p>' if item.get("summary") else "")
+            + (f'<ol class="pi-steps">{steps}</ol>' if steps else "")
+            + (f'<div class="pi-links">{"".join(links)}</div>' if links else "")
+            + '</li>')))
+
+    seen = set()
+    for doc in notices or []:
+        close = parse_event_date(doc.get("comments_close_on"))
+        url = doc.get("html_url") or ""
+        if not close or close < today or url in seen:
+            continue
+        seen.add(url)
+        cards.append((close, (
+            '<li class="pi-card">'
+            f'<div class="pi-meta"><span class="pi-deadline">Comments close: {esc(fmt(close))}</span><span class="pi-auto">Found automatically</span></div>'
+            f'<h3>Public comment period: {esc(doc.get("title", "Federal Register notice"))}</h3>'
+            '<p>A federal agency has asked for public comments on this notice. Read the notice for what is being decided and how to submit.</p>'
+            f'<div class="pi-links"><a class="pi-btn" href="{esc(url, quote=True)}" target="_blank" rel="noopener">Read the notice and comment</a></div>'
+            '</li>')))
+
+    hearings = [ev for ev in (calendar or []) if ev.get("kind") == "hearing"]
+    if hearings:
+        ev = hearings[0]
+        when = fmt(ev["date"]) + (f', {ev["time"]}' if ev.get("time") else "")
+        cards.append((ev["date"], (
+            '<li class="pi-card">'
+            f'<div class="pi-meta"><span class="pi-date">{esc(when)}</span><span class="pi-auto">From the docket</span></div>'
+            f'<h3>Watch the court hearing: {esc(ev["label"])}</h3>'
+            '<p>Federal court hearings are open to the public. You can sit in, but the public does not speak; only the parties\' lawyers address the judge. '
+            f'Judge Ana C. Reyes sits at the {esc(COURTHOUSE)}. Some hearings are held remotely, so check the docket entry first.</p>'
+            f'<div class="pi-links"><a class="pi-link" href="{esc(COURT_DOCKET_URL, quote=True)}" target="_blank" rel="noopener">Check the docket</a></div>'
+            '</li>')))
+
+    cards.sort(key=lambda c: c[0])
+    body = "".join(c[1] for c in cards) or '<li class="pi-card"><p>Nothing is open for public input right now. This box updates daily.</p></li>'
+    return f"""
+  <section class="public-input" aria-labelledby="public-input-title">
+    <p class="summary-kicker">Take part</p>
+    <h2 id="public-input-title">How you can weigh in</h2>
+    <ol class="pi-list">{body}</ol>
+    <details class="pi-court-note"><summary>Can the public comment to the court?</summary>
+      <p>No. The judge decides the case only on what the parties file and argue, and does not take public comments or petitions. Outside organizations can ask permission to file a &ldquo;friend of the court&rdquo; (amicus) brief, which a lawyer has to file. The court granted one such request on November 2, 2026. If you want to influence what happens, the planning commission and your members of Congress are the places to go.</p>
+    </details>
   </section>
 """
 
@@ -1060,13 +1161,17 @@ def main():
         df_docket.to_csv("data/east_potomac_docket.csv", index=False)
     court_summary = update_court_summary(df_docket, now)
     today_et = now.astimezone(EASTERN).date()
+    calendar = docket_calendar(df_docket, today_et)
     court_summary_html = render_court_summary(
-        court_summary, docket_calendar(df_docket, today_et), latest_docket_activity(df_docket), today_et)
+        court_summary, calendar, latest_docket_activity(df_docket), today_et)
     print("Fetching public notices...", flush=True)
     # --- Upcoming hearings / notices ---
     fr_notices = get_federal_register_notices("East Potomac", "national-park-service")
     fr_notices += get_federal_register_notices("East Potomac", "interior-department")
     hearing_entries = flag_hearing_entries(df_docket)
+    # NCPC notices only feed the "How you can weigh in" box (not the subscriber email diff).
+    ncpc_notices = get_federal_register_notices("East Potomac", "national-capital-planning-commission")
+    public_input_html = render_public_input(today_et, calendar, fr_notices + ncpc_notices)
 
     article_store = load_article_store()
     # Remove the broad-feed results saved by earlier runs.  This is intentional:
@@ -1400,14 +1505,27 @@ def main():
   .cal-kind {{ display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 999px; background: #f1e6c8; color: #6b5214; font: 700 .64rem/1.6 Arial, sans-serif; text-transform: uppercase; letter-spacing: .03em; vertical-align: 2px; }}
   .next-event + .summary-overview {{ margin-top: 20px; }}
   .cal-note {{ margin: 8px 0 0; color: #6a6a5f; font: .76rem/1.4 Arial, sans-serif; }}
-  .as-of {{ display: inline-block; margin-right: 4px; padding: 1px 8px; border-radius: 999px; background: #eceae4; color: #4d4d45; font: 700 .7rem/1.6 Arial, sans-serif; text-transform: uppercase; letter-spacing: .04em; vertical-align: 2px; }}
-  .stale-line {{ margin: -8px 0 18px; font: .84rem/1.5 Arial, sans-serif; color: #5a5f5c; }}
-  .stale-line p {{ margin: 0; }}
-  .stale-line details {{ margin-top: 4px; }}
-  .stale-line summary {{ cursor: pointer; color: #24543f; font-weight: 700; }}
-  .latest-activity {{ list-style: none; margin: 8px 0 0; padding: 0; }}
-  .latest-activity li {{ display: grid; grid-template-columns: 6.5rem 1fr; gap: 10px; padding: 6px 0; border-top: 1px solid #e4e9e4; }}
-  .latest-activity li span {{ font-weight: 700; color: #173f31; }}
+  .public-input {{ margin: 0 0 28px; padding: 22px 24px; border: 2px solid #2C5F4F; border-radius: 12px; background: #f3f8f4; }}
+  .public-input h2 {{ margin: 2px 0 14px; }}
+  .pi-list {{ list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }}
+  .pi-card {{ padding: 16px 18px; border-radius: 10px; background: #fff; border: 1px solid #d3e0d6; }}
+  .pi-card h3 {{ margin: 4px 0 6px; font-size: 1.08rem; }}
+  .pi-card p {{ margin: 6px 0; font-size: .96rem; }}
+  .pi-who {{ color: #3f4a44; font: italic .86rem/1.4 Arial, sans-serif; }}
+  .pi-meta {{ display: flex; flex-wrap: wrap; gap: 6px; }}
+  .pi-date, .pi-deadline, .pi-auto {{ display: inline-block; padding: 2px 9px; border-radius: 999px; font: 700 .72rem/1.6 Arial, sans-serif; }}
+  .pi-date {{ background: #2C5F4F; color: #fff; }}
+  .pi-deadline {{ background: #fff0c7; color: #684c0b; }}
+  .pi-auto {{ background: #eceae4; color: #4d4d45; font-weight: 400; }}
+  .pi-steps {{ margin: 8px 0; padding-left: 20px; font-size: .93rem; }}
+  .pi-steps li {{ margin: 3px 0; }}
+  .pi-links {{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 10px; font-family: Arial, sans-serif; }}
+  .pi-btn {{ display: inline-block; background: #2C5F4F; color: #fff; text-decoration: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; font-size: .9rem; }}
+  .pi-btn:hover {{ background: #1f4639; }}
+  .pi-link {{ color: #24543f; font-size: .88rem; font-weight: 700; }}
+  .pi-court-note {{ margin-top: 14px; font: .86rem/1.5 Arial, sans-serif; color: #3f4a44; }}
+  .pi-court-note summary {{ cursor: pointer; color: #24543f; font-weight: 700; }}
+  .pi-court-note p {{ margin: 6px 0 0; }}
   .prior-actions {{ margin-top: 16px; border-top: 1px solid #d8e2da; padding-top: 12px; }}
   .prior-actions > summary {{ cursor: pointer; color: #24543f; font: 700 .92rem/1.4 Arial, sans-serif; }}
   .summary-method, .summary-empty {{ color: #59635f; font: .78rem/1.45 Arial, sans-serif; }}
@@ -1418,9 +1536,9 @@ def main():
     .section > div {{ padding: 0 16px 18px; }}
     .section div[style*="justify-content:space-between"] {{ flex-wrap: wrap; }}
     .court-summary {{ padding: 18px 16px; }}
+    .public-input {{ padding: 18px 14px; }}
     .summary-grid {{ grid-template-columns: 1fr; }}
     .court-calendar li {{ grid-template-columns: 5.6rem 1fr; gap: 8px; }}
-    .latest-activity li {{ grid-template-columns: 1fr; gap: 0; }}
   }}
 </style>
 </head>
@@ -1439,12 +1557,7 @@ def main():
   </div>
   <p class="updated">Automatically updated daily. Last updated: {updated}</p>
 
-  <div style="display:flex; gap:10px; flex-wrap:wrap; font-family: Arial, sans-serif; margin-bottom: 24px;">
-    <a href="write-to-congress.html" style="display:inline-block; background:#2C5F4F; color:#fff; text-decoration:none; padding:10px 18px; border-radius:4px; font-weight:bold;">
-      Write to Your Member of Congress &rarr;
-    </a>
-
-  </div>
+  {public_input_html}
 
   {court_summary_html}
 

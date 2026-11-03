@@ -1,0 +1,31 @@
+{
+  "_how_to_edit": "Add or change items below to update the 'How you can weigh in' box. Each item disappears on its own the day after its 'date'. Items without a date stay up until you remove them. Dates are YYYY-MM-DD. 'deadline' is optional and shows as a highlighted 'Sign up by' line.",
+  "items": [
+    {
+      "title": "Speak or send comments to the National Capital Planning Commission",
+      "date": "2026-12-03",
+      "deadline_label": "Agenda posts",
+      "deadline": "2026-11-13",
+      "who": "Anyone. You don't need to live in D.C.",
+      "summary": "The government told the court the Park Service would submit the Fazio golf-course design to NCPC, with review set for its December 3 meeting. Right now this is the main place where the public can formally speak on the plan. You can testify in person, online or by phone (3 minutes for yourself, 5 for an organization), or send a written comment. If no one signs up to speak on an item, NCPC can move it to its consent calendar and approve it with no presentation or discussion.",
+      "steps": [
+        "Watch for the tentative agenda (expected November 13) and final agenda (expected November 27) to confirm the item and the sign-up deadline.",
+        "Register to speak at go.ncpc.gov/register, or send a written comment. A written comment does not sign you up to speak.",
+        "Keep it specific: what in the plan affects you (the trail, Ohio Drive, the mini golf, the cherry trees, affordability) and what you're asking NCPC to do."
+      ],
+      "links": [
+        {"label": "NCPC meeting calendar", "url": "https://www.ncpc.gov/review/calendar/"},
+        {"label": "How to testify or comment", "url": "https://www.ncpc.gov/participate/guide"},
+        {"label": "Register to speak", "url": "https://go.ncpc.gov/register"}
+      ]
+    },
+    {
+      "title": "Write to your member of Congress",
+      "who": "Anyone. Members of Congress respond most to their own constituents.",
+      "summary": "Senators from Maryland and Virginia, and several House members, have already written to the Interior Department asking for details on cost, access, affordability and the historic cherry trees. Constituent letters show them the public is paying attention.",
+      "links": [
+        {"label": "Use the letter builder on this site", "url": "write-to-congress.html"}
+      ]
+    }
+  ]
+}
