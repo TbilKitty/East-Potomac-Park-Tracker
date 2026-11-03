@@ -1,0 +1,28 @@
+name: models-diag
+on:
+  push:
+    branches: [claude/models-diag]
+permissions:
+  contents: read
+  models: read
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe GitHub Models
+        env:
+          T: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import os, requests, json
+          T=os.environ["T"]
+          body={"model":"openai/gpt-4.1-mini","messages":[{"role":"user","content":"Reply with {\"ok\":true}"}],"response_format":{"type":"json_object"},"max_tokens":20}
+          variants={
+            "current":{"Authorization":f"Bearer {T}","Content-Type":"application/json"},
+            "documented":{"Authorization":f"Bearer {T}","Content-Type":"application/json","Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"},
+          }
+          for name,h in variants.items():
+              r=requests.post("https://models.github.ai/inference/chat/completions",headers=h,json=body,timeout=60)
+              print("==",name,r.status_code,r.headers.get("content-type"),"history:",[x.status_code for x in r.history],"final url:",r.url)
+              print(repr(r.text[:700]))
+          PY
