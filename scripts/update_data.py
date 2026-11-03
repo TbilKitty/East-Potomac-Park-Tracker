@@ -702,6 +702,54 @@ def render_public_input(today, calendar=None, notices=None, path=PUBLIC_INPUT_PA
 """
 
 
+def render_action_banner(today, notices=None, path=PUBLIC_INPUT_PATH):
+    """Red box at the very top: one line per thing the public can do now, with a direct link.
+
+    Uses each item's "banner" entry in data/public_input.json (text, link_label, url);
+    falls back to the item's title and first link. Open Federal Register comment
+    periods are added automatically. Returns "" when nothing is open.
+    """
+    esc = html_module.escape
+
+    def fmt(d):
+        return d.strftime("%a, %b ") + str(d.day)
+
+    rows = []  # (sort_date, html)
+    for item in load_public_input(path):
+        day = parse_event_date(item.get("date"))
+        if day and day < today:
+            continue
+        banner = item.get("banner") if isinstance(item.get("banner"), dict) else {}
+        links = [l for l in item.get("links", []) if isinstance(l, dict) and l.get("url")]
+        text = banner.get("text") or item["title"]
+        url = banner.get("url") or (links[0]["url"] if links else "")
+        label = banner.get("link_label") or (links[0].get("label") if links else "")
+        rows.append((day or datetime.max.date(), text, url, label, day))
+    seen = set()
+    for doc in notices or []:
+        close = parse_event_date(doc.get("comments_close_on"))
+        url = doc.get("html_url") or ""
+        if close and close >= today and url not in seen:
+            seen.add(url)
+            rows.append((close, f'Send a public comment: {doc.get("title", "Federal Register notice")} (closes {fmt(close)})',
+                         url, "Comment", close))
+    if not rows:
+        return ""
+    rows.sort(key=lambda r: r[0])
+    items = []
+    for _, text, url, label, day in rows:
+        when = f'<span class="ab-date">{esc(fmt(day))}</span>' if day else ""
+        external = ' target="_blank" rel="noopener"' if str(url).startswith("http") else ""
+        link = f'<a class="ab-btn" href="{esc(str(url), quote=True)}"{external}>{esc(str(label or "Go"))} &rarr;</a>' if url else ""
+        items.append(f'<li>{when}<span class="ab-text">{esc(str(text))}</span>{link}</li>')
+    return (
+        '<aside class="action-banner" role="region" aria-labelledby="action-banner-title">'
+        '<h2 id="action-banner-title">Take action: what the public can do now</h2>'
+        f'<ul>{"".join(items)}</ul>'
+        '<a class="ab-more" href="#public-input-title">How each one works &darr;</a>'
+        '</aside>')
+
+
 def send_email_update(subject, body):
     api_key = os.environ.get("BUTTONDOWN_API_KEY", "")
     if not api_key:
@@ -1172,6 +1220,7 @@ def main():
     # NCPC notices only feed the "How you can weigh in" box (not the subscriber email diff).
     ncpc_notices = get_federal_register_notices("East Potomac", "national-capital-planning-commission")
     public_input_html = render_public_input(today_et, calendar, fr_notices + ncpc_notices)
+    action_banner_html = render_action_banner(today_et, fr_notices + ncpc_notices)
 
     article_store = load_article_store()
     # Remove the broad-feed results saved by earlier runs.  This is intentional:
@@ -1505,6 +1554,16 @@ def main():
   .cal-kind {{ display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 999px; background: #f1e6c8; color: #6b5214; font: 700 .64rem/1.6 Arial, sans-serif; text-transform: uppercase; letter-spacing: .03em; vertical-align: 2px; }}
   .next-event + .summary-overview {{ margin-top: 20px; }}
   .cal-note {{ margin: 8px 0 0; color: #6a6a5f; font: .76rem/1.4 Arial, sans-serif; }}
+  .action-banner {{ margin: 0 0 18px; padding: 16px 20px 14px; border: 3px solid #B3261E; border-radius: 10px; background: #FDECEA; font-family: Arial, sans-serif; }}
+  .action-banner h2 {{ margin: 0 0 10px; color: #8C1D18; font: 700 1.05rem/1.3 Arial, sans-serif; text-transform: uppercase; letter-spacing: .03em; }}
+  .action-banner ul {{ list-style: none; margin: 0; padding: 0; }}
+  .action-banner li {{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 0; border-top: 1px solid #F3C2BD; }}
+  .action-banner li:first-child {{ border-top: 0; padding-top: 2px; }}
+  .ab-date {{ padding: 3px 10px; border-radius: 999px; background: #B3261E; color: #fff; font-weight: 700; font-size: .8rem; white-space: nowrap; }}
+  .ab-text {{ flex: 1 1 260px; color: #3B0E0B; font-size: .98rem; font-weight: 700; }}
+  .ab-btn {{ padding: 7px 14px; border-radius: 4px; background: #B3261E; color: #fff; text-decoration: none; font-weight: 700; font-size: .88rem; white-space: nowrap; }}
+  .ab-btn:hover {{ background: #8C1D18; }}
+  .ab-more {{ display: inline-block; margin-top: 6px; color: #8C1D18; font-size: .84rem; font-weight: 700; }}
   .public-input {{ margin: 0 0 28px; padding: 22px 24px; border: 2px solid #2C5F4F; border-radius: 12px; background: #f3f8f4; }}
   .public-input h2 {{ margin: 2px 0 14px; }}
   .pi-list {{ list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }}
@@ -1543,6 +1602,7 @@ def main():
 </style>
 </head>
 <body>
+  {action_banner_html}
   <img src="{photo_src}" alt="Cherry blossoms lining the road at East Potomac Park" style="width:100%; max-height:320px; object-fit:cover; border-radius:8px; margin-bottom:6px;">
   <p style="font-family: Arial, sans-serif; font-size: 0.72rem; color: #4A4A4A; margin: 0 0 28px;">Photo: NPS / NCR Photo Library (public domain)</p>
 
